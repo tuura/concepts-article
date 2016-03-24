@@ -1,0 +1,5091 @@
+#LyX file created by tex2lyx 2.1
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass IEEEtran
+\begin_preamble
+\usepackage{babel}
+
+\end_preamble
+\options compsoc,conference
+\use_default_options false
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding iso8859-15
+\fontencoding T1
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\lang british
+Compositional design of asynchronous circuits 
+\begin_inset Newline newline
+\end_inset
+
+ from behavioural concepts
+\end_layout
+
+\begin_layout Author
+
+\lang british
+Jonathan Beaumont, Andrey Mokhov, Danil Sokolov, Alex Yakovlev
+\begin_inset Newline newline
+\end_inset
+
+ 
+\family typewriter
+{j.r.beaumont, andrey.mokhov, danil.sokolov, alex.yakovlev}@ncl.ac.uk
+\family default
+
+\begin_inset Newline newline
+\end_inset
+
+ 
+\emph on
+School of Electrical and Electronic Engineering, Newcastle University, UK
+\emph default
+
+\end_layout
+
+\begin_layout Abstract
+
+\lang british
+Asynchronous circuits can be useful in many applications, however, they are yet to be widely used in industry. The main reason for this is a steep learning curve for concurrency models, such Signal Transition Graphs, that are developed by the academic community for specification and synthesis of asynchronous circuits. In this paper we introduce a compositional design flow for asynchronous circuits using 
+\shape italic
+concepts
+\shape default
+ -- a set of formalised descriptions for system requirements. Our aim is to simplify the process of capturing system requirements in the form of a formal specification, and promote the concepts as a means for design reuse. The proposed design flow is applied to the development of an asynchronous buck converter. 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+sloppy
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Introduction
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Asynchronous circuits are event-driven, i.e. they react to changes in a system at the rate they occur
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "sparso2001principles"
+
+\end_inset
+
+. This makes them particularly useful for on-chip power management, where the ability to quickly respond to dynamically changing loads across the chip is essential for reliable operation and efficiency
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2008_audy_isscc_tutorial"
+
+\end_inset
+
+. A power management system relies on analogue circuitry for power regulation and conversion whose behaviour is characterised by many operating modes and complexity of their interplay. Capturing all these aspects of system behaviour in a consistent specification becomes the major design challenge
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_sokolov_ftfc"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Signal Transition Graphs
+\begin_inset space ~
+
+\end_inset
+
+(STGs) are commonly used for the specification of asynchronous control circuits as they are compatible with multiple synthesis tools, such as 
+\noun on
+Petrify
+\noun default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Cortadella"
+
+\end_inset
+
+ and 
+\noun on
+Mpsat
+\noun default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "khomenko2004detecting"
+
+\end_inset
+
+. These tools take an STG specification of a complete controller and produce a speed-independent circuit implementation
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Muller_1959_ts"
+
+\end_inset
+
+. Such a monolithic approach to designing asynchronous circuits has poor scalability: as the system grows in complexity its monolithic specification becomes challenging to comprehend and debug. The STG models of components cannot be reused when designing other specifications, and thus each new design must be built from the ground up. This further adds to the design time, hence making asynchronous circuits undesirable for use in industry.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+To address this issue, we propose a new method of asynchronous circuit design. The method splits a specification into several parts corresponding to operational modes of the circuit (
+\emph on
+scenarios
+\emph default
+). The features, constraints and requirements of each scenario
+\emph on
+ 
+\emph default
+(
+\emph on
+concepts
+\emph default
+), are described in a formal notation, which we implemented as a domain specific language embedded in Haskell
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "1996_hudak_dsl"
+
+\end_inset
+
+. Concepts can be composed and one concept can be made up of multiple smaller concepts, thus supporting the design reuse at the level of system specification. Scenarios of reconfigurable systems
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_mokhov_jlpea"
+
+\end_inset
+
+ can also be parameterised by run-time parameters (e.g., available energy budget) or design-time ones (e.g., the number of processing cores in a Network-on-Chip network), therefore concepts should also support parameterisation.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+A set of concepts describing the operation of a scenario is then passed into a translation algorithm that automatically converts it into an equivalent STG, which satisfies all given concepts and can be model-checked using standard tools
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2007_poliakov_workcraft"
+
+\end_inset
+
+. When all scenarios have been translated to STGs and verified, they can be combined to produce a complete specification. This step will also be automated, and will offer 
+\emph on
+templates
+\emph default
+ for common scenario ordering requirements, such as mode switching sequences and start-up scenarios.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Designing a controller for an analogue circuit using this method can be beneficial. Any of the partial knowledge we have about any casual relationships between events in the environment can be naturally modelled as concepts. When composed with other concepts describing these relationships and concepts describing the control which reacts to the environment, a model will be produced which shows how the environment and the control system interacts.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+There are several existing methodologies which are similar to the one being proposed in this paper, however we found them limited in certain aspects as discussed below.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Snippets
+\series default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "raey"
+
+\end_inset
+
+, similar to concepts, are smaller state graph models which are used to compose full state graphs of larger systems. Snippets describe the operation of a part of a system in terms of input and output alphabets, and in which ways these snippets can fail. When composed with other snippets it can produce a working system state graph model. With our design methodology however we want to go deeper and decompose a component into concepts responsible for capturing signal behaviours for system features, such as handshakes, mutual exclusion, synchronisation, etc.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Structural design
+\series default
+ features re-usability of modular components
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "modular-circuit-design"
+
+\end_inset
+
+. Here, a component design can be used multiple times across full device designs in conjunction with several other circuit modules. These modules can be changed in some way without affecting how they are used in the full device designs. The ideas of this method are similar to that of the design methodology we are proposing to reduce design time. However, this method is at a much higher level, using fully designed and tested components where as we propose to allow re-usability when modelling at circuit level, using composed concepts.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+DI algebra
+\series default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "josephs1993overview"
+
+\end_inset
+
+ is a method of describing systems as algebraic equations. Each equation represents an operation of the specification, similar to scenarios, and composing these can be simplified for the most compact version of the equation. These can then be composed to find an equation for the whole specification and again simplified for the most compact version. Our method is similar to DI algebra, however concepts are described textually, which is different to DI algebra and as such, simplification does not occur at concept level, but during the composition and combination steps, and the most compact form of the model is automatically produced. To the best of our knowledge there are no tools or methodologies supporting compositional design of asynchronous circuits using DI algebra and it is therefore not interoperable with the rest of our design flow, and this also makes it unsuitable for use in an industrial setting.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Resynthesis
+\series default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Resynth2"
+
+\end_inset
+
+ is a process of decomposing a full model and recomposing it of selective components to produce a smaller model. This can be used to reduce the number of signals to connect two separate models for example. This process is regularly used for optimisation of Balsa control circuits
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "plana2005attacking"
+
+\end_inset
+
+, however in Balsa the set of predefined components is fixed, so a designer cannot easily introduce new scenarios. Resynthesis also requires full models which can be decomposed. This requirement may be problematic for the proposed methodology as we take a ground-up approach to composition, starting with primitive concepts which composed into scenarios, which are subsequently combined into a complete model. Resynthesis can still be used at a later stage of the design process, once the complete model of a system
+\begin_inset space ~
+
+\end_inset
+
+(or a subsystem) has been obtained using the proposed methodology.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The idea is that our approach should reduce the complexity of designing asynchronous circuits, so the number of errors should be reduced, and easier to find and correct. This will in turn reduce the design time, and make asynchronous circuits more desirable and be used to make devices.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The presented approach is automated in the open-source
+\noun on
+ Workcraft
+\noun default
+ framework
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2007_poliakov_workcraft"
+
+\end_inset
+
+. This parses concepts, uses them to produce scenario STGs and performs parallel composition
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "PCOMP"
+
+\end_inset
+
+ on these and creates full model STGs. Full models can then be synthesised using 
+\noun on
+Workcraft
+\noun default
+. In this paper, we use real life industrial example of a buck converter
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_sokolov_ftfc"
+
+\end_inset
+
+ to show our design flow, and test this design approach. 
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Concepts 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Concepts"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In this section we formally introduce 
+\emph on
+concepts
+\emph default
+ that we propose to employ for the specification of asynchronous circuits. Below we list (fairly standard) definitions and notational conventions that are used throughout the paper.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We use 
+\begin_inset Formula $\mathbb{B}$
+\end_inset
+
+ to denote the set of Boolean values 
+\begin_inset Formula $\{0,1\}$
+\end_inset
+
+. Given two Boolean functions 
+\begin_inset Formula $f:X\rightarrow\mathbb{B}$
+\end_inset
+
+ and 
+\begin_inset Formula $g:X\rightarrow\mathbb{B}$
+\end_inset
+
+ with the same domain 
+\begin_inset Formula $X$
+\end_inset
+
+, we lift Boolean operators (disjunction
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\vee$
+\end_inset
+
+, conjunction
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\wedge$
+\end_inset
+
+, implication 
+\begin_inset Formula $\Rightarrow$
+\end_inset
+
+, etc.) in the usual manner: 
+\begin_inset Formula $h=f\vee g$
+\end_inset
+
+ means 
+\begin_inset Formula $h(x)=f(x)\vee g(x)$
+\end_inset
+
+ for all 
+\begin_inset Formula $x\in X$
+\end_inset
+
+, etc. Furthermore,
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\mathbf{0}$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\mathbf{1}$
+\end_inset
+
+ stand for constant Boolean functions that discard their input and return values 
+\begin_inset Formula $0$
+\end_inset
+
+ and 
+\begin_inset Formula $1$
+\end_inset
+
+, respectively.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+A
+\emph on
+ monoid
+\emph default
+ is a set 
+\begin_inset Formula $M$
+\end_inset
+
+ and a binary operation 
+\begin_inset Formula $\diamond:M\times M\rightarrow M$
+\end_inset
+
+ satisfying two axioms: 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Identity: 
+\begin_inset Formula $e\diamond a=a\diamond e=a$
+\end_inset
+
+ for any 
+\begin_inset Formula $a\in M$
+\end_inset
+
+, where 
+\begin_inset Formula $e\in M$
+\end_inset
+
+ is the 
+\emph on
+identity element
+\emph default
+ of the monoid. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Associativity: 
+\begin_inset Formula $a\diamond(b\diamond c)=(a\diamond b)\diamond c$
+\end_inset
+
+ for all 
+\begin_inset Formula $a,b,c\in M$
+\end_inset
+
+. 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Monoid is the simplest mathematical structure that captures the notions of 
+\emph on
+emptiness
+\emph default
+ and 
+\emph on
+composition
+\emph default
+. The concepts introduced in this section form 
+\emph on
+commutative monoids
+\emph default
+: they have identity elements corresponding to empty specifications, and can be composed to build complex concepts from simpler ones. The order of composition does not matter, i.e., the concepts commute: 
+\begin_inset Formula $a\diamond b=b\diamond a$
+\end_inset
+
+ for all 
+\begin_inset Formula $a,b\in M$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Abstract concepts 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We first describe 
+\emph on
+abstract concepts
+\emph default
+ that we use as building blocks for developing 
+\emph on
+domain specific concepts
+\emph default
+, such as those related to asynchronous circuits (Section
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Concepts-for-asynchronous"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Abstract concepts are parameterised by finite sets of 
+\emph on
+states
+\emph default
+ 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\emph on
+events
+\emph default
+ 
+\begin_inset Formula $E$
+\end_inset
+
+. The 
+\emph on
+initial state concept
+\emph default
+ captures all possible (or 
+\emph on
+permitted
+\emph default
+) initial states of the system. In the most general form it is a function 
+\begin_inset Formula \[
+\mathsf{initial}:S\rightarrow\mathbb{B}
+\]
+\end_inset
+
+that given a state 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ returns 
+\begin_inset Formula $1$
+\end_inset
+
+ if 
+\begin_inset Formula $s$
+\end_inset
+
+ is an initial state and 
+\begin_inset Formula $0$
+\end_inset
+
+ otherwise. In practice this concept is often realised as a membership test of a set of initial states
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $I\subseteq S$
+\end_inset
+
+, i.e. 
+\begin_inset Formula $\mathsf{initial}(s)=s\in I$
+\end_inset
+
+. However, we prefer the functional form because it is more abstract and permits other, often more efficient realisations. Note that
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\mathbf{0}$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\mathbf{1}$
+\end_inset
+
+ have natural interpretations as initial concepts: they correspond to systems with no initial states, and systems where any state can be initial, respectively. Initial state concepts form a commutative monoid with the identity element
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\mathbf{1}$
+\end_inset
+
+ and the composition operation
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\wedge$
+\end_inset
+
+. Intuitively, if a system comprises two subsystems then its initial state should satisfy constraints imposed by both subsystems, hence the conjunction operator.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The 
+\emph on
+event excitation concept
+\emph default
+ captures all states wherein a given event can occur (or is 
+\emph on
+excited
+\emph default
+). In the most general form it is a function 
+\begin_inset Formula \[
+\mathsf{excited}:E\times S\rightarrow\mathbb{B}
+\]
+\end_inset
+
+that given an event 
+\begin_inset Formula $e\in E$
+\end_inset
+
+ and a state 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ checks whether 
+\begin_inset Formula $e$
+\end_inset
+
+ is excited in 
+\begin_inset Formula $s$
+\end_inset
+
+. In practice this concept is often realised using 
+\emph on
+interpreted graph models
+\emph default
+ such as Finite State Machines and Petri Nets
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Cortadella"
+
+\end_inset
+
+, Conditional Partial Order Graphs
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "CPOG1"
+
+\end_inset
+
+, and others. A partial application of the excitation function is often useful: 
+\begin_inset Formula $\mathsf{excited}(e)$
+\end_inset
+
+ captures all states where event 
+\begin_inset Formula $e$
+\end_inset
+
+ is excited; for example, if 
+\begin_inset Formula $\mathsf{excited}(e)=\mathbf{0}$
+\end_inset
+
+ then 
+\begin_inset Formula $e$
+\end_inset
+
+ is never excited or 
+\emph on
+dead
+\emph default
+. Event excitation concepts also form a commutative monoid with
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $e=\mathbf{1}$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\diamond=\wedge$
+\end_inset
+
+. This definition corresponds to the 
+\emph on
+parallel composition
+\emph default
+ operation, a standard notion for many behavioural models
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "PCOMP"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Some states may be impossible or undesirable during the normal system operation. To express this we use the 
+\emph on
+invariant concept
+\emph default
+, which captures all 
+\emph on
+correct
+\emph default
+ or 
+\emph on
+permitted
+\emph default
+ states of the system. A typical use case for invariant concepts is to specify assertions or assumptions about the system state space, that may by verified via model checking and/or used for optimising the implementation. In the most general form an invariant concept is a function 
+\begin_inset Formula \[
+\mathsf{invariant}:S\rightarrow\mathbb{B}
+\]
+\end_inset
+
+that given a state 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ returns 
+\begin_inset Formula $1$
+\end_inset
+
+ if 
+\begin_inset Formula $s$
+\end_inset
+
+ is permitted by the invariant and 
+\begin_inset Formula $0$
+\end_inset
+
+ otherwise. Note that if for some state 
+\begin_inset Formula $s$
+\end_inset
+
+ the initial concept 
+\begin_inset Formula $\mathsf{initial}(s)$
+\end_inset
+
+ holds but the invariant 
+\begin_inset Formula $\mathsf{invariant}(s)$
+\end_inset
+
+ does not hold, then the specification is 
+\emph on
+contradictory
+\emph default
+ and cannot be satisfied by any implementation. We therefore usually assume that 
+\begin_inset Formula $\mathsf{initial}(s)\Rightarrow\mathsf{invariant}(s)$
+\end_inset
+
+ holds for all 
+\begin_inset Formula $s\in S$
+\end_inset
+
+. Similarly, invariant concepts form a commutative monoid with
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $e=\mathbf{1}$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $\diamond=\wedge$
+\end_inset
+
+. Intuitively, if a system comprises two subsystems then its states should be permitted in both of the subsystems.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+One can derive other useful concepts from the three concepts described above, for instance, 
+\begin_inset Formula \[
+\mathsf{quiescent}(e,s)=\overline{\mathsf{excited}(e,s)}
+\]
+\end_inset
+
+captures all states 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ when a given event 
+\begin_inset Formula $e\in E$
+\end_inset
+
+ cannot occur. Furthermore, one can define other useful concepts that cannot be derived from the above, e.g., the 
+\emph on
+execution concept
+\emph default
+ capturing the effects that different events have on the system state. Due to space limitations we only consider the three concepts defined above and their derivatives.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+All described concepts form monoids, hence their combinations are trivially monoids too. It is therefore convenient to consider triples of concepts 
+\begin_inset Formula $(\mathsf{initial},\mathsf{excited},\mathsf{invariant})$
+\end_inset
+
+ with 
+\begin_inset Formula $(\mathbf{1},\mathbf{1},\mathbf{1})$
+\end_inset
+
+ representing the 
+\emph on
+empty specification
+\emph default
+, and composition 
+\begin_inset Formula $(\mathsf{initial}_{1},\mathsf{excited}_{1},\mathsf{invariant}_{1})\diamond(\mathsf{initial}_{2},\mathsf{excited}_{2},\mathsf{invariant}_{2})$
+\end_inset
+
+ defined as 
+\begin_inset Formula $(\mathsf{initial}_{1}\diamond\mathsf{initial}_{2},\mathsf{excited}_{1}\diamond\mathsf{excited}_{2},\mathsf{invariant}_{1}\diamond\mathsf{invariant}_{2})$
+\end_inset
+
+. Importantly, composition of two non-contradictory specifications is always non-contradictory, that is if both 
+\begin_inset Formula $\mathsf{initial}_{1}(s)\Rightarrow\mathsf{invariant}_{1}(s)$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{2}(s)$
+\end_inset
+
+ hold for all states 
+\begin_inset Formula $s\in S$
+\end_inset
+
+, then 
+\begin_inset Formula $\mathsf{initial}_{1}(s)\diamond\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{1}(s)\diamond\mathsf{invariant}_{2}(s)$
+\end_inset
+
+ holds too.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Concepts for asynchronous circuits
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Concepts-for-asynchronous"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We now introduce concepts which are specific for the domain of asynchronous circuits and express them using the abstract concepts defined above.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Signal-level concepts:
+\series default
+ States and events of an asynchronous circuit are parameterised by a fixed set of signals 
+\begin_inset Formula $A$
+\end_inset
+
+. A state 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ is an assignment of Boolean values to signals, i.e. a function 
+\begin_inset Formula $s:A\rightarrow\mathbb{B}$
+\end_inset
+
+, while an event 
+\begin_inset Formula $e\in E$
+\end_inset
+
+ is a 
+\emph on
+signal transition
+\emph default
+, i.e. a pair 
+\begin_inset Formula $e:A\times\mathbb{B}$
+\end_inset
+
+ comprising a signal 
+\begin_inset Formula $a\in A$
+\end_inset
+
+ and the value of the signal 
+\emph on
+after
+\emph default
+ the transition occurs. We call transitions 
+\begin_inset Formula $(a,0)$
+\end_inset
+
+ and 
+\begin_inset Formula $(a,1)$
+\end_inset
+
+ 
+\emph on
+falling
+\emph default
+ and 
+\emph on
+rising
+\emph default
+, respectively, and denote them by 
+\begin_inset Formula $a^{-}$
+\end_inset
+
+ and 
+\begin_inset Formula $a^{+}$
+\end_inset
+
+ for brevity.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The following two predicates are very useful for constructing concepts: 
+\begin_inset Formula \[
+\begin{array}{ccc}
+\mathsf{before} & \!\!\!\!:\!\!\!\!\! & E\times S\rightarrow\mathbb{B}\\
+\mathsf{after} & \!\!\!\!:\!\!\!\!\! & E\times S\rightarrow\mathbb{B}
+\end{array}
+\]
+\end_inset
+
+A state 
+\begin_inset Formula $s\in S$
+\end_inset
+
+ is said to be 
+\emph on
+before
+\emph default
+ a transition 
+\begin_inset Formula $(a,b)\in E$
+\end_inset
+
+ if 
+\begin_inset Formula $s(a)\neq b$
+\end_inset
+
+, i.e. in state 
+\begin_inset Formula $s$
+\end_inset
+
+ signal 
+\begin_inset Formula $a$
+\end_inset
+
+ has a value which is different from the resulting value of the transition. Similarly, 
+\begin_inset Formula $s$
+\end_inset
+
+ is 
+\emph on
+after
+\emph default
+ 
+\begin_inset Formula $(a,b)$
+\end_inset
+
+ if 
+\begin_inset Formula $s(a)=b$
+\end_inset
+
+ (the transition has already occurred).
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We are now ready to define an excitation concept called 
+\emph on
+consistency
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Cortadella"
+
+\end_inset
+
+: 
+\begin_inset Formula \[
+\mathsf{consistency}=\mathsf{before}
+\]
+\end_inset
+
+This concept captures the requirement that in a consistent asynchronous circuit a signal transition can only be excited in states that are before it.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Another key concept in asynchronous circuits is 
+\emph on
+causality
+\emph default
+: we say that a transition 
+\begin_inset Formula $\mathit{effect}\in E$
+\end_inset
+
+ causally depends on transition 
+\begin_inset Formula $\mathit{cause}\in E$
+\end_inset
+
+, denoted as 
+\begin_inset Formula \[
+\mathsf{causality}(\mathit{cause},\mathit{effect}):E\times S\rightarrow\mathbb{B}
+\]
+\end_inset
+
+if 
+\begin_inset Formula $\mathit{effect}$
+\end_inset
+
+ can occur only in states that are after 
+\begin_inset Formula $\mathit{cause}$
+\end_inset
+
+. This is an excitation concept, which can be expressed as follows: 
+\begin_inset Formula \[
+\mathsf{causality}(\mathit{cause},\mathit{effect})(e)\!=\!\begin{cases}
+\mathbf{1} & \mathit{if}\, e\neq\mathit{effect}\\
+\mathsf{after}(cause) & \mathit{otherwise}
+\end{cases}
+\]
+\end_inset
+
+In words, we do not add any constraints to events 
+\begin_inset Formula $e\in E$
+\end_inset
+
+ that are distinct from 
+\begin_inset Formula $\mathit{effect}$
+\end_inset
+
+, but 
+\begin_inset Formula $\mathit{effect}$
+\end_inset
+
+ is constrained to occur only after 
+\begin_inset Formula $\mathit{cause}$
+\end_inset
+
+. Note that function 
+\begin_inset Formula $\mathsf{after}$
+\end_inset
+
+ is used in the partially applied form. We will use a short-hand notation 
+\begin_inset Formula \[
+\mathit{cause}\rightsquigarrow\mathit{effect}
+\]
+\end_inset
+
+for the causality concept for convenience.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+One can compose two causality concepts using the monoid composition, for example 
+\begin_inset Formula \[
+a\rightsquigarrow c\ \diamond\ b\rightsquigarrow c
+\]
+\end_inset
+
+corresponds to so-called AND-causality: event 
+\begin_inset Formula $c$
+\end_inset
+
+ can only occur after both 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ have occurred. Specifying OR-causality is slightly more tricky: 
+\begin_inset Formula \[
+\mathsf{orCausality}(a,b,c)(e)=\begin{cases}
+\mathbf{1} & \mathit{if}\, c\neq\mathit{e}\\
+\mathsf{after}(a)\vee\mathsf{after}(b) & \mathit{otherwise}
+\end{cases}
+\]
+\end_inset
+
+Event 
+\begin_inset Formula $c$
+\end_inset
+
+ is thus excited after at least one cause has occurred.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Gate-level concepts:
+\series default
+ Using the causality concept we can express the behaviour of gates in asynchronous circuits. For example, a 
+\emph on
+buffer
+\emph default
+ is a gate with one input signal 
+\begin_inset Formula $a\in A$
+\end_inset
+
+ and one output signal 
+\begin_inset Formula $b\in A$
+\end_inset
+
+, whose output transitions causally depend on the input ones: 
+\begin_inset Formula \[
+\mathsf{buffer}(a,b)=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
+\]
+\end_inset
+
+An 
+\emph on
+inverter
+\emph default
+ has a similar conceptual specification, but the output transition is inverted: 
+\begin_inset Formula \[
+\mathsf{inverter}(a,b)=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
+\]
+\end_inset
+
+A 
+\emph on
+C-element
+\emph default
+ is a gate with two inputs 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ and one output
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $c$
+\end_inset
+
+, which synchronises input transitions: 
+\begin_inset Formula \[
+\mathsf{cElement}(a,b,c)=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
+\]
+\end_inset
+
+In words, the rising output transition 
+\begin_inset Formula $c^{+}$
+\end_inset
+
+ causally depends on both 
+\begin_inset Formula $a^{+}$
+\end_inset
+
+ and 
+\begin_inset Formula $b^{+}$
+\end_inset
+
+, and the falling output transition 
+\begin_inset Formula $c^{-}$
+\end_inset
+
+ causally depends on both 
+\begin_inset Formula $a^{-}$
+\end_inset
+
+ and 
+\begin_inset Formula $b^{-}$
+\end_inset
+
+. An alternative way to express the same concept is to reuse the buffer concept: 
+\begin_inset Formula \[
+\mathsf{cElement}(a,b,c)=\mathsf{buffer}(a,c)\ \diamond\ \mathsf{buffer}(b,c)
+\]
+\end_inset
+
+Indeed, a C-element combines the constraints imposed on the output transitions by two `virtual' buffers.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Behaviour of other gates can be similarly defined using concepts, see our Haskell implementation
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2015_concepts_github"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Protocol-level concepts:
+\series default
+ In addition to gate-level concepts described above it is often important to specify 
+\emph on
+protocols
+\emph default
+ of interaction between multiple gates or components. In this section we demonstrate how one can use concepts to specify asynchronous handshakes and mutual exclusion mechanisms.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Given two signals 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+, a 
+\emph on
+handshake
+\emph default
+ between them is the following composition of causality concepts: 
+\begin_inset Formula \[
+\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! a^{+}
+\]
+\end_inset
+
+Intuitively, we have a two-way asynchronous communication channel, where one party sends transitions 
+\begin_inset Formula $a^{+}$
+\end_inset
+
+ and 
+\begin_inset Formula $a^{-}$
+\end_inset
+
+ and the other party responds by corresponding 
+\begin_inset Formula $b^{+}$
+\end_inset
+
+ and 
+\begin_inset Formula $b^{-}$
+\end_inset
+
+ transitions. One can notice that the four causality concepts match those found in the buffer and inverter concepts, which leads to an alternative way to express a handshake between
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $a$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $b$
+\end_inset
+
+: 
+\begin_inset Formula \[
+\mathsf{handshake}(a,b)=\mathsf{buffer}(a,b)\diamond\mathsf{inverter}(b,a)
+\]
+\end_inset
+
+Indeed, this conceptual understanding of a handshake as being composed from a buffer and an inverter is often used by circuit designers as a convenient way of reasoning.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In order to specify the initial state of a handshake between signals
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $a$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $b$
+\end_inset
+
+, we can use functions 
+\begin_inset Formula $\mathsf{before}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathsf{after}$
+\end_inset
+
+. For example, 
+\begin_inset Formula $\mathsf{before}(a^{+})$
+\end_inset
+
+ captures the states where signal 
+\begin_inset Formula $a$
+\end_inset
+
+ is set to 
+\begin_inset Formula $0$
+\end_inset
+
+. We can compose an initial state concept with the handshake concept as follows: 
+\begin_inset Formula \[
+\mathsf{handshake00}(a,b)\!=\!\mathsf{handshake}(a,b)\diamond\mathsf{before}(a^{+})\diamond\mathsf{before}(b^{+})
+\]
+\end_inset
+
+The resulting concept corresponds to a handshake between signals
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $a$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $b$
+\end_inset
+
+ that are both initially 
+\begin_inset Formula $0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The last important concept that requires an introduction is 
+\emph on
+mutual exclusion
+\emph default
+ between two signals
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $a$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $b$
+\end_inset
+
+: 
+\begin_inset Formula \[
+\mathsf{me}(a,b)=a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}(a^{+})\wedge\mathsf{after}(b^{+})}
+\]
+\end_inset
+
+The concept comprises two parts: 1) in terms of causality, we say that rising transitions 
+\begin_inset Formula $a^{+}$
+\end_inset
+
+ and 
+\begin_inset Formula $b^{+}$
+\end_inset
+
+ can only occur after the opposite falling ones, 2) the initial states when 
+\begin_inset Formula $a=b=1$
+\end_inset
+
+ are forbidden. Taken together these two parts guarantee that 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ are never set to 
+\begin_inset Formula $1$
+\end_inset
+
+ at the same time, i.e. they are mutually exclusive. We also add 
+\begin_inset Formula $\overline{\mathsf{after}(a^{+})\wedge\mathsf{after}(b^{+})}$
+\end_inset
+
+ to the invariant.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We can now specify a 
+\emph on
+mutual exclusion element
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2008_kinniment_synchronisation"
+
+\end_inset
+
+ that receives asynchronous requests 
+\begin_inset Formula $r_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $r_{2}$
+\end_inset
+
+ to a shared resource and grants access to it by corresponding mutually exclusive signals 
+\begin_inset Formula $g_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $g_{2}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+ 
+\size small
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+{}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula \[
+\mathsf{meElement}(r_{1},r_{2},g_{1},g_{2})\!=\mathsf{\! buffer}(r_{1},g_{1})\diamond\mathsf{buffer}(r_{2},g_{2})\diamond\mathsf{me}(g_{1},g_{2})
+\]
+\end_inset
+
+
+\size default
+
+\size small
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Circuit specification with concepts 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Circuit-specification-with"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This section presents a method for deriving a circuit specification from a set of concepts that describe its different aspects. We focus on specification of 
+\emph on
+Speed-Independent
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+(SI) circuits, which is an important class of asynchronous circuits
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Muller_1959_ts"
+
+\end_inset
+
+ that work correctly regardless of the gates' delays, while the wires are assumed to have negligible delays. Alternatively, one can regard wire forks as isochronic and add wire delays to the corresponding gate delays
+\begin_inset space ~
+
+\end_inset
+
+(
+\emph on
+Quasi-Delay Insensitive
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+(QDI) circuit class
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Martin_1986_dc"
+
+\end_inset
+
+). A convenient formalism for specification of SI circuits is STGs
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Chu_1987_phd,Rosenblum_1985_tpn"
+
+\end_inset
+
+, which is a special kind of Petri nets
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Petri_1962_phd"
+
+\end_inset
+
+ whose transitions are associated with signal events.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Petri nets and STGs
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Formally, a Petri net is defined as a tuple
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $PN=\left\langle P,\, T,\, F,\, M_{0}\right\rangle $
+\end_inset
+
+ comprising finite disjoint sets of 
+\emph on
+places
+\begin_inset space ~
+
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula $P$
+\end_inset
+
+ and 
+\emph on
+transitions
+\begin_inset space ~
+
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula $T$
+\end_inset
+
+, 
+\emph on
+arcs
+\emph default
+ denoting the flow relation
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $F\subseteq\left(P\times T\right)\cup\left(T\times P\right)$
+\end_inset
+
+ and 
+\emph on
+initial
+\begin_inset space ~
+
+\end_inset
+
+marking
+\begin_inset space ~
+
+\end_inset
+
+
+\emph default
+
+\begin_inset Formula $M_{0}$
+\end_inset
+
+. There is an arc between
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $x\in P\cup T$
+\end_inset
+
+ and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $y\in P\cup T$
+\end_inset
+
+ iff 
+\begin_inset Formula $\left(x,y\right)\in F$
+\end_inset
+
+. The 
+\emph on
+preset
+\emph default
+ of a node 
+\begin_inset Formula $x\in P\cup T$
+\end_inset
+
+ is defined as 
+\begin_inset Formula $\bullet x=\left\{ y\mid\left(y,x\right)\in F\right\} $
+\end_inset
+
+, and the 
+\emph on
+postset
+\emph default
+ as 
+\begin_inset Formula $x\bullet=\left\{ y\mid\left(x,y\right)\in F\right\} $
+\end_inset
+
+. The dynamic behaviour of a Petri net is defined as a 
+\emph on
+token
+\begin_inset space ~
+
+\end_inset
+
+game
+\emph default
+, changing marking according to the enabling and firing rules. A 
+\emph on
+marking
+\emph default
+ is a mapping
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $M:\, P\rightarrow\mathbb{N}$
+\end_inset
+
+ denoting the number of 
+\emph on
+tokens
+\emph default
+ in each place
+\begin_inset space ~
+
+\end_inset
+
+(
+\begin_inset Formula $\mathbb{N}=\left\{ 0,1\right\} $
+\end_inset
+
+ for 
+\emph on
+1-safe
+\emph default
+ Petri nets). A transition 
+\begin_inset Formula $t$
+\end_inset
+
+ is 
+\emph on
+enabled
+\emph default
+ iff 
+\begin_inset Formula $\forall p,p\in\bullet t\Rightarrow M(p)>0$
+\end_inset
+
+. The evolution of a Petri net is possible by 
+\emph on
+firing
+\emph default
+ the enabled transitions. 
+\emph on
+Firing
+\emph default
+ of a transition
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset Formula $t$
+\end_inset
+
+ results in a new marking 
+\begin_inset Formula $M'$
+\end_inset
+
+ such that 
+\begin_inset Formula \[
+M'\left(p\right)=\left\{ \begin{array}{cc}
+M(p)-1 & if\, p\in\bullet t\setminus t\bullet,\\
+M(p)+1 & if\, p\in t\bullet\setminus\bullet t,\\
+M(p)\,\,\,\,\, & otherwise
+\end{array}\right.
+\]
+\end_inset
+
+for all 
+\begin_inset Formula $p\in P$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+An STG is a 1-safe Petri net whose transitions are labelled by signal events, i.e. 
+\begin_inset Formula $STG=\left\langle P,\, T,\, F,\, M_{0},\,\lambda,\, Z,\, v_{0}\right\rangle $
+\end_inset
+
+, where 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ is a 
+\emph on
+labelling
+\begin_inset space ~
+
+\end_inset
+
+function
+\emph default
+, 
+\begin_inset Formula $Z$
+\end_inset
+
+ is a set of 
+\emph on
+signals
+\emph default
+ and 
+\begin_inset Formula $v_{0}\in\left\{ 0,\,1\right\} ^{\left|Z\right|}$
+\end_inset
+
+ is a 
+\emph on
+vector
+\begin_inset space ~
+
+\end_inset
+
+of
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\emph on
+initial
+\begin_inset space ~
+
+\end_inset
+
+signal
+\begin_inset space ~
+
+\end_inset
+
+values
+\emph default
+. The labelling function 
+\begin_inset Formula $\lambda:T\rightarrow Z\pm$
+\end_inset
+
+ maps transitions into 
+\emph on
+signal
+\begin_inset space ~
+
+\end_inset
+
+events
+\emph default
+ 
+\begin_inset Formula $Z\pm=Z\times\left\{ +,-\right\} $
+\end_inset
+
+. The signal events labelled 
+\begin_inset Formula $z+$
+\end_inset
+
+ and 
+\begin_inset Formula $z-$
+\end_inset
+
+ denote the transitions of signals 
+\begin_inset Formula $z\in Z$
+\end_inset
+
+ from 0
+\begin_inset space ~
+
+\end_inset
+
+to
+\begin_inset space ~
+
+\end_inset
+
+1
+\begin_inset space ~
+
+\end_inset
+
+(rising edge), or from 1
+\begin_inset space ~
+
+\end_inset
+
+to
+\begin_inset space ~
+
+\end_inset
+
+0
+\begin_inset space ~
+
+\end_inset
+
+(falling edge), respectively. The labelling function does not have to be 1-to-1, i.e. transitions with the same label may occur several times in the net. To distinguish transitions with the same label and refer to them from the text an index 
+\begin_inset Formula $i\in\mathbb{N}$
+\end_inset
+
+ is attached to their labels as follows: 
+\begin_inset Formula $\lambda\left(t\right)/i$
+\end_inset
+
+, where 
+\begin_inset Formula $i$
+\end_inset
+
+ differs for different transitions with the same label. STGs inherit the operational semantics of their underlying PNs, including the notions of transition enabling and firing.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Graphically, the places are represented as circles, transitions as text labels, consuming and producing arcs are shown by arrows, and tokens are depicted by dots. For simplicity, the places with one incoming and one outgoing arc are often hidden, allowing arcs
+\begin_inset space ~
+
+\end_inset
+
+(with implicit places) between transitions.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Composition of concepts
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+A single concept can be used to describe an initial state, invariant states, a single event or a combination of these, yet describing some protocols using this method can become long winded, as these can involve multiple events. We make use of the monoid composition of concepts to describe complex systems incrementally. Importantly we can mix several levels of system description and refer to signal, gate and protocol level concepts in one specification, depending on which level is more convenient in a particular situation.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Consider a C-element example whose signals 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ are inputs, and signal 
+\begin_inset Formula $c$
+\end_inset
+
+ is the output. When input 
+\begin_inset Formula $a$
+\end_inset
+
+ or 
+\begin_inset Formula $b$
+\end_inset
+
+ changes, we assume it remains in the new state until the output 
+\begin_inset Formula $c$
+\end_inset
+
+ changes. The following signal-level concepts describe this system:
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace 2mm
+\end_inset
+
+ 
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{outputRise}=a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{inputFall}=c^{+}\rightsquigarrow a^{-}\,\diamond\, c^{+}\rightsquigarrow b^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{outputFall}=a^{-}\rightsquigarrow c^{-}\,\diamond\, b^{-}\rightsquigarrow c^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{inputRise}=c^{-}\rightsquigarrow a^{+}\,\diamond\, c^{-}\rightsquigarrow b^{+}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{initialState}=\mathsf{before}(a^{+})\,\diamond\,\mathsf{before}(b^{+})\,\diamond\,\mathsf{before}(c^{+})$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\begin{aligned}\mathsf{system}= & \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\diamond\,\mathsf{outputFall\,\diamond}\\
+ & \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}
+\end{aligned}
+$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace 2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+There are 6 concepts featured, the first 5 of which describe certain operations of the system. The sixth concept composes all of the first 5 concepts, and can be translated to the STG shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cElement STG"
+
+\end_inset
+
+. The first four are named according to what they represent, for example, 
+\family sans
+
+\shape italic
+
+\emph on
+outputRise
+\emph default
+
+\shape default
+
+\family default
+
+\shape italic
+ 
+\shape default
+describes the events which cause the output to rise
+\shape italic
+.
+\shape default
+ The fifth concept is the initial state concept. This is necessary for the algorithm to produce a scenario STG, as the STG produced will not be usable without knowing the states the signals will be in when the scenario is entered. The algorithm takes this concept and works out where tokens need to be placed in the STG produced.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/stg-cElement.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:cElement STG"
+
+\end_inset
+
+STG for the example system.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This set of concepts is only one way of describing this C-element and the environment. Another way could be to use gate-level concepts and describe the environment explicitly. In this case the environment allows the inputs to transition in the opposite direction to the output 
+\begin_inset Formula $c$
+\end_inset
+
+, as two inverters would. We can then compose this with the C-element and the same initial state concept:
+\begin_inset VSpace 1mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+
+\begin_inset Formula $\mathsf{environment}=\mathsf{inverter}(c,a)\,\diamond\,\mathsf{inverter}(c,b)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\begin_inset Formula $\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace 2mm
+\end_inset
+
+ This specification is equivalent to the previous one; indeed one can prove this by rearranging the primitive concepts using the commutativity and associativity axioms of the underlying commutative monoid. Consequently, this specification will be translated to the same STG shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cElement STG"
+
+\end_inset
+
+. Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cElement-concepts"
+
+\end_inset
+
+ illustrates all the concepts involved in this specification.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement t
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/c-element-circuit.pdf
+	scale 60
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:cElement-concepts"
+
+\end_inset
+
+Example system specified using concepts.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Finally, the designer can also rely on protocol-level concepts, producing the following equivalent specification:
+\begin_inset VSpace 1mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+
+\begin_inset Formula $\mathsf{system}=\mathsf{handshake00}(a,c)\,\diamond\,\mathsf{handshake00}(b,c)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace 2mm
+\end_inset
+
+ This example demonstrates that the presented formal notation for capturing concepts is very flexible and provides the designer with a rich selection of available levels of abstraction, which could be used not only for deriving simplest possible specifications but also for cross-checking the adequacy of specifications by 
+\emph on
+refactoring
+\emph default
+ them according to the composition laws.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Multiple behavioural scenarios
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+So far we have only considered systems operating in a single behavioural 
+\shape italic
+scenario
+\shape default
+ specified by a composition of concepts. However, real-life systems often need to support multiple scenarios
+\begin_inset space ~
+
+\end_inset
+
+ (e.g., start-up and normal operation, different power modes
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_mokhov_jlpea"
+
+\end_inset
+
+, etc.). This allows each individual scenario to be designed using concepts, and tested individually to ensure they work correctly, before these are combined to produce a full system specification.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+To increase the re-usability of scenarios, which helps reduce design time of future systems, this method supports the use of pre-designed scenarios as concepts.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In some cases, a designer may find it easier to split the specification of operational modes further than scenarios and design certain elements separately. In this way, a model may be produced from concepts, which may not be an operational mode on its own, but can be composed and tested separately. In some cases, having several elements predefined using concepts may become useful for quickly designing systems. A predefined logic gate, for example, could be useful to include quickly in any list of concepts when designing multiple scenarios. An STG produced of this element can be referenced in a list of concepts by name (provided that the definition is appropriately imported into the current namespace). When a list of concepts is passed into the STG translation algorithm, all referenced concepts are replaced by the corresponding definitions.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Synthesis of STGs from concepts 
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Synthesis-of-STGs"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+When a list of concepts is produced, we then pass this into an algorithm which converts these into a single scenario STG that, if possible, satisfies all of the concepts. This STG represents one operational mode of a full specification, and this needs to be combined with other scenario STGs in order to produce a full system specification. In this section we will discuss how this process is performed, from concepts, to a set of scenario STGs, to a full system model.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Deriving STG fragments from concepts
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The algorithm begins by expanding any predefined concepts, and this returns a full list of concepts. Each concept can then be converted into its own STG fragment. In some cases, a single concept can represent a single STG fragment, but if a one-to-many concept is used, multiple fragments can be produced. These fragments are all created and stored for use in the next step, but hidden from the user. However, how the fragments are produced is important. For example, an STG fragment converted from the concept 
+\family sans
+
+\shape italic
+
+\emph on
+outputRise
+\emph default
+
+\shape default
+
+\family default
+ in the above C-element example is shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:outputRise STG"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/outputRise-stg.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:outputRise STG"
+
+\end_inset
+
+STG for the 
+\family sans
+
+\shape italic
+
+\emph on
+outputRise
+\emph default
+
+\shape default
+
+\family default
+ concept.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This STG features arcs which suggest that 
+\family sans
+
+\begin_inset Formula $a^{+}$
+\end_inset
+
+
+\family default
+ and 
+\begin_inset Formula $b^{+}$
+\end_inset
+
+ must occur before 
+\family sans
+
+\begin_inset Formula $c^{+}$
+\end_inset
+
+
+\family default
+, as the concept suggests. This fragment can also be seen as part of the scenario STG in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cElement STG"
+
+\end_inset
+
+. This concept however features two back-pressure arcs which are not necessarily described in the concept. In order for fragments created from concepts to be usable in producing scenario STGs, they need to be complete, meaning they must have initial states, displayed using tokens, and must not reach deadlock at any point, and this STG would be incomplete without these back-pressure arcs used to show initial states. These arcs are produced automatically by the algorithm, and these fragments may be hidden from the user.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Scenario STGs
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+If all concepts can be correctly converted into STG fragments, then they can then be used to produce the STG for the scenario. This process is done using a tool integrated in 
+\noun on
+Workcraft
+\noun default
+ called 
+\noun on
+Pcomp
+\begin_inset space ~
+
+\end_inset
+
+
+\noun default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "PCOMP"
+
+\end_inset
+
+, which is designed to compose multiple STGs. The algorithm will automatically take all STG fragments and pass them into the 
+\noun on
+Pcomp
+\noun default
+ tool, and this returns a single STG, created by composing all of the fragments. It is necessary for all STG fragments to be complete, for example using back-pressure arcs and including the initial states, as this is used in the parallel composition process.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We can use this process to produce STGs for scenarios, which are then verified and simulated in 
+\noun on
+Workcraft
+\noun default
+ and used in the next step. However, if this STG is not to be used as a scenario but as a predefined concept, this can be verified and stored for further use as part of scenario descriptions.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Combination of scenarios 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Combination-of-scenarios"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+When a scenario STG has been produced and verified, it can then be combined with other scenarios to produce a complete circuit specification.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+When combining scenarios, there are several things to consider in how the scenarios fit together. Depending on the application the circuit is being designed for, some scenarios may need to operate in certain orders, for example, one scenario may exist simply to initialise the circuit, therefore this scenario needs to run at start-up, before any of the other scenarios, and then never be run again while the system remains active.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+To address this, when combining scenarios we offer some templates, each of which can be used to combine scenarios in various orders. With this the designer specifies in which ways the scenarios should be combined, and if an order is needed, the order the scenarios should be run from start up. The following are some examples of templates that will be offered before scenarios are combined:
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Sequential:
+\series default
+ Sequential combination will allow a designer to select the order of all scenarios, so when combined, they will run in a sequence. In this case, there may be a clear order in which the scenarios may run, and this needs to be specified by the designer.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Concurrent:
+\series default
+ In this case there is no order, but one or more of the scenarios in a specification may run in parallel. This template will combine the scenarios in a way that will allow concurrency to occur, limited to requirements of the specification, for instance, the number of scenarios that can be active at any one time, which can be limited by the number of tokens available at once.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\series bold
+Non-deterministic choice:
+\series default
+ This template will combine the scenarios in a way that allows any of the scenarios to run, but not according to any order to deal with the lack of determinism in the system, using one token which is used only by the running scenario, and this is returned when the scenario completes.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+There may be some more complex requirements to combination, and it is possible to combine some scenarios using one template, then including the result in a combination using another template. For example, a system which is non-deterministic may also have a scenario that runs at start up to initialise the system. In this case, a designer could combine all non-deterministic scenarios first, then combine the resulting STG with the initialising scenario, setting the order so this runs first.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This method of combination can allow for many possible scenario combination styles, and more complex systems can be combined automatically, which in comparison to manual combination, could reduce the number of errors as well as design time.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Case study
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In this section we follow a case study to show the design flow of this method using an example from power management domain
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_sokolov_ftfc"
+
+\end_inset
+
+. A basic power regulator comprises an analogue buck and a digital controller, as shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:buck-schematic"
+
+\end_inset
+
+. The controller operates the power regulating PMOS and NMOS transistors of the buck
+\begin_inset space ~
+
+\end_inset
+
+(using
+\family sans
+ 
+\begin_inset Formula $gp$
+\end_inset
+
+
+\family default
+ and 
+\begin_inset Formula $gn$
+\end_inset
+
+ outputs) as a reaction to 
+\emph on
+under-voltage
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+(UV), 
+\emph on
+over-current
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+(OC) and 
+\emph on
+zero-crossing
+\emph default
+
+\begin_inset space ~
+
+\end_inset
+
+(ZC) conditions
+\begin_inset space ~
+
+\end_inset
+
+(
+\family sans
+
+\begin_inset Formula $uv$
+\end_inset
+
+,
+\family default
+ 
+\family sans
+
+\begin_inset Formula $oc$
+\end_inset
+
+
+\family default
+ and 
+\family sans
+
+\begin_inset Formula $zc$
+\end_inset
+
+
+\family default
+ inputs, respectively). These conditions are detected and signalled by a set of specialised sensors implemented as comparators of measured current and voltage levels against some reference values
+\begin_inset space ~
+
+\end_inset
+
+(
+\family sans
+V_ref
+\family default
+, 
+\family sans
+I_max
+\family default
+, 
+\family sans
+V_0
+\family default
+). Note that the 
+\begin_inset Formula $gp$
+\end_inset
+
+ and 
+\begin_inset Formula $gn$
+\end_inset
+
+ signals are buffered to drive the very large power regulating transistors and their effect on the buck can be significantly delayed. Therefore, the controller is explicitly notified
+\begin_inset space ~
+
+\end_inset
+
+(by the 
+\begin_inset Formula $gp\_ack$
+\end_inset
+
+ and 
+\begin_inset Formula $gn\_ack$
+\end_inset
+
+ signals) when the power transistor threshold levels
+\begin_inset space ~
+
+\end_inset
+
+(
+\family sans
+Th_pmos
+\family default
+ and 
+\family sans
+Th_nmos
+\family default
+) are crossed.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/schematic-buck.pdf
+	scale 75
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:buck-schematic"
+
+\end_inset
+
+Schematic.
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/spec-buck.pdf
+	scale 60
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:buck-spec"
+
+\end_inset
+
+Informal specification.
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:buck"
+
+\end_inset
+
+Buck converter.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The operation of a power regulator is usually specified in an intuitive, but rather informal way, e.g. by enumerating the possible sequences of detected conditions and describing the intended reaction to these events, as shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:buck-spec"
+
+\end_inset
+
+. The diagram shows that UV should be handled by switching the NMOS transistor 
+\noun on
+Off
+\noun default
+ and PMOS transistor 
+\noun on
+On
+\noun default
+, while OC should revert their state
+\begin_inset space ~
+
+\end_inset
+
+-- PMOS 
+\noun on
+Off
+\noun default
+ and NMOS 
+\noun on
+On
+\noun default
+
+\begin_inset space ~
+
+\end_inset
+
+(no
+\begin_inset space ~
+
+\end_inset
+
+ZC scenario). Detection of the ZC after UV does not change this behaviour
+\begin_inset space ~
+
+\end_inset
+
+(late
+\begin_inset space ~
+
+\end_inset
+
+ZC scenario). However, if ZC is detected before UV then both the PMOS and NMOS transistors remain 
+\noun on
+Off
+\noun default
+ until the UV condition
+\begin_inset space ~
+
+\end_inset
+
+(early
+\begin_inset space ~
+
+\end_inset
+
+ZC scenario).
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Note that ZC and UV are independent conditions that indicate separate physical effects and therefore the corresponding signals can happen in any order. UV indicates that the voltage supplied to the load has decreased below the reference value. ZC occurs when the coil current reduces to
+\begin_inset space ~
+
+\end_inset
+
+0 and causes the NMOS transistor to switch 
+\noun on
+Off
+\noun default
+, so that the NMOS acts like a diode and only conducts in one direction.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Formal specification
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+From the informal buck specification and our knowledge of the signals, we can determine three separate operating conditions that occur in the analogue circuit and the controller needs to react to. All of these can be produced from concepts separately and composed to produce scenario STGs, before combining these to produce a single full circuit STG.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+During this process, it is useful to find any operations which occur between two or more operational modes, as these can then be reused in other scenarios. If this is defined in one list of concepts, it can then be referenced in concept lists for other scenarios by name.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang british
+No ZC scenario
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+We start with describing the operational mode where no ZC condition is signalled and produce the following list of concepts:
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{uvFunc}=uv^{+}\rightsquigarrow gp^{+}\,\diamond\, uv^{+}\rightsquigarrow gn^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{ocFunc}=oc^{+}\rightsquigarrow gp^{-}\,\diamond\, oc^{+}\rightsquigarrow gn^{+}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{uvReact}=gp\_ack^{+}\rightsquigarrow uv^{-}\,\diamond\, gn\_ack^{+}\rightsquigarrow uv^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{ocReact}=gp\_ack^{-}\rightsquigarrow oc^{-}\,\diamond\, gn\_ack^{+}\rightsquigarrow oc^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{environmentConstraint}=\mathsf{me}(uv,\, oc)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}(gn,\, gp)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{gpHandshake}=\mathsf{handshake}(gp,\, gp\_ack)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{gnHandshake}=\mathsf{handshake}(gn,\, gn\_ack)$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{initialState}=\mathsf{before}(uv^{+})\,\diamond\,\mathsf{before}(oc^{+})$
+\end_inset
+
+
+\begin_inset space ~
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\begin{aligned}\mathsf{chargeFunc}= & \,\mathsf{ocFunc}\,\diamond\,\mathsf{ocReact}\,\diamond\\
+ & \mathsf{\mathsf{\, environmentConstraint}\,\diamond\, circuitConstraint}\,\diamond\,\\
+ & \mathsf{\, gpHandshake}\,\diamond\,\mathsf{gnHandshake}\,\diamond\,\mathsf{initialState}
+\end{aligned}
+$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{zcAbsent}=\mathsf{quiescent}(zc^{+})\,\diamond\,\mathsf{quiescent}(zc^{-})$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\begin{aligned}\mathsf{zcAbsentScenario}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReaction}\,\diamond\\
+ & \,\mathsf{zcAbsent}
+\end{aligned}
+$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align left
+
+\lang british
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/stg-UV_without_ZC.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:zcAbsentScenario STG"
+
+\end_inset
+
+ STG for the 
+\family sans
+zcAbsentScenario
+\family default
+ concept.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In this list, we introduce concepts which describe the correction of both under-voltage and over-current. This includes concepts describing handshakes for 
+\begin_inset Formula $gp/gp\_ack$
+\end_inset
+
+ and 
+\begin_inset Formula $gn/gn\_ack$
+\end_inset
+
+, and transistor safety constraints which are described using protocol-level concepts. We also describe constraints provided by the environment that we are aware of, so this behaviour is captured in the resulting STG.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The descriptions of the operational modes suggest that there are similarities between them, mainly in the sequence of PMOS/NMOS activation during the charging cycle. Therefore it is natural to define a 
+\family sans
+chargeFunc
+\family default
+ concept that can be reused when other operation modes are specified.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcAbsentScenario STG"
+
+\end_inset
+
+ shows the STG produced from the final concept in the list, 
+\family sans
+zcAbsentScenario
+\family default
+. It contains two tokens which are created based on the 
+\family sans
+initialState
+\family default
+ concept. The analogue circuit is not guaranteed to signal either under-voltage or over-current first, and this needs to be noted in the concepts and the STG.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang british
+Late ZC scenario
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In this operational mode we have to include zero-crossing, as per the specification. However, in this case under-voltage and over-current are corrected in the same way as in the no
+\begin_inset space ~
+
+\end_inset
+
+ZC scenario, and therefore we can include the 
+\family sans
+zcAbsentScenario
+\family default
+ concept. We still need to describe the interactions involving zero-crossing. The concepts are as follows:
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{+}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\begin{aligned}\mathsf{zcLateScenario}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
+ & \,\mathsf{zcLate}\,\diamond\,\mathsf{before}(zc^{+})
+\end{aligned}
+$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/stg-UV_before_ZC.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:zcLateScenario STG"
+
+\end_inset
+
+STG for the 
+\family sans
+zcLateScenario
+\family default
+ concept.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcLateScenario STG"
+
+\end_inset
+
+ shows the STG produced, which looks similar to the STG in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcAbsentScenario STG"
+
+\end_inset
+
+ but this features a branch from some 
+\begin_inset Formula $uv$
+\end_inset
+
+ and 
+\begin_inset Formula $zc$
+\end_inset
+
+ interaction. This is defined in the concept 
+\family sans
+zcLateScenario
+\family default
+, which does not describe the arc 
+\begin_inset Formula $zc^{+}\rightsquigarrow zc^{-}$
+\end_inset
+
+ but this consistency is implied in concepts, as for obvious reasons, 
+\begin_inset Formula $zc^{+}$
+\end_inset
+
+ must occur before 
+\begin_inset Formula $zc^{-}$
+\end_inset
+
+ can occur.
+\end_layout
+
+\begin_layout Subsubsection
+
+\lang british
+Early ZC scenario
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The 
+\family sans
+chargeFunc
+\family default
+ concept can be reused, as the PMOS/NMOS transistors are still operated in the same way. However, the interplay between the early zero-crossing and under-voltage needs to be specified with several new concepts:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\lang british
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{zcReact}=oc^{-}\rightsquigarrow zc^{+}\,\diamond\, gp^{+}\rightsquigarrow zc^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{uvFunc'}=uv^{+}\rightsquigarrow gp^{+}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigarrow uv^{-}\diamond\, gp\_ack^{+}\rightsquigarrow uv^{-}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\align left
+
+\begin_inset Formula $\begin{aligned}\mathsf{zcEarlyScenario}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
+ & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{before}(zc^{+})
+\end{aligned}
+$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/stg-UV_after_ZC.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:zcEarlyScenario STG"
+
+\end_inset
+
+STG for the 
+\family sans
+zcEarlyScenario
+\family default
+ concept.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The obtained STG for the 
+\family sans
+zcEarlyScenario
+\family default
+ concept is shown in Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcEarlyScenario STG"
+
+\end_inset
+
+. We have now produced three scenario STGs, one for each operational mode in this system. However, we need to ensure they are correct both for the specification and as STG models before we can combine these.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Verification and simulation of scenarios 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Verification-and-simulation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+To be combinable by our method, the produced STGs need to have certain properties
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Cortadella"
+
+\end_inset
+
+: 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Complete State Coding (CSC): each state of the models with different behaviour has differing signal encodings to avoid problems during synthesis. Note that in some cases it is possible to automatically resolve a CSC conflict. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Deadlock freedom: no state is reachable from which no progress can be made. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Output persistence: there are no race conditions in the STG. 
+\end_layout
+
+\begin_layout Itemize
+
+\lang british
+Signal consistency: in any trace the rising and falling phases of each signal alternate. 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+These properties are automatically checked in 
+\noun on
+Workcraft 
+\noun default
+using the 
+\noun on
+Mpsat
+\noun default
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "khomenko2004detecting"
+
+\end_inset
+
+ backend tool
+\noun on
+. 
+\noun default
+In the event that one of these properties does not hold, unless it can be corrected automatically, the composition of scenarios fails. In this case a problematic concept is identified and diagnostic information is printed out to help a designer to correct the issue.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Correctly produced scenarios may not necessarily work as the specification suggests, and this needs to be validated before using these scenarios in any further designs. 
+\noun on
+Workcraft
+\noun default
+ features a simulation tool, and this can be used by a designer to check that the signals can transition according to the initial requirements. If the simulation produces undesirable results, a designer can work to fix the error of the scenario STG, or correct the design at the concept level. The latter is the preferable method if this design is to be reused either as a predefined concept, or as a scenario in another system.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Combining scenarios 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Now we have scenario STGs that have been verified to ensure they conform to standards required of STGs, and simulated to ensure they work as expected according to the specification. These can now be combined to produce a full system implementation. As mentioned in Section
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Combination-of-scenarios"
+
+\end_inset
+
+, we can combine these scenarios in multiple ways, depending on whether there is some sort of required ordering to the way these scenarios must run.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+For a simple buck controller there is no required order of running these scenarios, and it is uncertain as to which scenario may be running at any one time. Therefore, the best solution for this system is to combine all of the scenarios in a non-deterministic fashion. The full system implementation produced should allow for only one of these scenarios to run at a time, but when the scenario has completed the system should return to a state where any of the scenarios could run again, regardless of which solution ran previously.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement t
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/stg-buck.pdf
+	scale 23
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:buck STG"
+
+\end_inset
+
+Complete STG for a buck converter.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:buck STG"
+
+\end_inset
+
+ shows the full system specification STG that has been produced from combining the three scenario STGs as seen in Figures
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcAbsentScenario STG"
+
+\end_inset
+
+,
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcLateScenario STG"
+
+\end_inset
+
+, and
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:zcEarlyScenario STG"
+
+\end_inset
+
+. The first most notable part of this full system STG is that there is only one branch for over-current correction. As mentioned above, over-current is corrected in exactly the same way for each of these scenarios, and as such, to reduce the complexity of the model, these can be combined into a single branch that runs after any of the under-voltage correction branches have run.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+There are two explicit places in this model, 
+\family sans
+p1
+\family default
+ and 
+\family sans
+p2
+\family default
+. 
+\family sans
+p1
+\family default
+ holds a token initially, and this allows any of the scenarios to run. This place has no control over which scenario can run, but it only allows one of them to run at a time. The single token is consumed by whichever scenario runs, and the lack of token in 
+\family sans
+p1
+\family default
+ after this stops any more scenarios running. The token is passed through the scenario, and after under-voltage is corrected the token is passed into 
+\family sans
+p2
+\family default
+. This token is then consumed by the over-current branch, and returned to 
+\family sans
+p1
+\family default
+
+\noun on
+ 
+\noun default
+and this allows only one of the scenarios to run again.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Verification and simulation
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+Like with the scenario models when they have been composed, we need to verify that this model satisfies certain properties after combination of multiple scenarios, as any issues at this stage will cause an implementation of the model to be wrong and this can cause the model to be unimplementable as an SI circuit.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The verification properties we need to satisfy are the same as for scenarios
+\begin_inset space ~
+
+\end_inset
+
+(see
+\begin_inset space ~
+
+\end_inset
+
+Section
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Verification-and-simulation"
+
+\end_inset
+
+), and are corrected in similar ways, however the corrections can be done within the problematic scenario, by changing, adding or removing one or more concepts to avoid affecting any of the functionality of the whole system, or any of the correctly functioning scenarios.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+When the full system model satisfies all of the verification properties, we can simulate this model and check that the signals can transition in the order we expect according to the requirements of the system. If this is correct, we can guarantee that this model represents the full system specification, and can now be used in the next step.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2.5mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+
+\lang british
+Synthesis of a speed-independent controller
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2.5mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+A fully working model of the system is only part way to having completed the process. The final step in this design flow is to synthesize this model. Synthesis is the process of finding Boolean equations to calculate the next state of the output signals based on the input signals and the current state of the circuit
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "Cortadella"
+
+\end_inset
+
+. We can do this using 
+\noun on
+Petrify
+\noun default
+ or 
+\noun on
+Mpsat
+\noun default
+, both of which are integrated in 
+\noun on
+Workcraft
+\noun default
+. Passing this model through one of these tools will produce logic equations that describe how the outputs 
+\begin_inset Formula $gp$
+\end_inset
+
+ and 
+\begin_inset Formula $gn$
+\end_inset
+
+ can be produced using 
+\begin_inset Formula $uv$
+\end_inset
+
+, 
+\begin_inset Formula $oc$
+\end_inset
+
+, 
+\begin_inset Formula $zc$
+\end_inset
+
+, 
+\begin_inset Formula $gp\_ack$
+\end_inset
+
+, 
+\begin_inset Formula $gn\_ack$
+\end_inset
+
+. Using logic gates, we can reproduce a circuit diagram for these equations. Figure
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:buck Circuit"
+
+\end_inset
+
+ shows the logic circuit, synthesized from this full model.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+
+\begin_layout Standard
+\align center
+
+\lang british
+
+\begin_inset Graphics 
+	filename Images/circuit-buck.pdf
+	scale 35
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+\backslash
+protect
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:buck Circuit"
+
+\end_inset
+
+Asynchronous logic gate implementation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+When we have acquired a circuit design, it needs to be verified to ensure that the logic will perform as we expected before the circuit is fabricated. To verify this, the circuit is converted into a so-called circuit Petri net, using a model for each logic gate and combining them by means of read-arcs. By reachability analysis of this Petri net one can verify that the corresponding circuit is deadlock-free, hazard-free and conforms to the specification
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2008_poliakov_async"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+
+\lang british
+Conclusions and future work
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This paper shows that it is possible to design a system by splitting it into operational modes, and describing signal interactions and requirements of the mode in a textual format. These can then be used to produce STGs that represent these operational modes, which can be combined to produce a model for the full system specification.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This design method can reduce the time of designing an asynchronous control circuit from the ground up, as well as allow reuse of components either as part of a scenario or entire scenarios to reduce the design-time of future projects. Composition of concepts and scenarios can help reduce errors and save time in comparison to performing these manually. This method can help to make asynchronous circuits more appealing to industrial designers.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+This method currently works with Signal Transition Graphs, however it can be applied to other modelling disciplines, such as Finite State Machines
+\begin_inset space ~
+
+\end_inset
+
+(FSM). In some cases, a designer may wish to view a scenario or full system model as an FSM as they can provide more information about a system, which can help with editing finer details of system, or when correcting errors. It would be possible to use concepts to create scenario FSMs that can be combined to produce a full system model in FSM form. STGs and FSMs could be interchangeable in this respect, for example, a scenario STG could be produced, and a designer may choose to view it as an FSM, which can be viewed by 
+\begin_inset Quotes eld
+\end_inset
+
+zooming in
+\begin_inset Quotes erd
+\end_inset
+
+ to a section of the STG, that will expand this to show states of the system, and possible transitions. Any edits to this can then be used to update the overall STG.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In addition to FSMs and STGs, we also plan to extend this design method to support Conditional Partial Order Graphs
+\begin_inset space ~
+
+\end_inset
+
+(CPOGs)
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "CPOG1"
+
+\end_inset
+
+ and Parameterised Graphs
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_mokhov_algebra"
+
+\end_inset
+
+ for modelling asynchronous circuits. These models are also integrated into 
+\noun on
+Workcraft
+\noun default
+ as part of the 
+\noun on
+Scenco
+\noun default
+ toolsuite
+\noun on
+
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2015_workcraft_scenco"
+
+\end_inset
+
+, 
+\noun default
+allowing circuits to be described by algebraic equations in text form. 
+\noun on
+Scenco
+\noun default
+ provides support for describing concept models to produce scenarios and then compose scenarios to produce full system implementations.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+In certain cases, an implementation may need to be changed based on design parameters to produce the best result, and these may change during run-time or after the fabrication stage. CPOGs support parameter and run-time reconfigurability
+\begin_inset space ~
+
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+after ""
+key "2014_mokhov_jlpea"
+
+\end_inset
+
+, hence if design parameters change, the design does not need to be recomposed from another list of concepts, thus saving time. For this reason, CPOGs could work very well with this design approach.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+STGs and CPOGs both have their benefits when working with asynchronous systems, and it will be useful to compare these two methods, to see if either is better when designing a system from concepts, or see if there are certain specifications where one modelling method is better than the other.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+
+\lang british
+Acknowledgements
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2.5mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+The authors would like to thank the reviewers for their constructive comments. This research is supported by EPSRC research grant `A4A: Asynchronous design for Analogue electronics' (EP/L025507/1) and the Royal Society research grant `Computation Alive: Design of a Processor with Survival Instincts'.
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+
+\begin_inset VSpace -2.5mm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\lang british
+ 
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "publications"
+options "unsrt"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
