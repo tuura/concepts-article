@@ -11,10 +11,9 @@
 
 \makeatletter
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 \newcommand{\noun}[1]{\textsc{#1}}
 
-\@ifundefined{showcaptionsetup}{}{%
+\@ifundefined{showcaptionsetup}{}{
  \PassOptionsToPackage{caption=false}{subfig}}
 \usepackage{subfig}
 \makeatother
@@ -24,8 +23,6 @@
 
 \title{Compositional design of asynchronous circuits \\
 from behavioural concepts}
-
-
 \author{Jonathan Beaumont, Andrey Mokhov, Danil Sokolov, Alex Yakovlev\\
 \texttt{\{j.r.beaumont, andrey.mokhov, danil.sokolov, alex.yakovlev\}@ncl.ac.uk}\\
 \emph{School of Electrical and Electronic Engineering, Newcastle University,
@@ -67,10 +64,6 @@ and conversion whose behaviour is characterised by many operating
 modes and complexity of their interplay. Capturing all these aspects
 of system behaviour in a consistent specification becomes the major
 design challenge~\cite{2014_sokolov_ftfc}.
-
- 
-
-
 
 Signal Transition Graphs~(STGs) are commonly used for the specification
 of asynchronous control circuits as they are compatible with multiple
@@ -188,7 +181,17 @@ using \noun{Workcraft}. In this paper, we use real life industrial
 example of a buck converter~\cite{2014_sokolov_ftfc} to show our
 design flow, and test this design approach. \vspace{-2mm}
 
+\section{Motivating Example \label{sec:Motivating Example}}
 
++ Here is the problem we are solving
+
+
+
++ STGs are a conventional specification model, STGs tend to get very large and complex for real-life circuits (show simple-buck example STG)
+
+
+
++ STGs mix many different concerns in one single graph -- show how one could split the specification into what we call concepts.
 
 \section{Concepts \label{sec:Concepts}}
 
@@ -229,7 +232,7 @@ for all $a,b\in M$.
 
 
 
-\subsection{Abstract concepts }
+\subsection{Abstract concepts}
 
 \vspace{-3mm}
 
@@ -501,7 +504,9 @@ signals $g_{1}$ and $g_{2}$:
 
 \vspace{-3mm}
 
+\subsection{Signal types}
 
+A discussion of signal types and how these are represented using concepts. The benefits of this, for example we can block input -> input. 
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
 
@@ -734,11 +739,19 @@ the corresponding definitions.
 \vspace{-3mm}
 
 
+\section{Interoperability with STG based tools \label{sec: interop-with-stg}}
 
-\section{Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
++ Algorithm for converting concepts to STGs
+
++ Using parallel and scenario composition to produce STGs for the whole system
+
++ Direct synthesis from concepts
+\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
 
 \vspace{-3mm}
+\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
 
+\vspace{5mm}
 
 When a list of concepts is produced, we then pass this into an algorithm
 which converts these into a single scenario STG that, if possible,
@@ -1323,7 +1336,9 @@ hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 
 \vspace{-2mm}
 
+\section{Related work}
 
+\textbf{A section to include some related work, and it's comparisons with both eachother and concepts. This will be based on the lit review done earlier}
 
 \section{Conclusions and future work}
 
@@ -1403,5 +1418,6 @@ Processor with Survival Instincts'.
 
 \bibliographystyle{unsrt}
 \bibliography{publications}
+
 
 \end{document}
