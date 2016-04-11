@@ -75,8 +75,7 @@ poor scalability: as the system grows in complexity its monolithic
 specification becomes challenging to comprehend and debug. The STG
 models of components cannot be reused when designing other specifications,
 and thus each new design must be built from the ground up. This further
-adds to the design time, hence making asynchronous circuits undesirable
-for use in industry. 
+adds to the design time, hence making asynchronous circuits undesirable for use in industry.
 
 To address this issue, we propose a new method of asynchronous circuit
 design. The method splits a specification into several parts corresponding
@@ -183,18 +182,71 @@ design flow, and test this design approach. \vspace{-2mm}
 
 \section{Motivating Example \label{sec:Motivating Example}}
 
-Signal transition graphs are currently used for the specification of asynchronous circuits, and a monolithic design approach is used. This approach can become problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.  
+Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
 
-+ Here is the problem we are solving
+\subsection{Monolithic design approach for asynchronous circuits \label{sub: Monolithic}}
 
+The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how this STG is attained using the monolithic approach.
 
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.23]{Images/stg-buck}
+\par\end{centering}
 
-+ STGs are a conventional specification model, STGs tend to get very large and complex for real-life circuits (show simple-buck example STG)
+\begin{centering}
+\protect\caption{\label{fig:Monolithic-buck}STG of a simple buck converter.}
 
+\par\end{centering}
 
+\end{figure}
 
-+ STGs mix many different concerns in one single graph -- show how one could split the specification into what we call concepts.
+This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and manually connect these depending on the similarities between these branches. 
 
+In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
+
+\subsection{A new way of viewing STGs \label{sub:new-way}}
+In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum amount of time spent making the change.  
+
+This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example, figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted. 
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.225]{Images/stg-breakdown}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:stg-breakdown}A scenario STG with highlighted points of interest}
+
+\par\end{centering}
+
+\end{figure}
+
+Studying this STG shows that there are some signal interactions that we can identify.  These are: 
+\begin{enumerate}
+\item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
+\item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
+\item Signals \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
+\item Signals \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
+\end{enumerate}
+
+These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and  \textsf{$gn$} respectively, forming two separate handshakes.
+
+Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold. 
+
+If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may happen when using the monolithic approach.  
+
+With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without needing to change every single interaction. 
+
+%% + Here is the problem we are solving
+%%
+%%
+%%
+%%+ STGs are a conventional specification model, STGs tend to get very large and complex for real-life circuits (show simple-buck example STG)
+%%
+%%
+%%
+%%+ STGs mix many different concerns in one single graph -- show how one could split the specification into what we call concepts.
+%%
 \section{Concepts \label{sec:Concepts}}
 
 \vspace{-2mm}
@@ -653,7 +705,7 @@ placed in the STG produced.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/stg-cElement}
+\includegraphics[scale=0.28]{Images/stg-cElement}
 \par\end{centering}
 
 \protect\caption{\label{fig:cElement STG}STG for the example system.}
@@ -892,7 +944,7 @@ as well as design time.
 
 
 
-\section{Case study}
+\section{Case study \label{sec:case-study}}
 
 \vspace{-2mm}
 
@@ -1340,7 +1392,7 @@ hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 
 \section{Related work}
 
-\textbf{A section to include some related work, and it's comparisons with both eachother and concepts. This will be based on the lit review done earlier}
+\textbf{A section to include some related work, and it's comparisons with both each other and concepts. This will be based on the lit review done earlier}
 
 \section{Conclusions and future work}
 
