@@ -795,11 +795,17 @@ the corresponding definitions.
 
 \section{Interoperability with STG based tools \label{sec: interop-with-stg}}
 
-+ Algorithm for converting concepts to STGs
+Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as  \noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to convert concept specifications to STGs in order to be used with these tools. 
 
-+ Using parallel and scenario composition to produce STGs for the whole system
+In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
-+ Direct synthesis from concepts
+\subsection{Converting concepts to STGs \label {sub: converting}}
+
+%%+ Algorithm for converting concepts to STGs
+%%
+%%+ Using parallel and scenario composition to produce STGs for the whole system
+%%
+%%+ Direct synthesis from concepts
 \section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
 
 \vspace{-3mm}
