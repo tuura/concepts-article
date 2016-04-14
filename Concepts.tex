@@ -641,7 +641,7 @@ places) between transitions.
 
 
 
-\subsection{Composition of concepts}
+\subsection{Composition of concepts \label{sub:Comp-of-concepts}}
 
 \vspace{-3mm}
 
@@ -693,7 +693,7 @@ $
 
 There are 6 concepts featured, the first 5 of which describe certain
 operations of the system. The sixth concept composes all of the first
-5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG}.
+5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
 The first four are named according to what they represent, for example,
 \textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
 which cause the output to rise\textit{.} The fifth concept is the
@@ -708,7 +708,7 @@ placed in the STG produced.
 \includegraphics[scale=0.28]{Images/stg-cElement}
 \par\end{centering}
 
-\protect\caption{\label{fig:cElement STG}STG for the example system.}
+\protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
 
 
@@ -728,7 +728,7 @@ $\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diam
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity axioms of the underlying commutative monoid. Consequently,
-this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG}.
+this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
 Figure~\ref{fig:cElement-concepts} illustrates all the concepts
 involved in this specification.
 
@@ -800,6 +800,126 @@ Concepts may be a useful way of specifying asynchronous circuits, but specificat
 In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
 \subsection{Converting concepts to STGs \label {sub: converting}}
+
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level of concepts, signal-level concepts.  As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.  Using the example of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the following list of concepts:
+
+\vspace{2mm}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,a^{+}\rightsquigarrow c^{+}$
+\par\end{center}
+
+\begin{center}
+$\,b^{+}\rightsquigarrow c^{+}$
+\par\end{center}
+
+\begin{center}
+$\,c^{+}\rightsquigarrow a^{-}$
+\par\end{center}
+
+\begin{center}
+$\,c^{+}\rightsquigarrow b^{-}$
+\par\end{center}
+
+\begin{center}
+$\,a^{-}\rightsquigarrow c^{-}$
+\par\end{center}
+
+\begin{center}
+$\,b^{-}\rightsquigarrow c^{-}$
+\par\end{center}
+
+\begin{center}
+$\,c^{-}\rightsquigarrow a^{+}$
+\par\end{center}
+
+\begin{center}
+$\,c^{-}\rightsquigarrow b^{+}$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(a,0)$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(b,0)$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(c,0)$
+\par\end{center}
+
+\end{minipage}\vspace{2mm}
+
+With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g} file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}. 
+
+Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transistions of a signal, and places in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-step1}.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.23]{Images/Step-by-step1}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:step-by-step1}The first step in converting concepts to an STG}
+
+\par\end{centering}
+
+\end{figure}
+
+Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$.  To represent this in the STG, we need to connect the place after $a^{+}$, $a_0$ in figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of $c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from occuring.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.23]{Images/Step-by-step2}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:step-by-step2}The second step in converting concepts to STGs}
+
+\par\end{centering}
+
+\end{figure}
+
+All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as shown in~\ref{fig:step-by-step9}
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.225]{Images/Step-by-step9}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:step-by-step9}The converted STG with all arcs added}
+
+\par\end{centering}
+
+\end{figure}
+
+At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG.  The initial state concepts are $\,\mathsf{initialise}(a,0)$, $\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$, $b_0$ and $c_0$. This will produce the fully converted STG, which will look as follows:
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.225]{Images/Step-by-step12}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:step-by-step12}The converted C-element with environment STG}
+
+\par\end{centering}
+
+\end{figure}
+
+This STG is now useable with existing tools.  For example, the \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.28]{Images/stg-cElement}
+\par\end{centering}
+
+\protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
+\end{figure}
+
+\subsection{Parrallel and scenario composition}
 
 %%+ Algorithm for converting concepts to STGs
 %%
