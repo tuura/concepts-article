@@ -857,11 +857,11 @@ Initially the algorithm finds all signals in the system, and produces some \emph
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/Step-by-step1}
+\includegraphics[scale=0.26]{Images/Step-by-step1}
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:step-by-step1}The first step in converting concepts to an STG \textbf{REPLACES THESE WITH DIAMONDS}}
+\protect\caption{\label{fig:step-by-step1}The first step in converting concepts to an STG}
 
 \par\end{centering}
 
@@ -871,7 +871,7 @@ Next step in the algorithm is to start connecting the signal transitions in the 
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/Step-by-step2}
+\includegraphics[scale=0.25]{Images/Step-by-step2}
 \par\end{centering}
 
 \begin{centering}
@@ -881,11 +881,11 @@ Next step in the algorithm is to start connecting the signal transitions in the 
 
 \end{figure}
 
-All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as shown in~\ref{fig:step-by-step9}
+All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as shown in Figure~\ref{fig:step-by-step9}
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.225]{Images/Step-by-step9}
+\includegraphics[scale=0.25]{Images/Step-by-step9}
 \par\end{centering}
 
 \begin{centering}
@@ -899,7 +899,7 @@ At this point, all that is left to add is the initial states. This involves plac
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.225]{Images/Step-by-step12}
+\includegraphics[scale=0.25]{Images/Step-by-step12}
 \par\end{centering}
 
 \begin{centering}
@@ -919,9 +919,43 @@ This STG is now useable with existing tools.  For example, the \emph{.g} file co
 \protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
 \end{figure}
 
-\subsection{Parrallel and scenario composition}
+\subsection{Parallel composition}
 
-With this method of converting STGs to 
+With this method of converting concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and convert this to an STG, it is also possible to convert smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using \emph{Parallel Composition} within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}. 
+
+Using the example above, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial states, this would give us the following STGs.
+
+\begin{figure}[h]
+\begin{centering}
+\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/C-element}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\begin{centering}
+\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/inverter(c,a)}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\begin{centering}
+\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/inverter(c,b)}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\protect\caption{\label{fig:IndividConceptStgs}Individual STG conversions of concepts}
+\end{figure}
+
+These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in Figure~\ref{fig:cElement STG}.
+
+\subsection{Scenario composition}
 
 %%+ Algorithm for converting concepts to STGs
 %%
