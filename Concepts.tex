@@ -759,7 +759,7 @@ to the composition laws.
 
 
 
-\subsection{Multiple behavioural scenarios}
+\subsection{Multiple behavioural scenarios \label{sec:scenarios}}
 
 \vspace{-2mm}
 
@@ -800,6 +800,8 @@ Concepts may be a useful way of specifying asynchronous circuits, but specificat
 In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
 \subsection{Converting concepts to STGs \label {sub: converting}}
+
+\textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
 
 As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level of concepts, signal-level concepts.  As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.  Using the example of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the following list of concepts:
 
@@ -909,7 +911,7 @@ At this point, all that is left to add is the initial states. This involves plac
 
 \end{figure}
 
-This STG is now useable with existing tools.  For example, the \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
+The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
 
 \begin{figure}[h]
 \begin{centering}
@@ -918,6 +920,10 @@ This STG is now useable with existing tools.  For example, the \emph{.g} file co
 
 \protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
 \end{figure}
+
+Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with \noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made these can be done either with the concepts, which can be re-converted to view the updated STG, or to the STG directly. 
+
+In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sec:direct-synth}.
 
 \subsection{Parallel composition}
 
@@ -957,103 +963,7 @@ These STGs can now be passed into \noun{Pcomp}, which will compose them. The out
 
 \subsection{Scenario composition}
 
-%%+ Algorithm for converting concepts to STGs
-%%
-%%+ Using parallel and scenario composition to produce STGs for the whole system
-%%
-%%+ Direct synthesis from concepts
-\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
-
-\vspace{-3mm}
-\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
-
-\vspace{5mm}
-
-When a list of concepts is produced, we then pass this into an algorithm
-which converts these into a single scenario STG that, if possible,
-satisfies all of the concepts. This STG represents one operational
-mode of a full specification, and this needs to be combined with other
-scenario STGs in order to produce a full system specification. In
-this section we will discuss how this process is performed, from concepts,
-to a set of scenario STGs, to a full system model. 
-
-\vspace{-2mm}
-
-
-
-\subsection{Deriving STG fragments from concepts}
-
-\vspace{-2mm}
-
-
-The algorithm begins by expanding any predefined concepts, and this
-returns a full list of concepts. Each concept can then be converted
-into its own STG fragment. In some cases, a single concept can represent
-a single STG fragment, but if a one-to-many concept is used, multiple
-fragments can be produced. These fragments are all created and stored
-for use in the next step, but hidden from the user. However, how the
-fragments are produced is important. For example, an STG fragment
-converted from the concept \textsf{\textit{\emph{outputRise}}} in
-the above C-element example is shown in Figure~\ref{fig:outputRise STG}. 
-
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.23]{Images/outputRise-stg}
-\par\end{centering}
-
-\protect\caption{\label{fig:outputRise STG}STG for the \textsf{\textit{\emph{outputRise}}}
-concept.}
-\end{figure}
-
-
-This STG features arcs which suggest that \textsf{$a^{+}$} and $b^{+}$
-must occur before \textsf{$c^{+}$}, as the concept suggests. This
-fragment can also be seen as part of the scenario STG in Figure~\ref{fig:cElement STG}.
-This concept however features two back-pressure arcs which are not
-necessarily described in the concept. In order for fragments created
-from concepts to be usable in producing scenario STGs, they need to
-be complete, meaning they must have initial states, displayed using
-tokens, and must not reach deadlock at any point, and this STG would
-be incomplete without these back-pressure arcs used to show initial
-states. These arcs are produced automatically by the algorithm, and
-these fragments may be hidden from the user. 
-
-\vspace{-3mm}
-
-
-
-\subsection{Scenario STGs}
-
-\vspace{-2mm}
-
-
-If all concepts can be correctly converted into STG fragments, then
-they can then be used to produce the STG for the scenario. This process
-is done using a tool integrated in \noun{Workcraft} called \noun{Pcomp~}\cite{PCOMP},
-which is designed to compose multiple STGs. The algorithm will automatically
-take all STG fragments and pass them into the \noun{Pcomp} tool, and
-this returns a single STG, created by composing all of the fragments.
-It is necessary for all STG fragments to be complete, for example
-using back-pressure arcs and including the initial states, as this
-is used in the parallel composition process. 
-
-We can use this process to produce STGs for scenarios, which are then
-verified and simulated in \noun{Workcraft} and used in the next step.
-However, if this STG is not to be used as a scenario but as a predefined
-concept, this can be verified and stored for further use as part of
-scenario descriptions. 
-
-\vspace{-3mm}
-
-
-
-\subsection{Combination of scenarios \label{sub:Combination-of-scenarios}}
-
-\vspace{-3mm}
-
-
-When a scenario STG has been produced and verified, it can then be
-combined with other scenarios to produce a complete circuit specification.
+As mentioned in~\ref{sec:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation. 
 
 When combining scenarios, there are several things to consider in
 how the scenarios fit together. Depending on the application the circuit
@@ -1102,9 +1012,160 @@ styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time. 
 
-\vspace{-3mm}
+\subsection{Direct synthesis from concepts \label{sec:direct-synth}}
 
+It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding boolean functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the best possible implementation, but it may be a quicker method of finding an implementation. We will explain this method in this section. 
 
+\textbf{THERE NEEDS TO BE AN ALGORITHM FOR THIS. WORK ONE OUT.}
+
+%%+ Algorithm for converting concepts to STGs
+%%
+%%+ Using parallel and scenario composition to produce STGs for the whole system
+%%
+%%+ Direct synthesis from concepts
+%\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
+%
+%\vspace{-3mm}
+%\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
+%
+%\vspace{5mm}
+%
+%When a list of concepts is produced, we then pass this into an algorithm
+%which converts these into a single scenario STG that, if possible,
+%satisfies all of the concepts. This STG represents one operational
+%mode of a full specification, and this needs to be combined with other
+%scenario STGs in order to produce a full system specification. In
+%this section we will discuss how this process is performed, from concepts,
+%to a set of scenario STGs, to a full system model. 
+%
+%\vspace{-2mm}
+%
+%
+%
+%\subsection{Deriving STG fragments from concepts}
+%
+%\vspace{-2mm}
+%
+%
+%The algorithm begins by expanding any predefined concepts, and this
+%returns a full list of concepts. Each concept can then be converted
+%into its own STG fragment. In some cases, a single concept can represent
+%a single STG fragment, but if a one-to-many concept is used, multiple
+%fragments can be produced. These fragments are all created and stored
+%for use in the next step, but hidden from the user. However, how the
+%fragments are produced is important. For example, an STG fragment
+%converted from the concept \textsf{\textit{\emph{outputRise}}} in
+%the above C-element example is shown in Figure~\ref{fig:outputRise STG}. 
+%
+%\begin{figure}[h]
+%\begin{centering}
+%\includegraphics[scale=0.23]{Images/outputRise-stg}
+%\par\end{centering}
+%
+%\protect\caption{\label{fig:outputRise STG}STG for the \textsf{\textit{\emph{outputRise}}}
+%concept.}
+%\end{figure}
+%
+%
+%This STG features arcs which suggest that \textsf{$a^{+}$} and $b^{+}$
+%must occur before \textsf{$c^{+}$}, as the concept suggests. This
+%fragment can also be seen as part of the scenario STG in Figure~\ref{fig:cElement STG}.
+%This concept however features two back-pressure arcs which are not
+%necessarily described in the concept. In order for fragments created
+%from concepts to be usable in producing scenario STGs, they need to
+%be complete, meaning they must have initial states, displayed using
+%tokens, and must not reach deadlock at any point, and this STG would
+%be incomplete without these back-pressure arcs used to show initial
+%states. These arcs are produced automatically by the algorithm, and
+%these fragments may be hidden from the user. 
+%
+%\vspace{-3mm}
+%
+%
+%
+%\subsection{Scenario STGs}
+%
+%\vspace{-2mm}
+%
+%
+%If all concepts can be correctly converted into STG fragments, then
+%they can then be used to produce the STG for the scenario. This process
+%is done using a tool integrated in \noun{Workcraft} called \noun{Pcomp~}\cite{PCOMP},
+%which is designed to compose multiple STGs. The algorithm will automatically
+%take all STG fragments and pass them into the \noun{Pcomp} tool, and
+%this returns a single STG, created by composing all of the fragments.
+%It is necessary for all STG fragments to be complete, for example
+%using back-pressure arcs and including the initial states, as this
+%is used in the parallel composition process. 
+%
+%We can use this process to produce STGs for scenarios, which are then
+%verified and simulated in \noun{Workcraft} and used in the next step.
+%However, if this STG is not to be used as a scenario but as a predefined
+%concept, this can be verified and stored for further use as part of
+%scenario descriptions. 
+%
+%\vspace{-3mm}
+%
+%
+%
+%\subsection{Combination of scenarios \label{sub:Combination-of-scenarios}}
+%
+%\vspace{-3mm}
+%
+%
+%When a scenario STG has been produced and verified, it can then be
+%combined with other scenarios to produce a complete circuit specification.
+%
+%When combining scenarios, there are several things to consider in
+%how the scenarios fit together. Depending on the application the circuit
+%is being designed for, some scenarios may need to operate in certain
+%orders, for example, one scenario may exist simply to initialise the
+%circuit, therefore this scenario needs to run at start-up, before
+%any of the other scenarios, and then never be run again while the
+%system remains active. 
+%
+%To address this, when combining scenarios we offer some templates,
+%each of which can be used to combine scenarios in various orders.
+%With this the designer specifies in which ways the scenarios should
+%be combined, and if an order is needed, the order the scenarios should
+%be run from start up. The following are some examples of templates
+%that will be offered before scenarios are combined:
+%
+%\textbf{Sequential:} Sequential combination will allow a designer
+%to select the order of all scenarios, so when combined, they will
+%run in a sequence. In this case, there may be a clear order in which
+%the scenarios may run, and this needs to be specified by the designer. 
+%
+%\textbf{Concurrent:} In this case there is no order, but one or more
+%of the scenarios in a specification may run in parallel. This template
+%will combine the scenarios in a way that will allow concurrency to
+%occur, limited to requirements of the specification, for instance,
+%the number of scenarios that can be active at any one time, which
+%can be limited by the number of tokens available at once. 
+%
+%\textbf{Non-deterministic choice:} This template will combine the
+%scenarios in a way that allows any of the scenarios to run, but not
+%according to any order to deal with the lack of determinism in the
+%system, using one token which is used only by the running scenario,
+%and this is returned when the scenario completes. 
+%
+%There may be some more complex requirements to combination, and it
+%is possible to combine some scenarios using one template, then including
+%the result in a combination using another template. For example, a
+%system which is non-deterministic may also have a scenario that runs
+%at start up to initialise the system. In this case, a designer could
+%combine all non-deterministic scenarios first, then combine the resulting
+%STG with the initialising scenario, setting the order so this runs
+%first. 
+%
+%This method of combination can allow for many possible scenario combination
+%styles, and more complex systems can be combined automatically, which
+%in comparison to manual combination, could reduce the number of errors
+%as well as design time. 
+%
+%\vspace{-3mm}
+%
+%
 
 \section{Case study \label{sec:case-study}}
 
