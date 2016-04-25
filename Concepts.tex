@@ -19,6 +19,9 @@
 \makeatother
 
 \usepackage{babel}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
 \begin{document}
 
 \title{Compositional design of asynchronous circuits \\
@@ -1064,16 +1067,81 @@ as well as design time.
 
 \subsection{Direct synthesis from concepts \label{sec:direct-synth}}
 
-It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding boolean
+It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
 functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
-best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section.
+best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
 
-When finding an implementation for a specification, we need only concern ourselves with the boolean equations for the output signals. The input signals, the environment, can not be
-controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the boolean equations for the output signals. 
+\subsubsection{Algorithm of direct synthesis}
 
-Therefore, we take an output signal, $x$. 
+When finding an implementation for a specification, we need only concern ourselves with the Boolean equations for the output signals. The input signals, the environment, can not be
+controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
+Boolean equations for the output signals. 
 
-\textbf{THERE NEEDS TO BE AN ALGORITHM FOR THIS. WORK ONE OUT.}
+Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, $x^{+}$, such as $p\rightsquigarrow x^{+}$, 
+where p is any signal transition. We then record these signals only for $x+$ in the form of a Boolean equation, where a low to high signal transition, such as $p^{+}$ would be recorded 
+as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario will be combined using the
+\emph{AND} ($*$) operation.
+
+This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$. Now we can reduce these equations. First of 
+all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a transition of one being assumed to occur after the 
+transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If some concepts in this system are:
+
+\vspace{2mm}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,p^{+}\rightsquigarrow x^{+}$
+\par\end{center}
+
+\begin{center}
+$\,q^{+}\rightsquigarrow x^{+}$
+\par\end{center}
+
+\begin{center}
+$\,p^{+}\rightsquigarrow q^{+}$
+\par\end{center}
+
+\end{minipage}\vspace{2mm}
+
+The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however, 
+the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
+Boolean equations. 
+
+Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. Following this, we can then combined the 
+equations for both $x^{+}$ and $x^{-}$. This is done by first, negating only the signals in the $x^{-}$ equation, not the equation itself, and then \emph{OR}-ing this with the equation 
+of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
+
+This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
+Synthesis is found in Algorithm~\ref{alg:direct-synth}
+
+\begin{algorithm}
+\begin{algorithmic}
+\caption{Algorithm for direct synthesis \label{alg:direct-synth}}
+\For {Each scenario in system}
+  \For {Output signal $x$ in all output signals}
+    \For {Each signal transition $p$ that causes $x^{+}$}
+	\If {$p^{+}$}
+                \State setEq <- setEq $*$ $p$;
+          \Else
+	     \State setEq <- setEq  $*$ $\bar{p}$
+	\EndIf
+    \EndFor
+    \For {Each signal transition $p$ that causes $x^{-}$}
+         \If {$p^{+}$}
+                \State resetEq <- resetEq  $*$  $p$;
+          \Else
+	     \State resetEq <- resetEq  $*$  $\bar{p}$
+	\EndIf
+    \EndFor
+  \EndFor    
+  \State reduce(setEq)
+  \State reduce(resetEq)
+  \State xEq <- xEq $+$ setEq
+  \State \ \ \ \ \ \ \ \ \ \ \ \ \ \   $+$ negateSignals(resetEq)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Example of direct synthesis}
 
 %%+ Algorithm for converting concepts to STGs
 %%
