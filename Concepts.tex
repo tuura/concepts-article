@@ -182,11 +182,15 @@ design flow, and test this design approach. \vspace{-2mm}
 
 \section{Motivating Example \label{sec:Motivating Example}}
 
-Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
+Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become
+problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which
+has helped us develop concepts.
 
 \subsection{Monolithic design approach for asynchronous circuits \label{sub: Monolithic}}
 
-The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how this STG is attained using the monolithic approach.
+The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
+serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
+this STG is attained using the monolithic approach.
 
 \begin{figure}[h]
 \begin{centering}
@@ -200,14 +204,24 @@ The example we will use throughout this paper is that of a simple buck converter
 
 \end{figure}
 
-This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and manually connect these depending on the similarities between these branches. 
+This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the 
+connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and 
+manually connect these depending on the similarities between these branches.
 
-In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
+In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to
+further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, 
+unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow 
+the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~
+\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
-In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum amount of time spent making the change.  
+In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, 
+this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum 
+amount of time spent making the change.
 
-This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example, figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted. 
+This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
+allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example,
+figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted.
 
 \begin{figure}[h]
 \begin{centering}
@@ -229,13 +243,20 @@ Studying this STG shows that there are some signal interactions that we can iden
 \item Signals \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
 \end{enumerate}
 
-These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and  \textsf{$gn$} respectively, forming two separate handshakes.
+These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually
+exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and
+should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
+\textsf{$gn$} respectively, forming two separate handshakes.
 
-Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold. 
+Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of
+these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an
+interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold.
 
-If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may happen when using the monolithic approach.  
+If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may 
+happen when using the monolithic approach.
 
-With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without needing to change every single interaction. 
+With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without
+needing to change every single interaction.
 
 %% + Here is the problem we are solving
 %%
@@ -505,7 +526,7 @@ and mutual exclusion mechanisms.
 Given two signals $a$ and $b$, a \emph{handshake} between them is
 the following composition of causality concepts:
 \[
-\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! a^{+}
+\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
 \]
 Intuitively, we have a two-way asynchronous communication channel,
 where one party sends transitions $a^{+}$ and $a^{-}$ and the other
@@ -795,15 +816,22 @@ the corresponding definitions.
 
 \section{Interoperability with STG based tools \label{sec: interop-with-stg}}
 
-Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as  \noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to convert concept specifications to STGs in order to be used with these tools. 
+Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
+deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
+\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to convert 
+concept specifications to STGs in order to be used with these tools.
 
-In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
+In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be
+discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
 \subsection{Converting concepts to STGs \label {sub: converting}}
 
 \textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level of concepts, signal-level concepts.  As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.  Using the example of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the following list of concepts:
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
+a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
+of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
+of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the following list of concepts:
 
 \vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
@@ -853,9 +881,13 @@ $\,\mathsf{initialise}(c,0)$
 
 \end{minipage}\vspace{2mm}
 
-With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g} file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}. 
+With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
+file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
 
-Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transistions of a signal, and places in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-step1}.
+Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transistions of a signal, and places
+in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before
+it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first
+part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-step1}.
 
 \begin{figure}[h]
 \begin{centering}
@@ -869,7 +901,10 @@ Initially the algorithm finds all signals in the system, and produces some \emph
 
 \end{figure}
 
-Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$.  To represent this in the STG, we need to connect the place after $a^{+}$, $a_0$ in figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of $c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from occuring.
+Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
+in the STG, we need to connect the place after $a^{+}$, $a_0$ in figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of 
+$c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from 
+occuring.
 
 \begin{figure}[h]
 \begin{centering}
@@ -883,7 +918,8 @@ Next step in the algorithm is to start connecting the signal transitions in the 
 
 \end{figure}
 
-All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as shown in Figure~\ref{fig:step-by-step9}
+All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as
+shown in Figure~\ref{fig:step-by-step9}
 
 \begin{figure}[h]
 \begin{centering}
@@ -897,7 +933,9 @@ All concepts like this can be added to the STG in the same way. The STG followin
 
 \end{figure}
 
-At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG.  The initial state concepts are $\,\mathsf{initialise}(a,0)$, $\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$, $b_0$ and $c_0$. This will produce the fully converted STG, which will look as follows:
+At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}(a,0)$,
+$\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
+$b_0$ and $c_0$. This will produce the fully converted STG, which will look as follows:
 
 \begin{figure}[h]
 \begin{centering}
@@ -911,7 +949,8 @@ At this point, all that is left to add is the initial states. This involves plac
 
 \end{figure}
 
-The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
+The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be 
+resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
 
 \begin{figure}[h]
 \begin{centering}
@@ -921,15 +960,23 @@ The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, wh
 \protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
 \end{figure}
 
-Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with \noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made these can be done either with the concepts, which can be re-converted to view the updated STG, or to the STG directly. 
+Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with 
+\noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made 
+these can be done either with the concepts, which can be re-converted to view the updated STG, or to the STG directly.
 
-In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sec:direct-synth}.
+In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further
+quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct
+Synthesis}, which is discussed in Section~\ref{sec:direct-synth}.
 
 \subsection{Parallel composition}
 
-With this method of converting concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and convert this to an STG, it is also possible to convert smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using \emph{Parallel Composition} within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}. 
+With this method of converting concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and convert this to an STG, it is also possible to
+convert smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using 
+\emph{Parallel Composition}
+within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example above, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial states, this would give us the following STGs.
+Using the example above, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial 
+states, this would give us the following STGs.
 
 \begin{figure}[h]
 \begin{centering}
@@ -959,11 +1006,14 @@ Using the example above, a C-element with environment, we can convert the $\math
 \protect\caption{\label{fig:IndividConceptStgs}Individual STG conversions of concepts}
 \end{figure}
 
-These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in Figure~\ref{fig:cElement STG}.
+These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
+Figure~\ref{fig:cElement STG}.
 
 \subsection{Scenario composition}
 
-As mentioned in~\ref{sec:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation. 
+As mentioned in~\ref{sec:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions 
+to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
+produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
 When combining scenarios, there are several things to consider in
 how the scenarios fit together. Depending on the application the circuit
@@ -1014,7 +1064,14 @@ as well as design time.
 
 \subsection{Direct synthesis from concepts \label{sec:direct-synth}}
 
-It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding boolean functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the best possible implementation, but it may be a quicker method of finding an implementation. We will explain this method in this section. 
+It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding boolean
+functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
+best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section.
+
+When finding an implementation for a specification, we need only concern ourselves with the boolean equations for the output signals. The input signals, the environment, can not be
+controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the boolean equations for the output signals. 
+
+Therefore, we take an output signal, $x$. 
 
 \textbf{THERE NEEDS TO BE AN ALGORITHM FOR THIS. WORK ONE OUT.}
 
