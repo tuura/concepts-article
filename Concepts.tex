@@ -19,6 +19,9 @@
 \makeatother
 
 \usepackage{babel}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
 \begin{document}
 
 \title{Compositional design of asynchronous circuits \\
@@ -182,11 +185,15 @@ design flow, and test this design approach. \vspace{-2mm}
 
 \section{Motivating Example \label{sec:Motivating Example}}
 
-Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
+Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become
+problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which
+has helped us develop concepts.
 
 \subsection{Monolithic design approach for asynchronous circuits \label{sub: Monolithic}}
 
-The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how this STG is attained using the monolithic approach.
+The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
+serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
+this STG is attained using the monolithic approach.
 
 \begin{figure}[h]
 \begin{centering}
@@ -200,14 +207,24 @@ The example we will use throughout this paper is that of a simple buck converter
 
 \end{figure}
 
-This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and manually connect these depending on the similarities between these branches. 
+This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the 
+connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and 
+manually connect these depending on the similarities between these branches.
 
-In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
+In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to
+further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, 
+unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow 
+the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~
+\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
-In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum amount of time spent making the change.  
+In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, 
+this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum 
+amount of time spent making the change.
 
-This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example, figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted. 
+This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
+allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example,
+figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted.
 
 \begin{figure}[h]
 \begin{centering}
@@ -229,13 +246,20 @@ Studying this STG shows that there are some signal interactions that we can iden
 \item Signals \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
 \end{enumerate}
 
-These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and  \textsf{$gn$} respectively, forming two separate handshakes.
+These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually
+exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and
+should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
+\textsf{$gn$} respectively, forming two separate handshakes.
 
-Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold. 
+Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of
+these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an
+interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold.
 
-If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may happen when using the monolithic approach.  
+If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may 
+happen when using the monolithic approach.
 
-With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without needing to change every single interaction. 
+With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without
+needing to change every single interaction.
 
 %% + Here is the problem we are solving
 %%
@@ -505,7 +529,7 @@ and mutual exclusion mechanisms.
 Given two signals $a$ and $b$, a \emph{handshake} between them is
 the following composition of causality concepts:
 \[
-\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! a^{+}
+\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
 \]
 Intuitively, we have a two-way asynchronous communication channel,
 where one party sends transitions $a^{+}$ and $a^{-}$ and the other
@@ -641,7 +665,7 @@ places) between transitions.
 
 
 
-\subsection{Composition of concepts}
+\subsection{Composition of concepts \label{sub:Comp-of-concepts}}
 
 \vspace{-3mm}
 
@@ -693,7 +717,7 @@ $
 
 There are 6 concepts featured, the first 5 of which describe certain
 operations of the system. The sixth concept composes all of the first
-5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG}.
+5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
 The first four are named according to what they represent, for example,
 \textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
 which cause the output to rise\textit{.} The fifth concept is the
@@ -708,7 +732,7 @@ placed in the STG produced.
 \includegraphics[scale=0.28]{Images/stg-cElement}
 \par\end{centering}
 
-\protect\caption{\label{fig:cElement STG}STG for the example system.}
+\protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
 
 
@@ -728,7 +752,7 @@ $\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diam
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity axioms of the underlying commutative monoid. Consequently,
-this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG}.
+this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
 Figure~\ref{fig:cElement-concepts} illustrates all the concepts
 involved in this specification.
 
@@ -759,7 +783,7 @@ to the composition laws.
 
 
 
-\subsection{Multiple behavioural scenarios}
+\subsection{Multiple behavioural scenarios \label{sec:scenarios}}
 
 \vspace{-2mm}
 
@@ -795,103 +819,209 @@ the corresponding definitions.
 
 \section{Interoperability with STG based tools \label{sec: interop-with-stg}}
 
-+ Algorithm for converting concepts to STGs
+Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
+deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
+\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to convert 
+concept specifications to STGs in order to be used with these tools.
 
-+ Using parallel and scenario composition to produce STGs for the whole system
+In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be
+discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
-+ Direct synthesis from concepts
-\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
+\subsection{Converting concepts to STGs \label {sub: converting}}
 
-\vspace{-3mm}
-\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
+\textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
 
-\vspace{5mm}
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
+a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
+of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
+of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the list of concepts found in 
+Figure~\ref{fig:c-element-concepts}.
 
-When a list of concepts is produced, we then pass this into an algorithm
-which converts these into a single scenario STG that, if possible,
-satisfies all of the concepts. This STG represents one operational
-mode of a full specification, and this needs to be combined with other
-scenario STGs in order to produce a full system specification. In
-this section we will discuss how this process is performed, from concepts,
-to a set of scenario STGs, to a full system model. 
+\vspace{2mm}
+\begin{figure}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,a^{+}\rightsquigarrow c^{+}$
+\par\end{center}
 
-\vspace{-2mm}
+\begin{center}
+$\,b^{+}\rightsquigarrow c^{+}$
+\par\end{center}
 
+\begin{center}
+$\,c^{+}\rightsquigarrow a^{-}$
+\par\end{center}
 
+\begin{center}
+$\,c^{+}\rightsquigarrow b^{-}$
+\par\end{center}
 
-\subsection{Deriving STG fragments from concepts}
+\begin{center}
+$\,a^{-}\rightsquigarrow c^{-}$
+\par\end{center}
 
-\vspace{-2mm}
+\begin{center}
+$\,b^{-}\rightsquigarrow c^{-}$
+\par\end{center}
 
+\begin{center}
+$\,c^{-}\rightsquigarrow a^{+}$
+\par\end{center}
 
-The algorithm begins by expanding any predefined concepts, and this
-returns a full list of concepts. Each concept can then be converted
-into its own STG fragment. In some cases, a single concept can represent
-a single STG fragment, but if a one-to-many concept is used, multiple
-fragments can be produced. These fragments are all created and stored
-for use in the next step, but hidden from the user. However, how the
-fragments are produced is important. For example, an STG fragment
-converted from the concept \textsf{\textit{\emph{outputRise}}} in
-the above C-element example is shown in Figure~\ref{fig:outputRise STG}. 
+\begin{center}
+$\,c^{-}\rightsquigarrow b^{+}$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(a,0)$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(b,0)$
+\par\end{center}
+
+\begin{center}
+$\,\mathsf{initialise}(c,0)$
+\par\end{center}
+
+\end{minipage}
+\caption{Concepts for a C-element with environment\label{fig:c-element-concepts}}
+\end{figure}
+\vspace{2mm}
+
+With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
+file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
+
+Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transistions of a signal, and places
+in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before
+it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first
+part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-step1}.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/outputRise-stg}
+\includegraphics[scale=0.26]{Images/Step-by-step1}
 \par\end{centering}
 
-\protect\caption{\label{fig:outputRise STG}STG for the \textsf{\textit{\emph{outputRise}}}
-concept.}
+\begin{centering}
+\protect\caption{\label{fig:step-by-step1}The first step in converting concepts to an STG}
+
+\par\end{centering}
+
 \end{figure}
 
+Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
+in the STG, we need to connect the place after $a^{+}$, $a_0$ in figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of 
+$c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from 
+occuring.
 
-This STG features arcs which suggest that \textsf{$a^{+}$} and $b^{+}$
-must occur before \textsf{$c^{+}$}, as the concept suggests. This
-fragment can also be seen as part of the scenario STG in Figure~\ref{fig:cElement STG}.
-This concept however features two back-pressure arcs which are not
-necessarily described in the concept. In order for fragments created
-from concepts to be usable in producing scenario STGs, they need to
-be complete, meaning they must have initial states, displayed using
-tokens, and must not reach deadlock at any point, and this STG would
-be incomplete without these back-pressure arcs used to show initial
-states. These arcs are produced automatically by the algorithm, and
-these fragments may be hidden from the user. 
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.25]{Images/Step-by-step2}
+\par\end{centering}
 
-\vspace{-3mm}
+\begin{centering}
+\protect\caption{\label{fig:step-by-step2}The second step in converting concepts to STGs}
 
+\par\end{centering}
 
+\end{figure}
 
-\subsection{Scenario STGs}
+All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as
+shown in Figure~\ref{fig:step-by-step9}
 
-\vspace{-2mm}
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.25]{Images/Step-by-step9}
+\par\end{centering}
 
+\begin{centering}
+\protect\caption{\label{fig:step-by-step9}The converted STG with all arcs added}
 
-If all concepts can be correctly converted into STG fragments, then
-they can then be used to produce the STG for the scenario. This process
-is done using a tool integrated in \noun{Workcraft} called \noun{Pcomp~}\cite{PCOMP},
-which is designed to compose multiple STGs. The algorithm will automatically
-take all STG fragments and pass them into the \noun{Pcomp} tool, and
-this returns a single STG, created by composing all of the fragments.
-It is necessary for all STG fragments to be complete, for example
-using back-pressure arcs and including the initial states, as this
-is used in the parallel composition process. 
+\par\end{centering}
 
-We can use this process to produce STGs for scenarios, which are then
-verified and simulated in \noun{Workcraft} and used in the next step.
-However, if this STG is not to be used as a scenario but as a predefined
-concept, this can be verified and stored for further use as part of
-scenario descriptions. 
+\end{figure}
 
-\vspace{-3mm}
+At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}(a,0)$,
+$\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
+$b_0$ and $c_0$. This will produce the fully converted STG, which will look as follows:
 
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.25]{Images/Step-by-step12}
+\par\end{centering}
 
+\begin{centering}
+\protect\caption{\label{fig:step-by-step12}The converted C-element with environment STG}
 
-\subsection{Combination of scenarios \label{sub:Combination-of-scenarios}}
+\par\end{centering}
 
-\vspace{-3mm}
+\end{figure}
 
+The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be 
+resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
 
-When a scenario STG has been produced and verified, it can then be
-combined with other scenarios to produce a complete circuit specification.
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.28]{Images/stg-cElement}
+\par\end{centering}
+
+\protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
+\end{figure}
+
+Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with 
+\noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made 
+these can be done either with the concepts, which can be re-converted to view the updated STG, or to the STG directly.
+
+In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further
+quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct
+Synthesis}, which is discussed in Section~\ref{sec:direct-synth}.
+
+\subsection{Parallel composition}
+
+With this method of converting concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and convert this to an STG, it is also possible to
+convert smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using 
+\emph{Parallel Composition}
+within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
+
+Using the example above, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial 
+states, this would give us the following STGs.
+
+\begin{figure}[h]
+\begin{centering}
+\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/C-element}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\begin{centering}
+\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/inverter(c,a)}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\begin{centering}
+\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
+\includegraphics[scale=0.26]{Images/inverter(c,b)}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\protect\caption{\label{fig:IndividConceptStgs}Individual STG conversions of concepts}
+\end{figure}
+
+These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
+Figure~\ref{fig:cElement STG}.
+
+\subsection{Scenario composition}
+
+As mentioned in~\ref{sec:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions 
+to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
+produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
 When combining scenarios, there are several things to consider in
 how the scenarios fit together. Depending on the application the circuit
@@ -940,9 +1070,264 @@ styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time. 
 
-\vspace{-3mm}
+\subsection{Direct synthesis from concepts \label{sec:direct-synth}}
 
+It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
+functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
+best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
 
+\subsubsection{Algorithm of direct synthesis}
+
+When finding an implementation for a specification, we need only concern ourselves with the Boolean equations for the output signals. The input signals, the environment, can not be
+controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
+Boolean equations for the output signals. 
+
+Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as 
+$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such 
+as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
+will be combined using the \emph{AND} ($*$) operation.
+
+This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Now we can 
+reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a transition of one 
+being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If some concepts in 
+this system are:
+
+\vspace{2mm}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,p^{+}\rightsquigarrow x^{+}$
+\par\end{center}
+
+\begin{center}
+$\,q^{+}\rightsquigarrow x^{+}$
+\par\end{center}
+
+\begin{center}
+$\,p^{+}\rightsquigarrow q^{+}$
+\par\end{center}
+
+\end{minipage}\vspace{2mm}
+
+The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however, 
+the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
+Boolean equations. 
+
+Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. Following this, the set and reset functions for 
+this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
+reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
+with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
+
+This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
+Synthesis is found in Algorithm~\ref{alg:direct-synth}
+
+\begin{algorithm}
+\begin{algorithmic}
+\caption{Algorithm for direct synthesis \label{alg:direct-synth}}
+\For {Each scenario in system}
+  \For {Output signal $x$ in all output signals}
+    \For {Each signal transition $p$ that causes $x^{+}$}
+	\If {$p^{+}$}
+                \State setEq <- setEq $*$ $p$;
+          \Else
+	     \State setEq <- setEq  $*$ $\bar{p}$
+	\EndIf
+    \EndFor
+    \For {Each signal transition $p$ that causes $x^{-}$}
+         \If {$p^{+}$}
+                \State resetEq <- resetEq  $*$  $p$;
+          \Else
+	     \State resetEq <- resetEq  $*$  $\bar{p}$
+	\EndIf
+    \EndFor
+  \EndFor    
+  \State reduce(setEq)
+  \State reduce(resetEq)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Example of direct synthesis} 
+
+For this example we will use the same example as we have previously, the C-element with environment. In the case of a circuit for this example, the inputs $a$ and $b$ we cannot 
+control, and thus it is assumed that the environment will correctly invert the output, $c$ to produce these input signals. 
+
+Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
+
+\vspace{2mm}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,c^{+}: a * b$
+\par\end{center}
+
+\begin{center}
+$\,c^{-}: \bar{a} * \bar{b}$
+\par\end{center}
+
+\end{minipage}\vspace{2mm}
+
+These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a C-
+element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.65]{Images/c-element-gate}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:c-element-gate}Implementation synthesized from C-element with environment concepts}
+
+\par\end{centering}
+
+\end{figure}
+
+%%+ Algorithm for converting concepts to STGs
+%%
+%%+ Using parallel and scenario composition to produce STGs for the whole system
+%%
+%%+ Direct synthesis from concepts
+%\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
+%
+%\vspace{-3mm}
+%\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
+%
+%\vspace{5mm}
+%
+%When a list of concepts is produced, we then pass this into an algorithm
+%which converts these into a single scenario STG that, if possible,
+%satisfies all of the concepts. This STG represents one operational
+%mode of a full specification, and this needs to be combined with other
+%scenario STGs in order to produce a full system specification. In
+%this section we will discuss how this process is performed, from concepts,
+%to a set of scenario STGs, to a full system model. 
+%
+%\vspace{-2mm}
+%
+%
+%
+%\subsection{Deriving STG fragments from concepts}
+%
+%\vspace{-2mm}
+%
+%
+%The algorithm begins by expanding any predefined concepts, and this
+%returns a full list of concepts. Each concept can then be converted
+%into its own STG fragment. In some cases, a single concept can represent
+%a single STG fragment, but if a one-to-many concept is used, multiple
+%fragments can be produced. These fragments are all created and stored
+%for use in the next step, but hidden from the user. However, how the
+%fragments are produced is important. For example, an STG fragment
+%converted from the concept \textsf{\textit{\emph{outputRise}}} in
+%the above C-element example is shown in Figure~\ref{fig:outputRise STG}. 
+%
+%\begin{figure}[h]
+%\begin{centering}
+%\includegraphics[scale=0.23]{Images/outputRise-stg}
+%\par\end{centering}
+%
+%\protect\caption{\label{fig:outputRise STG}STG for the \textsf{\textit{\emph{outputRise}}}
+%concept.}
+%\end{figure}
+%
+%
+%This STG features arcs which suggest that \textsf{$a^{+}$} and $b^{+}$
+%must occur before \textsf{$c^{+}$}, as the concept suggests. This
+%fragment can also be seen as part of the scenario STG in Figure~\ref{fig:cElement STG}.
+%This concept however features two back-pressure arcs which are not
+%necessarily described in the concept. In order for fragments created
+%from concepts to be usable in producing scenario STGs, they need to
+%be complete, meaning they must have initial states, displayed using
+%tokens, and must not reach deadlock at any point, and this STG would
+%be incomplete without these back-pressure arcs used to show initial
+%states. These arcs are produced automatically by the algorithm, and
+%these fragments may be hidden from the user. 
+%
+%\vspace{-3mm}
+%
+%
+%
+%\subsection{Scenario STGs}
+%
+%\vspace{-2mm}
+%
+%
+%If all concepts can be correctly converted into STG fragments, then
+%they can then be used to produce the STG for the scenario. This process
+%is done using a tool integrated in \noun{Workcraft} called \noun{Pcomp~}\cite{PCOMP},
+%which is designed to compose multiple STGs. The algorithm will automatically
+%take all STG fragments and pass them into the \noun{Pcomp} tool, and
+%this returns a single STG, created by composing all of the fragments.
+%It is necessary for all STG fragments to be complete, for example
+%using back-pressure arcs and including the initial states, as this
+%is used in the parallel composition process. 
+%
+%We can use this process to produce STGs for scenarios, which are then
+%verified and simulated in \noun{Workcraft} and used in the next step.
+%However, if this STG is not to be used as a scenario but as a predefined
+%concept, this can be verified and stored for further use as part of
+%scenario descriptions. 
+%
+%\vspace{-3mm}
+%
+%
+%
+%\subsection{Combination of scenarios \label{sub:Combination-of-scenarios}}
+%
+%\vspace{-3mm}
+%
+%
+%When a scenario STG has been produced and verified, it can then be
+%combined with other scenarios to produce a complete circuit specification.
+%
+%When combining scenarios, there are several things to consider in
+%how the scenarios fit together. Depending on the application the circuit
+%is being designed for, some scenarios may need to operate in certain
+%orders, for example, one scenario may exist simply to initialise the
+%circuit, therefore this scenario needs to run at start-up, before
+%any of the other scenarios, and then never be run again while the
+%system remains active. 
+%
+%To address this, when combining scenarios we offer some templates,
+%each of which can be used to combine scenarios in various orders.
+%With this the designer specifies in which ways the scenarios should
+%be combined, and if an order is needed, the order the scenarios should
+%be run from start up. The following are some examples of templates
+%that will be offered before scenarios are combined:
+%
+%\textbf{Sequential:} Sequential combination will allow a designer
+%to select the order of all scenarios, so when combined, they will
+%run in a sequence. In this case, there may be a clear order in which
+%the scenarios may run, and this needs to be specified by the designer. 
+%
+%\textbf{Concurrent:} In this case there is no order, but one or more
+%of the scenarios in a specification may run in parallel. This template
+%will combine the scenarios in a way that will allow concurrency to
+%occur, limited to requirements of the specification, for instance,
+%the number of scenarios that can be active at any one time, which
+%can be limited by the number of tokens available at once. 
+%
+%\textbf{Non-deterministic choice:} This template will combine the
+%scenarios in a way that allows any of the scenarios to run, but not
+%according to any order to deal with the lack of determinism in the
+%system, using one token which is used only by the running scenario,
+%and this is returned when the scenario completes. 
+%
+%There may be some more complex requirements to combination, and it
+%is possible to combine some scenarios using one template, then including
+%the result in a combination using another template. For example, a
+%system which is non-deterministic may also have a scenario that runs
+%at start up to initialise the system. In this case, a designer could
+%combine all non-deterministic scenarios first, then combine the resulting
+%STG with the initialising scenario, setting the order so this runs
+%first. 
+%
+%This method of combination can allow for many possible scenario combination
+%styles, and more complex systems can be combined automatically, which
+%in comparison to manual combination, could reduce the number of errors
+%as well as design time. 
+%
+%\vspace{-3mm}
+%
+%
 
 \section{Case study \label{sec:case-study}}
 
