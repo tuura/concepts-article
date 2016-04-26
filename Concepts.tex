@@ -834,9 +834,11 @@ discuss this. A method of synthesizing concepts directly also exists, which will
 As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
 a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
 of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
-of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the following list of concepts:
+of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the list of concepts found in 
+Figure~\ref{fig:c-element-concepts}.
 
 \vspace{2mm}
+\begin{figure}
 \begin{minipage}[t]{1\columnwidth}%
 \begin{center}
 $\,a^{+}\rightsquigarrow c^{+}$
@@ -882,7 +884,10 @@ $\,\mathsf{initialise}(b,0)$
 $\,\mathsf{initialise}(c,0)$
 \par\end{center}
 
-\end{minipage}\vspace{2mm}
+\end{minipage}
+\caption{Concepts for a C-element with environment\label{fig:c-element-concepts}}
+\end{figure}
+\vspace{2mm}
 
 With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
 file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
@@ -1077,14 +1082,15 @@ When finding an implementation for a specification, we need only concern ourselv
 controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
 Boolean equations for the output signals. 
 
-Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, $x^{+}$, such as $p\rightsquigarrow x^{+}$, 
-where p is any signal transition. We then record these signals only for $x+$ in the form of a Boolean equation, where a low to high signal transition, such as $p^{+}$ would be recorded 
-as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario will be combined using the
-\emph{AND} ($*$) operation.
+Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as 
+$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such 
+as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
+will be combined using the \emph{AND} ($*$) operation.
 
-This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$. Now we can reduce these equations. First of 
-all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a transition of one being assumed to occur after the 
-transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If some concepts in this system are:
+This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Now we can 
+reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a transition of one 
+being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If some concepts in 
+this system are:
 
 \vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
@@ -1106,9 +1112,10 @@ The equation for $x^{+}$ will contain in some variation $p*q$. These concepts st
 the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
 Boolean equations. 
 
-Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. Following this, we can then combined the 
-equations for both $x^{+}$ and $x^{-}$. This is done by first, negating only the signals in the $x^{-}$ equation, not the equation itself, and then \emph{OR}-ing this with the equation 
-of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
+Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. Following this, the set and reset functions for 
+this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
+reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
+with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
 
 This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
 Synthesis is found in Algorithm~\ref{alg:direct-synth}
@@ -1135,13 +1142,43 @@ Synthesis is found in Algorithm~\ref{alg:direct-synth}
   \EndFor    
   \State reduce(setEq)
   \State reduce(resetEq)
-  \State xEq <- xEq $+$ setEq
-  \State \ \ \ \ \ \ \ \ \ \ \ \ \ \   $+$ negateSignals(resetEq)
 \EndFor
 \end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Example of direct synthesis}
+\subsubsection{Example of direct synthesis} 
+
+For this example we will use the same example as we have previously, the C-element with environment. In the case of a circuit for this example, the inputs $a$ and $b$ we cannot 
+control, and thus it is assumed that the environment will correctly invert the output, $c$ to produce these input signals. 
+
+Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
+
+\vspace{2mm}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{center}
+$\,c^{+}: a * b$
+\par\end{center}
+
+\begin{center}
+$\,c^{-}: \bar{a} * \bar{b}$
+\par\end{center}
+
+\end{minipage}\vspace{2mm}
+
+These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a C-
+element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.65]{Images/c-element-gate}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:c-element-gate}Implementation synthesized from C-element with environment concepts}
+
+\par\end{centering}
+
+\end{figure}
 
 %%+ Algorithm for converting concepts to STGs
 %%
