@@ -189,7 +189,7 @@ Signal transition graphs are commonly used for the specification of asynchronous
 problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which
 has helped us develop concepts.
 
-\subsection{Monolithic design approach for asynchronous circuits \label{sub: Monolithic}}
+\subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
 
 The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
 serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
@@ -224,7 +224,7 @@ amount of time spent making the change.
 
 This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
 allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example,
-figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted.
+Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted.
 
 \begin{figure}[h]
 \begin{centering}
@@ -379,10 +379,6 @@ holds for all $s\in S$. Similarly, invariant concepts form a commutative
 monoid with~$e=\mathbf{1}$ and~$\diamond=\wedge$. Intuitively,
 if a system comprises two subsystems then its states should be permitted
 in both of the subsystems. 
-
-
-
-
 
 One can derive other useful concepts from the three concepts described
 above, for instance, 
@@ -783,7 +779,7 @@ to the composition laws.
 
 
 
-\subsection{Multiple behavioural scenarios \label{sec:scenarios}}
+\subsection{Multiple behavioural scenarios \label{sub:scenarios}}
 
 \vspace{-2mm}
 
@@ -827,14 +823,14 @@ concept specifications to STGs in order to be used with these tools.
 In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be
 discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
 
-\subsection{Converting concepts to STGs \label {sub: converting}}
+\subsection{Converting concepts to STGs \label {sub:converting}}
 
 \textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of represeting a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
 a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
 of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
-of a C-element with an environment, any representation mentionen in section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the list of concepts found in 
+of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the list of concepts found in 
 Figure~\ref{fig:c-element-concepts}.
 
 \vspace{2mm}
@@ -892,10 +888,10 @@ $\,\mathsf{initialise}(c,0)$
 With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
 file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
 
-Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transistions of a signal, and places
+Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transitions of a signal, and places
 in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before
 it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first
-part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-step1}.
+part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-step1}.
 
 \begin{figure}[h]
 \begin{centering}
@@ -910,9 +906,9 @@ part of the resulting STG to be produced is shown in figure~\ref{fig:step-by-ste
 \end{figure}
 
 Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
-in the STG, we need to connect the place after $a^{+}$, $a_0$ in figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of 
+in the STG, we need to connect the place after $a^{+}$, $a_0$ in Figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of 
 $c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from 
-occuring.
+occurring.
 
 \begin{figure}[h]
 \begin{centering}
@@ -926,7 +922,7 @@ occuring.
 
 \end{figure}
 
-All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initiliase} concepts, will produce an STG as
+All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initialise} concepts, will produce an STG as
 shown in Figure~\ref{fig:step-by-step9}
 
 \begin{figure}[h]
@@ -974,7 +970,7 @@ these can be done either with the concepts, which can be re-converted to view th
 
 In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further
 quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct
-Synthesis}, which is discussed in Section~\ref{sec:direct-synth}.
+Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
 
 \subsection{Parallel composition}
 
@@ -1017,9 +1013,9 @@ states, this would give us the following STGs.
 These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
 Figure~\ref{fig:cElement STG}.
 
-\subsection{Scenario composition}
+\subsection{Scenario composition \label{sub:scenario-composition}}
 
-As mentioned in~\ref{sec:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions 
+As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions 
 to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
 produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
@@ -1070,7 +1066,7 @@ styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time. 
 
-\subsection{Direct synthesis from concepts \label{sec:direct-synth}}
+\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
 
 It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
 functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
@@ -1655,7 +1651,7 @@ concept, or as a scenario in another system.
 Now we have scenario STGs that have been verified to ensure they conform
 to standards required of STGs, and simulated to ensure they work as
 expected according to the specification. These can now be combined
-to produce a full system implementation. As mentioned in Section~\ref{sub:Combination-of-scenarios},
+to produce a full system implementation. As mentioned in Section~\ref{sub:scenario-composition},
 we can combine these scenarios in multiple ways, depending on whether
 there is some sort of required ordering to the way these scenarios
 must run. 
