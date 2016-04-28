@@ -1760,6 +1760,12 @@ compositional design of asynchronous circuits using DI algebra and
 it is therefore not interoperable with the rest of our design flow,
 and this also makes it unsuitable for use in an industrial setting.
 
+\cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define 
+functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava 
+generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However, Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level. 
+
+\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash}, 
+
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
 %a full model and recomposing it of selective components to produce
 %a smaller model. This can be used to reduce the number of signals
