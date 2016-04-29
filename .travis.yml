@@ -1,0 +1,24 @@
+sudo: false
+before_install:
+- mkdir -p $HOME/texlive && curl -L https://github.com/urdh/texlive-blob/releases/download/20150712/texlive.tar.xz
+  | tar -JxC $HOME/texlive
+script:
+- PATH=$HOME/texlive/bin/x86_64-linux:$PATH
+- tlmgr update --self
+- tlmgr install IEEEtran
+- tlmgr install algorithmicx
+- tlmgr install algorithms
+- pdflatex Concepts
+- bibtex Concepts
+- pdflatex Concepts
+- pdflatex Concepts
+deploy:
+  provider: releases
+  api_key:
+    secure: cplVV9MS4j9wvQ09oDVs4DnLkm55tscO6sC4dE21GwJYODiRFJLdHljGk+Uy2cO2s4hj0YocLy9Ar6d/60AAig6N1i49zypYzuLgQD7d1JOusKe8GRZLXRJag14qJz31E1ZDeTzEmJwDzSs4yLAjQ8dQiMR2fL6LXQthunSaGHh9Z5vNxtsHViLpVenOSM6NxS8Y1Dgx5O9TZSqVB3b9JQIEdbzKvRGarTbzcPhg6O3yB/07axaMhLxBW3NWNPqAnHuXHjndt80fgcQvnYwcnjjFvG5em+nkJuK003XyIEFoUptIvNWJ56nH61DctAcH9RZIFwwS3KkES9oh528W/DuWkx3EQCmPT+K5O6n+1fntN3pnLcUFpGX92fIZqRluY3nacNtipkVrmk8wmPHywEO7rhffAVz/uiSsvkZGVs1zQSMXlaPV1dKTN6kmv0fuO+YM5kSQf/90p0Uv+jMod5afR4+ohbtwpxB+YEpiEnRMOGttINlM0zn+L6QdsGMB3ktDHa4yc/hw4nPRcEF7bFszvRVkrkxX3qe/i1H7J29ML8ynoYjSzh4BqfOKEPmRQQNPWfEK1NQKdn7/vlu3dCDJ7fx+KNm/vcuB/JnWTj+kZOMy0M5mYyLGSAQSxQ+8v3xuLfivyAnRB+qNHZZTmMyKvvXWskaSYF5dRVQlN8Y=
+  file: Concepts.pdf
+  skip_cleanup: true
+  on:
+    branches:
+      only:
+        - master
