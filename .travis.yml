@@ -1,0 +1,17 @@
+sudo: false
+
+before_install:
+- mkdir -p $HOME/texlive && curl -L https://github.com/urdh/texlive-blob/releases/download/20150712/texlive.tar.xz | tar -JxC $HOME/texlive
+
+
+script:
+- PATH=$HOME/texlive/bin/x86_64-linux:$PATH
+- tlmgr update --self
+- tlmgr install IEEEtran
+- tlmgr install algorithmicx
+- tlmgr install algorithms
+- mkdir _build
+- pdflatex Concepts
+- bibtex Concepts
+- pdflatex -output-directory _build Concepts.tex
+
