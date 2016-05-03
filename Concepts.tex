@@ -1725,6 +1725,31 @@ There are several existing methodologies which are similar to the
 one being proposed in this paper, however we found them limited in
 certain aspects as discussed below. 
 
+A common approach of designing asynchronous circuits, \textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify operations for asynchronous circuits for both big-
+digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into format describing a network of handshaked components, which can be 
+used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages 
+are used for synchronous design, and thus designers can adapt to Balsa more easily, however specifying a control system can lead to a complicated program which can be difficult to 
+comprehend, in comparison to the STGs produced in the proposed approach, in which signal interactions can be visualised.
+
+\textbf{Biscotti}~\cite{5232351} is an approach which uses a C-style language, which can be easy to adapt to as designers are likely to have programming experience. It features 
+\emph{forever} blocks, in which code runs sequentially, but all these blocks run concurrently to each other. This design method starts by specifying a circuit which is then 
+\emph{compiled} into a Petri-net for verification with existing tools including \noun{Workcraft} and if successful, synthesis, similar to our approach with conversion of concepts to allow 
+use with multiple existing tools based on STGs. Biscotti is aimed at designing data-driven asynchronous systems however, and as with Balsa, specifying an asynchronous control system is 
+complex and difficult, especially as the number of signals involved increases.  
+
+\cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define 
+functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava 
+generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However, 
+Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also 
+focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level. 
+
+\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell based tool, similar to Lava, focussed on asynchronous data circuits.  It has some cross-over 
+features with Lava, such as built-in verification, and the ability for users to define functions. C$\lambda$ash, however, uses existing Haskell constructs to directly synthesize as 
+asynchronous operations. C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of 
+specifying operations for asynchronous circuits, which may be more natural for designers, however Haskell as a language features huge differences to programming languages like 
+\noun{C}. The idea of a natural description is shared with Concepts, but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow 
+multiple levels, from low to high, when specifying. 
+
 \textbf{Snippets}~\cite{raey}, similar to concepts, are smaller
 state graph models which are used to compose full state graphs of
 larger systems. Snippets describe the operation of a part of a system
@@ -1733,17 +1758,7 @@ can fail. When composed with other snippets it can produce a working
 system state graph model. With our design methodology however we want
 to go deeper and decompose a component into concepts responsible for
 capturing signal behaviours for system features, such as handshakes,
-mutual exclusion, synchronisation, etc. 
-
-%\textbf{Structural design} features re-usability of modular components~\cite{modular-circuit-design}.
-%Here, a component design can be used multiple times across full device
-%designs in conjunction with several other circuit modules. These modules
-%can be changed in some way without affecting how they are used in
-%the full device designs. The ideas of this method are similar to that
-%of the design methodology we are proposing to reduce design time.
-%However, this method is at a much higher level, using fully designed
-%and tested components where as we propose to allow re-usability when
-%modelling at circuit level, using composed concepts. 
+mutual exclusion, synchronisation, etc.
 
 \textbf{DI algebra}~\cite{josephs1993overview} is a method of describing
 systems as algebraic equations. Each equation represents an operation
@@ -1760,11 +1775,19 @@ compositional design of asynchronous circuits using DI algebra and
 it is therefore not interoperable with the rest of our design flow,
 and this also makes it unsuitable for use in an industrial setting.
 
-\cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define 
-functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava 
-generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However, Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level. 
+\textbf{Structural design} features re-usability of modular components~\cite{modular-circuit-design}.
+Here, a component design can be used multiple times across full device
+designs in conjunction with several other circuit modules. These modules
+can be changed in some way without affecting how they are used in
+the full device designs. The ideas of this method are similar to that
+of the design methodology we are proposing to reduce design time.
+However, this method is at a much higher level, using fully designed
+and tested components where as we propose to allow re-usability when
+modelling at circuit level, using composed concepts. 
 
-\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash}, 
+Concepts have many beneficial features, such as reuse, natural description, multiple level description and composition, and more. Several of the discussed approaches feature similar 
+ideas which make them beneficial in certain ways, but we believe fall down at points where the inclusion of one or more of these features could make an approach better. With concepts, 
+we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible.
 
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
 %a full model and recomposing it of selective components to produce
