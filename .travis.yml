@@ -13,5 +13,6 @@ deploy:
   api_key:
     secure: RCv9wBh72u4e2jMmiVAR69y+iBtAPFFbmY+EN8PTMnHDSIfWlnLm6TxlJEDg60TCvCPJZ6Wu4N2IW7Y/9WddJgxgmwaCCWhFMuECcikO7P4B4DAZ0dLAYuObFUBeeXPY9w1T8aXnMvPOjnR3NSKB6ztZk5l0PFApsdOJWfqiF3WyI8K+60WP/ruAKgZ0+XODCRGBRD6TmHudguW++ex+YKsQEX827yaExWxeVb6+v1EYRBazYSRcpXWJjW+hmSyHonmmtNhSZaVHVaVgQghGr3Iqw/H7pdkhGDeeQ2/p6KnokwJT9buh3J0r8JQ77OLj9OFWJk+6sz/Fh3/c7c3Ip8zTWQMFlhanALhzYehRTTQVRaPve+tvL8Xl1sM3sNIHQM/674aQ2TQUoD/zM+SR5qv2zhwflyTKty7+B8D38ZmzYgd9QLxjyBk0LS8iNvbmahPlfGd2WCkojPQtnY9/Ooy7H6HZPKPjnyRJCexMNz6/t07XcKO39Aaosrybu4XjHBLGB9GRLHQxlFKlk6DqXIWgOEX+OvS7PhRzaE1oFWJz5+C33nLLNrUw8PWWVqp2yTGnHZCLSH1yX9llM94fbNnvW+rtnUabzuuKaTr/uMRS65W5Ak5j3Stvw9tbvJIP6DifKLoxpGQJiHoNa8S20mWOMKR5qwkCAKeNcZaFnVs=
   file: Concepts.pdf
+  skip_cleanup: true
   on:
     repo: tuura/concepts-article
