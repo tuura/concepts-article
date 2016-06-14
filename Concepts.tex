@@ -36,13 +36,13 @@ UK}}
 \begin{abstract}
 Asynchronous circuits can be useful in many applications, however,
 they are yet to be widely used in industry. The main reason for this
-is a steep learning curve for concurrency models, such Signal Transition
+is a steep learning curve for concurrency models, such as Signal Transition
 Graphs, that are developed by the academic community for specification
-and synthesis of asynchronous circuits. In this paper we introduce
+and synthesis of asynchronous circuits. In this article we introduce
 a compositional design flow for asynchronous circuits using \textit{concepts}
 -- a set of formalised descriptions for system requirements. Our aim
 is to simplify the process of capturing system requirements in the
-form of a formal specification, and promote the concepts as a means
+form of a formal specification, and promote concepts as a means
 for design reuse. The proposed design flow is applied to the development
 of an asynchronous buck converter. 
 \end{abstract}
@@ -98,7 +98,7 @@ A set of concepts describing the operation of a scenario is then passed
 into a translation algorithm that automatically converts it into an
 equivalent STG, which satisfies all given concepts and can be model-checked
 using standard tools~\cite{2007_poliakov_workcraft}. When all scenarios
-have been translated to STGs and verified, they can be combined to
+have been converted to STGs and verified, they can be combined to
 produce a complete specification. This step will also be automated,
 and will offer \emph{templates} for common scenario ordering requirements,
 such as mode switching sequences and start-up scenarios. 
@@ -113,21 +113,21 @@ and concepts describing the control which reacts to the environment,
 a model will be produced which shows how the environment and the control
 system interacts. 
 
-
-
-
-
 The idea is that our approach should reduce the complexity of designing
 asynchronous circuits, so the number of errors should be reduced,
 and easier to find and correct. This will in turn reduce the design
-time, and make asynchronous circuits more desirable and be used to
-make devices. 
+time, and make asynchronous circuits more desirable for industry, so 
+asynchronous circuits can be used in devices more commonly.
 
-The presented approach is automated in the open-source\noun{ Workcraft}
-framework~\cite{2007_poliakov_workcraft}. This parses concepts,
-uses them to produce scenario STGs and performs parallel composition~\cite{PCOMP}
-on these and creates full model STGs. Full models can then be synthesised
-using \noun{Workcraft}. In this paper, we use real life industrial
+The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.  
+This parses concepts and uses them to produce scenario STGs. 
+Combination of scenarios can also be performed by the \noun{Concepts} tool. 
+STGs produced by the tool, either scenario or full system STGs, are viewed, 
+edited, simulated, verified and synthesised using the open-source \noun{Workcraft} 
+framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify} 
+and \noun{Mpsat} to perform these operations.
+
+In this paper, we use real life industrial
 example of a buck converter~\cite{2014_sokolov_ftfc} to show our
 design flow, and test this design approach. \vspace{-2mm}
 
@@ -141,7 +141,7 @@ has helped us develop concepts.
 
 The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
 serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
-this STG is attained using the monolithic approach.
+this STG is obtained using the monolithic approach.
 
 \begin{figure}[h]
 \begin{centering}
@@ -160,9 +160,9 @@ connections between these according to the description of operation of the syste
 manually connect these depending on the similarities between these branches.
 
 In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to
-further faults, and several iterations design and tests until the new feature is added and deemed to be working correctly, or the designer may even have to start from a blank page, 
-unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. This can slow 
-the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~
+further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly. In some cases the designer may even have to start from a 
+blank page, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. 
+This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~
 \cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
@@ -180,7 +180,7 @@ Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter w
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:stg-breakdown}A scenario STG with highlighted points of interest}
+\protect\caption{\label{fig:stg-breakdown}ZC absent scenario STG showing points of interest}
 
 \par\end{centering}
 
@@ -188,18 +188,18 @@ Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter w
 
 Studying this STG shows that there are some signal interactions that we can identify.  These are: 
 \begin{enumerate}
-\item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
-\item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
 \item Signals \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
 \item Signals \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
+\item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
+\item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
 \end{enumerate}
 
 These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually
-exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and
-should be mutually exclusive, and \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
+exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and 
+therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
 \textsf{$gn$} respectively, forming two separate handshakes.
 
-Knowing this information means that we can describe these protocols once, and include them in the design of a circuit involving these signals. Any other interactions between of any of
+Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between of any of
 these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an
 interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold.
 
@@ -364,7 +364,7 @@ holds too.
 We now introduce concepts which are specific for the domain of asynchronous
 circuits and express them using the abstract concepts defined above. 
 
-\textbf{Signal-level concepts:} States and events of an asynchronous
+\textbf{\label{signal-level}Signal-level concepts:} States and events of an asynchronous
 circuit are parameterised by a fixed set of signals $A$. A state
 $s\in S$ is an assignment of Boolean values to signals, i.e. a function
 $s:A\rightarrow\mathbb{B}$, while an event $e\in E$ is a \emph{signal
@@ -462,12 +462,13 @@ Indeed, a C-element combines the constraints imposed on the output
 transitions by two `virtual' buffers.
 
 Behaviour of other gates can be similarly defined using concepts,
-see our Haskell implementation~\cite{2015_concepts_github}.
+see our Haskell implementation~\cite{2016_concepts_github}.
 
 \textbf{Protocol-level concepts:} In addition to gate-level concepts
 described above it is often important to specify \emph{protocols}
-of interaction between multiple gates or components. In this section
-we demonstrate how one can use concepts to specify asynchronous handshakes
+of interaction between multiple gates, components or signals, as shown in the example scenario STG in section~\ref{sub:new-way}.
+
+Here we demonstrate how one can use concepts to specify asynchronous handshakes
 and mutual exclusion mechanisms.
 
 Given two signals $a$ and $b$, a \emph{handshake} between them is
@@ -528,6 +529,8 @@ signals $g_{1}$ and $g_{2}$:
 
 \subsection{Signal types}
 
+\textbf{COULD THIS SECTION BE INCLUDED IN SIGNAL-LEVEL CONCEPTS? (SECTION~\ref{signal-level})}
+
 A discussion of signal types and how these are represented using concepts. The benefits of this, for example we can block input -> input. 
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
@@ -537,7 +540,7 @@ A discussion of signal types and how these are represented using concepts. The b
 
 
 
-This section presents a method for deriving a circuit specification
+Here we present a method for deriving a circuit specification
 from a set of concepts that describe its different aspects. We focus
 on specification of \emph{Speed-Independent}~(SI) circuits, which
 is an important class of asynchronous circuits~\cite{Muller_1959_ts}
@@ -607,8 +610,6 @@ places) between transitions.
 
 \vspace{-3mm}
 
-
-
 \subsection{Composition of concepts \label{sub:Comp-of-concepts}}
 
 \vspace{-3mm}
@@ -623,9 +624,12 @@ several levels of system description and refer to signal, gate and
 protocol level concepts in one specification, depending on which level
 is more convenient in a particular situation. 
 
-Consider a C-element example whose signals $a$ and $b$ are inputs,
-and signal $c$ is the output. When input $a$ or $b$ changes, we
-assume it remains in the new state until the output $c$ changes.
+Consider the example of a C-element, which has signals $a$ and $b$ as inputs,
+and signal $c$ is the output. The output of this C-element is connected to 
+each of the inputs via an inverter. This is a simple example of a complete 
+system, of a C-element with an environment, and will be used several 
+times as a simple example. 
+
 The following signal-level concepts describe this system: 
 
 \vspace{2mm}
@@ -647,7 +651,10 @@ $\,\mathsf{inputRise}=c^{-}\rightsquigarrow a^{+}\,\diamond\, c^{-}\rightsquigar
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{before}(a^{+})\,\diamond\,\mathsf{before}(b^{+})\,\diamond\,\mathsf{before}(c^{+})$
+$\begin{aligned}\mathsf{initialState}=\mathsf{initialise}(a, 0)\,\diamond\,\mathsf{initialise}(b,0)\,\diamond\\
+ \,\mathsf{initialise}(c,0)
+\end{aligned}
+$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -661,7 +668,7 @@ $
 
 There are 6 concepts featured, the first 5 of which describe certain
 operations of the system. The sixth concept composes all of the first
-5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
+5 concepts, and can be converted to the STG shown in Figure~\ref{fig:cElement STG composition}.
 The first four are named according to what they represent, for example,
 \textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
 which cause the output to rise\textit{.} The fifth concept is the
@@ -696,7 +703,7 @@ $\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diam
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity axioms of the underlying commutative monoid. Consequently,
-this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
+this specification will be converted to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
 Figure~\ref{fig:cElement-concepts} illustrates all the concepts
 involved in this specification.
 
