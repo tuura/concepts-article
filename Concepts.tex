@@ -765,6 +765,8 @@ the current namespace). When a list of concepts is passed into the
 STG translation algorithm, all referenced concepts are replaced by
 the corresponding definitions. 
 
+The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
+
 \vspace{-3mm}
 
 
@@ -785,12 +787,12 @@ discuss this. A method of synthesizing concepts directly also exists, which will
 As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
 a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
 of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
-of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would produce the list of concepts found in 
+of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts found in 
 Figure~\ref{fig:c-element-concepts}.
 
 \vspace{2mm}
-\begin{figure}
-\begin{minipage}[t]{1\columnwidth}%
+\begin{figure}[h]
+\begin{minipage}[h]{1\columnwidth}%
 \begin{center}
 $\,a^{+}\rightsquigarrow c^{+}$
 \par\end{center}
@@ -845,7 +847,7 @@ file. This file type is compatible with all standard tools, such as \noun{Petrif
 
 Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transitions of a signal, and places
 in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before
-it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the above list of signal-level concepts, the first
+it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the list of signal-level concepts, the first
 part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-step1}.
 
 \begin{figure}[h]
@@ -861,9 +863,9 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 \end{figure}
 
 Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
-in the STG, we need to connect the place after $a^{+}$, $a_0$ in Figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, to the transition of 
-$c^{+}$. We use a read-arc to connect these as if $a_0$ contains a token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from 
-occurring.
+in the STG, we need to connect the place after $a^{+}$, $a_0$ in Figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, with the use of a 
+token, being present if $a^{-}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains a 
+token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from occurring.
 
 \begin{figure}[h]
 \begin{centering}
@@ -877,7 +879,7 @@ occurring.
 
 \end{figure}
 
-All concepts like this can be added to the STG in the same way. The STG following insertion of all concepts in the above list, before the \emph{initialise} concepts, will produce an STG as
+All concepts like this, signal-level concepts, can be added to the STG in the same way. The STG following insertion of all signal-level concepts in the above list, before the \emph{initialise} concepts, will produce an STG as
 shown in Figure~\ref{fig:step-by-step9}
 
 \begin{figure}[h]
@@ -934,8 +936,8 @@ convert smaller collections of concepts, or even singular concepts, which are no
 \emph{Parallel Composition}
 within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example above, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial 
-states, this would give us the following STGs.
+Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial 
+states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
 
 \begin{figure}[h]
 \begin{centering}
@@ -1009,7 +1011,7 @@ and this is returned when the scenario completes.
 
 There may be some more complex requirements to combination, and it
 is possible to combine some scenarios using one template, then including
-the result in a combination using another template. For example, a
+the result in a combination with other scenarios using another template. For example, a
 system which is non-deterministic may also have a scenario that runs
 at start up to initialise the system. In this case, a designer could
 combine all non-deterministic scenarios first, then combine the resulting
@@ -1038,10 +1040,10 @@ $p\rightsquigarrow x^{+}$, where p is any signal transition. We then record thes
 as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
 will be combined using the \emph{AND} ($*$) operation.
 
-This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Now we can 
-reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a transition of one 
-being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If some concepts in 
-this system are:
+This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following 
+this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a 
+transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If 
+some concepts in this system are:
 
 \vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
@@ -1063,7 +1065,7 @@ The equation for $x^{+}$ will contain in some variation $p*q$. These concepts st
 the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
 Boolean equations. 
 
-Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. Following this, the set and reset functions for 
+Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for 
 this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
 reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
 with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
@@ -1071,7 +1073,7 @@ with the set function of $x^{+}$. This can then be combined with an existing equ
 This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
 Synthesis is found in Algorithm~\ref{alg:direct-synth}
 
-\begin{algorithm}
+\begin{algorithm}[h]
 \begin{algorithmic}
 \caption{Algorithm for direct synthesis \label{alg:direct-synth}}
 \For {Each scenario in system}
@@ -1099,8 +1101,8 @@ Synthesis is found in Algorithm~\ref{alg:direct-synth}
 
 \subsubsection{Example of direct synthesis} 
 
-For this example we will use the same example as we have previously, the C-element with environment. In the case of a circuit for this example, the inputs $a$ and $b$ we cannot 
-control, and thus it is assumed that the environment will correctly invert the output, $c$ to produce these input signals. 
+For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example, 
+the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals. 
 
 Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
 
@@ -1116,8 +1118,8 @@ $\,c^{-}: \bar{a} * \bar{b}$
 
 \end{minipage}\vspace{2mm}
 
-These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a C-
-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
+These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a 
+C-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
 
 \begin{figure}[h]
 \begin{centering}
@@ -1125,7 +1127,7 @@ element in the implementation, and thus we can use C-element synthesis. The synt
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:c-element-gate}Implementation synthesized from C-element with environment concepts}
+\protect\caption{\label{fig:c-element-gate}Implementation of C-element with environment}
 
 \par\end{centering}
 
@@ -1330,10 +1332,10 @@ of detected conditions and describing the intended reaction to these
 events, as shown in Figure~\ref{fig:buck-spec}. The diagram shows
 that UV should be handled by switching the NMOS transistor \noun{Off}
 and PMOS transistor \noun{On}, while OC should revert their state~--
-PMOS \noun{Off} and NMOS \noun{On}~(no~ZC scenario). Detection of
-the ZC after UV does not change this behaviour~(late~ZC scenario).
+PMOS \noun{Off} and NMOS \noun{On}~(ZC~absent scenario). Detection of
+the ZC after UV does not change this behaviour~(ZC~late scenario).
 However, if ZC is detected before UV then both the PMOS and NMOS transistors
-remain \noun{Off} until the UV condition~(early~ZC scenario). 
+remain \noun{Off} until the UV condition is indicated~(ZC~early scenario). 
 
 Note that ZC and UV are independent conditions that indicate separate
 physical effects and therefore the corresponding signals can happen
@@ -1363,10 +1365,10 @@ STG.
 During this process, it is useful to find any operations which occur
 between two or more operational modes, as these can then be reused
 in other scenarios. If this is defined in one list of concepts, it
-can then be referenced in concept lists for other scenarios by name. 
+can then be referenced in concept lists for other scenarios by name, assuming these scenarios will be built as part of the same workspace. 
 
 
-\subsubsection{No ZC scenario}
+\subsubsection{ZC~absent scenario}
 
 We start with describing the operational mode where no ZC condition
 is signalled and produce the following list of concepts:
@@ -1381,7 +1383,7 @@ $\,\mathsf{ocFunc}=oc^{+}\rightsquigarrow gp^{-}\,\diamond\, oc^{+}\rightsquigar
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{uvReact}=gp\_ack^{+}\rightsquigarrow uv^{-}\,\diamond\, gn\_ack^{+}\rightsquigarrow uv^{-}$
+$\,\mathsf{uvReact}=gp\_ack^{+}\rightsquigarrow uv^{-}\,\diamond\, gn\_ack^{-}\rightsquigarrow uv^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1405,7 +1407,7 @@ $\,\mathsf{gnHandshake}=\mathsf{handshake}(gn,\, gn\_ack)$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{before}(uv^{+})\,\diamond\,\mathsf{before}(oc^{+})$~
+$\,\mathsf{initialState}=\mathsf{initialise}(uv,0)\,\diamond\,\mathsf{initialise}(oc,0)$~
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1417,7 +1419,7 @@ $
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{zcAbsent}=\mathsf{quiescent}(zc^{+})\,\diamond\,\mathsf{quiescent}(zc^{-})$
+$\,\mathsf{zcAbsent}=\mathsf{silent}(zc^{+})\,\diamond\,\mathsf{silent}(zc^{-})$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1445,12 +1447,15 @@ of both under-voltage and over-current. This includes concepts describing
 handshakes for $gp/gp\_ack$ and $gn/gn\_ack$, and transistor safety
 constraints which are described using protocol-level concepts. We
 also describe constraints provided by the environment that we are
-aware of, so this behaviour is captured in the resulting STG. 
+aware of, so this behaviour is captured in the resulting STG for testing and simulation purposes. 
 
 The descriptions of the operational modes suggest that there are similarities
 between them, mainly in the sequence of PMOS/NMOS activation during
 the charging cycle. Therefore it is natural to define a \textsf{chargeFunc}
 concept that can be reused when other operation modes are specified. 
+
+We also include for this scenario a~\emph{zcAbscent} concept. This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate that in this system, there is a signal $zc$ 
+but it has no bearing on the scenario.
 
 Figure~\ref{fig:zcAbsentScenario STG} shows the STG produced from
 the final concept in the list, \textsf{zcAbsentScenario}. It contains
@@ -1460,23 +1465,23 @@ or over-current first, and this needs to be noted in the concepts
 and the STG. 
 
 
-\subsubsection{Late ZC scenario}
+\subsubsection{ZC~late scenario}
 
 In this operational mode we have to include zero-crossing, as per
 the specification. However, in this case under-voltage and over-current
-are corrected in the same way as in the no~ZC scenario, and therefore
+are corrected in the same way as in the no~ZC scenario, as zero-crossing has no effect when it signals after UV, and therefore
 we can include the \textsf{zcAbsentScenario} concept. We still need
-to describe the interactions involving zero-crossing. The concepts
+to describe the interactions involving zero-crossing, as well as it's initial state. The concepts
 are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{+}$
+$\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
 $\begin{aligned}\mathsf{zcLateScenario}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
- & \,\mathsf{zcLate}\,\diamond\,\mathsf{before}(zc^{+})
+ & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}(zc,0)
 \end{aligned}
 $
 \par\end{flushleft}%
@@ -1499,11 +1504,9 @@ looks similar to the STG in Figure~\ref{fig:zcAbsentScenario STG}
 but this features a branch from some $uv$ and $zc$ interaction.
 This is defined in the concept \textsf{zcLateScenario}, which does
 not describe the arc $zc^{+}\rightsquigarrow zc^{-}$ but this consistency
-is implied in concepts, as for obvious reasons, $zc^{+}$ must occur
-before $zc^{-}$ can occur. 
+is implied at conversion time by consistency loops.
 
-
-\subsubsection{Early ZC scenario}
+\subsubsection{ZC~early scenario}
 
 The \textsf{chargeFunc} concept can be reused, as the PMOS/NMOS transistors
 are still operated in the same way. However, the interplay between
@@ -1530,7 +1533,7 @@ $\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigar
 
 \begin{flushleft}
 $\begin{aligned}\mathsf{zcEarlyScenario}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
- & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{before}(zc^{+})
+ & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}(zc,0)
 \end{aligned}
 $
 \par\end{flushleft}%
@@ -1564,7 +1567,7 @@ as STG models before we can combine these.
 \vspace{-2mm}
 
 
-To be combinable by our method, the produced STGs need to have certain
+To be combinable by our method, the produced STGs need to satisfy certain
 properties~\cite{Cortadella}:
 \begin{itemize}
 \item Complete State Coding (CSC): each state of the models with different
@@ -1580,7 +1583,7 @@ each signal alternate.
 These properties are automatically checked in \noun{Workcraft }using
 the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
 }In the event that one of these properties does not hold, unless it
-can be corrected automatically, the composition of scenarios fails.
+can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
 In this case a problematic concept is identified and diagnostic information
 is printed out to help a designer to correct the issue.
 
@@ -1816,7 +1819,7 @@ we have attempted to address these issues and make concepts not only a powerful 
 \vspace{-2mm}
 
 
-This paper shows that it is possible to design a system by splitting
+This document shows that it is possible to design a system by splitting
 it into operational modes, and describing signal interactions and
 requirements of the mode in a textual format. These can then be used
 to produce STGs that represent these operational modes, which can
@@ -1855,6 +1858,10 @@ form. \noun{Scenco} provides support for describing concept models
 to produce scenarios and then compose scenarios to produce full system
 implementations. 
 
+CPOGs can also be used for process mining, using tools such as \noun{PGminer}~\cite{mokhov_2016_mining, pgminer}.
+Process mining can be used for various purposes in conjunction with designing asynchronous circuits. For example, process mining can find a behavioural model if non exists, and can be 
+used to check that an existing specification is realistic, or find less complex model. All of this can be performed automatically, and aid a designer in reducing design time and errors. 
+
 In certain cases, an implementation may need to be changed based on
 design parameters to produce the best result, and these may change
 during run-time or after the fabrication stage. CPOGs support parameter
@@ -1867,7 +1874,8 @@ STGs and CPOGs both have their benefits when working with asynchronous
 systems, and it will be useful to compare these two methods, to see
 if either is better when designing a system from concepts, or see
 if there are certain specifications where one modelling method is
-better than the other. 
+better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits 
+using concepts, and this is something we aim to explore.
 
 \vspace{-3mm}
 
