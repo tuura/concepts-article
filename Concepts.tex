@@ -42,7 +42,7 @@ and synthesis of asynchronous circuits. In this article we introduce
 a compositional design flow for asynchronous circuits using \textit{concepts}
 -- a set of formalised descriptions for system requirements. Our aim
 is to simplify the process of capturing system requirements in the
-form of a formal specification, and promote concepts as a means
+form of a formal specification, and to promote concepts as a means
 for design reuse. The proposed design flow is applied to the development
 of an asynchronous buck converter. 
 \end{abstract}
@@ -85,8 +85,9 @@ design. The method splits a specification into several parts corresponding
 to operational modes of the circuit (\emph{scenarios}). The features,
 constraints and requirements of each scenario\emph{ }(\emph{concepts}),
 are described in a formal notation, which we implemented as a domain
-specific language embedded in Haskell~\cite{1996_hudak_dsl}. Concepts
-can be composed and one concept can be made up of multiple smaller
+specific language embedded in Haskell~\cite{1996_hudak_dsl}. Concepts can
+be defined at several levels; signal-, gate- and protocol-level. All concepts
+can be composed with other concepts, and one concept can be made up of multiple smaller
 concepts, thus supporting the design reuse at the level of system
 specification. Scenarios of reconfigurable systems~\cite{microadapt}
 can also be parameterised by run-time parameters (e.g., available
@@ -98,7 +99,7 @@ A set of concepts describing the operation of a scenario is then passed
 into a translation algorithm that automatically converts it into an
 equivalent STG, which satisfies all given concepts and can be model-checked
 using standard tools~\cite{2007_poliakov_workcraft}. When all scenarios
-have been converted to STGs and verified, they can be combined to
+have been translated to STGs and verified, they can be combined to
 produce a complete specification. This step will also be automated,
 and will offer \emph{templates} for common scenario ordering requirements,
 such as mode switching sequences and start-up scenarios. 
@@ -160,10 +161,12 @@ connections between these according to the description of operation of the syste
 manually connect these depending on the similarities between these branches.
 
 In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to
-further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly. In some cases the designer may even have to start from a 
-blank page, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, debug and edit. 
-This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~
-\cite{2014_sokolov_ftfc}.
+further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly. 
+
+A designer may even have to start from a 
+blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, 
+debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and 
+ever shorter~\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
 In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, 
@@ -199,7 +202,7 @@ exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS tran
 therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
 \textsf{$gn$} respectively, forming two separate handshakes.
 
-Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between of any of
+Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between any of
 these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an
 interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold.
 
@@ -331,7 +334,7 @@ in both of the subsystems.
 One can derive other useful concepts from the three concepts described
 above, for instance, 
 \[
-\mathsf{quiescent}(e,s)=\overline{\mathsf{excited}(e,s)}
+\mathsf{silent}(e,s)=\overline{\mathsf{excited}(e,s)}
 \]
 captures all states $s\in S$ when a given event $e\in E$ cannot
 occur. Furthermore, one can define other useful concepts that cannot
@@ -418,8 +421,11 @@ is used in the partially applied form. We will use a short-hand notation
 \]
 for the causality concept for convenience.
 
-One can compose two causality concepts using the monoid composition,
-for example
+While this concept is called \emph{causality}, this doesn't necessarily imply timings, such as any $\mathit{cause}$ transition immediatley forcing the
+$\mathit{effect}$ transition it applies to. Causality can be used in order to list all possible $\mathit{cause}$ transitions which need to occur in order 
+for an $\mathit{effect}$ transition.
+
+For example, one can compose two causality concepts using the monoid composition.
 \[
 a\rightsquigarrow c\ \diamond\ b\rightsquigarrow c
 \]
@@ -445,6 +451,15 @@ An \emph{inverter} has a similar conceptual specification, but the
 output transition is inverted:
 \[
 \mathsf{inverter}(a,b)=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
+\]
+An \emph{SR-Latch} has two input signals, $s$ and $r$ each of which cause differing transitions with the output, $q$:
+\[
+\mathsf{SRLatch}(s,r,q)=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
+\]
+This can be described as, the\emph{set} signal, $s$ when active, or high, will cause the gate to latch a high state, outputting this with signal $q$ being high. Conversely, the \emph{reset} signal, $r$, when active, or high, will cause the gate to latch a low state, and the output $q$ will be low in this case.
+Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter. 
+\[
+\mathsf{SRLatch}(s,r,q)=\mathsf{buffer}(s,q)\ \diamond\ \mathsf{inverter}(r,q)
 \]
 A \emph{C-element} is a gate with two inputs $a$ and $b$ and one
 output~$c$, which synchronises input transitions:
@@ -490,12 +505,15 @@ from a buffer and an inverter is often used by circuit designers as
 a convenient way of reasoning. 
 
 In order to specify the initial state of a handshake between signals~$a$
-and~$b$, we can use functions $\mathsf{before}$ and $\mathsf{after}$.
-For example, $\mathsf{before}(a^{+})$ captures the states where signal
-$a$ is set to $0$. We can compose an initial state concept with
+and~$b$, we can use the function $\mathsf{initialise}$.
+For example, $\mathsf{initialise}(a,0)$ sets the state of the signal
+$a$ to $0$. We can compose an initial state concept with
 the handshake concept as follows:
 \[
-\mathsf{handshake00}(a,b)\!=\!\mathsf{handshake}(a,b)\diamond\mathsf{before}(a^{+})\diamond\mathsf{before}(b^{+})
+\mathsf{handshake00}(a,b)\!=\!\mathsf{handshake}(a,b)\, \diamond\,\mathsf{initialise}(a,0)\,\diamond \,
+\]
+\[
+\mathsf{initialise}(b, 0)
 \]
 The resulting concept corresponds to a handshake between signals~$a$
 and~$b$ that are both initially $0$.
@@ -651,8 +669,8 @@ $\,\mathsf{inputRise}=c^{-}\rightsquigarrow a^{+}\,\diamond\, c^{-}\rightsquigar
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{initialState}=\mathsf{initialise}(a, 0)\,\diamond\,\mathsf{initialise}(b,0)\,\diamond\\
- \,\mathsf{initialise}(c,0)
+$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}(a, 0)\,\diamond\,\mathsf{initialise}(b,0)\,\diamond \\
+ & \, \mathsf{initialise}(c,0)
 \end{aligned}
 $
 \par\end{flushleft}
@@ -668,7 +686,7 @@ $
 
 There are 6 concepts featured, the first 5 of which describe certain
 operations of the system. The sixth concept composes all of the first
-5 concepts, and can be converted to the STG shown in Figure~\ref{fig:cElement STG composition}.
+5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
 The first four are named according to what they represent, for example,
 \textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
 which cause the output to rise\textit{.} The fifth concept is the
@@ -703,7 +721,7 @@ $\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diam
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity axioms of the underlying commutative monoid. Consequently,
-this specification will be converted to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
+this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
 Figure~\ref{fig:cElement-concepts} illustrates all the concepts
 involved in this specification.
 
@@ -774,21 +792,21 @@ The process of combining scenarios is explained further in Section~\ref{sub:scen
 
 Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
 deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
-\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to convert 
+\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to translate 
 concept specifications to STGs in order to be used with these tools.
 
-In this section, we will discuss the algorithm which converts concepts to STGs. Once concepts have been converted, they can be composed and combined using tools, and this will also be
-discuss this. A method of synthesizing concepts directly also exists, which will be explained, and this gives more options to designers.
+In this section, we will discuss the algorithm which translates concepts to STGs. Once concepts have been translated, they can be composed and combined using tools, and this will also 
+be discussed. A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
 
-\subsection{Converting concepts to STGs \label {sub:converting}}
+\subsection{Translating concepts to STGs \label {sub:translating}}
 
 \textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
 
 As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
-a combination of concept types. When converting any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level 
-of concepts, signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
-of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts found in 
-Figure~\ref{fig:c-element-concepts}.
+a combination of concept types. When translating any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level, 
+signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
+of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts 
+found in Figure~\ref{fig:c-element-concepts}.
 
 \vspace{2mm}
 \begin{figure}[h]
@@ -856,16 +874,16 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:step-by-step1}The first step in converting concepts to an STG}
+\protect\caption{\label{fig:step-by-step1}The first step in translating concepts to an STG}
 
 \par\end{centering}
 
 \end{figure}
 
 Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
-in the STG, we need to connect the place after $a^{+}$, $a_0$ in Figure~\ref{fig:step-by-step1}, which shows whether $a$ has already transitioned high or not, with the use of a 
-token, being present if $a^{-}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains a 
-token, a read-arc will allow $c^{+}$ to transition without consuming the token, because this would block $a-$ from occurring.
+in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a 
+token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains 
+a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition so consistency will not be held.
 
 \begin{figure}[h]
 \begin{centering}
@@ -873,7 +891,7 @@ token, a read-arc will allow $c^{+}$ to transition without consuming the token, 
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:step-by-step2}The second step in converting concepts to STGs}
+\protect\caption{\label{fig:step-by-step2}The second step in translating concepts to STGs}
 
 \par\end{centering}
 
@@ -888,7 +906,7 @@ shown in Figure~\ref{fig:step-by-step9}
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:step-by-step9}The converted STG with all arcs added}
+\protect\caption{\label{fig:step-by-step9}The translated STG with all arcs added}
 
 \par\end{centering}
 
@@ -896,7 +914,7 @@ shown in Figure~\ref{fig:step-by-step9}
 
 At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}(a,0)$,
 $\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
-$b_0$ and $c_0$. This will produce the fully converted STG, which will look as follows:
+$b_0$ and $c_0$. This will produce the fully translated STG, which will look as follows:
 
 \begin{figure}[h]
 \begin{centering}
@@ -904,13 +922,13 @@ $b_0$ and $c_0$. This will produce the fully converted STG, which will look as f
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:step-by-step12}The converted C-element with environment STG}
+\protect\caption{\label{fig:step-by-step12}The translated C-element with environment STG}
 
 \par\end{centering}
 
 \end{figure}
 
-The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}, and it can be 
+The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}. This can be 
 resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
 
 \begin{figure}[h]
@@ -923,21 +941,21 @@ resynthesized using \noun{Petrify} to produce a more compact and easier to read 
 
 Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with 
 \noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made 
-these can be done either with the concepts, which can be re-converted to view the updated STG, or to the STG directly.
+these can be done either with the concepts, which can be re-translated to view an updated STG, or to the STG directly.
 
-In some cases it may not necessary to visualize a converted STG. A \emph{.g} file is used as input with these tools, without having to import into \noun{Workcraft}. This can further
-quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using \emph{Direct
-Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
+In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can 
+further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using 
+\emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
 
 \subsection{Parallel composition}
 
-With this method of converting concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and convert this to an STG, it is also possible to
-convert smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using 
+With this method of translating concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and translate this to an STG, it is also possible to
+translate smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using 
 \emph{Parallel Composition}
 within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can convert the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts individually. Including the initial 
-states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
+Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts 
+individually. Including the initial states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
 
 \begin{figure}[h]
 \begin{centering}
@@ -964,10 +982,10 @@ states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}
 }
 \par\end{centering}
 
-\protect\caption{\label{fig:IndividConceptStgs}Individual STG conversions of concepts}
+\protect\caption{\label{fig:IndividConceptStgs}Individual STG translations of concepts}
 \end{figure}
 
-These STGs can now be passed into \noun{Pcomp}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
+These STGs can now be passed into \noun{Pcomp}~\cite{PCOMP}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
 Figure~\ref{fig:cElement STG}.
 
 \subsection{Scenario composition \label{sub:scenario-composition}}
@@ -1031,7 +1049,7 @@ best possible implementation, but it may be a quicker method of finding an imple
 
 \subsubsection{Algorithm of direct synthesis}
 
-When finding an implementation for a specification, we need only concern ourselves with the Boolean equations for the output signals. The input signals, the environment, can not be
+When finding an implementation for a specification, we need only concern ourselves with the output signals. The input signals, the environment, can not be
 controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
 Boolean equations for the output signals. 
 
@@ -1133,7 +1151,7 @@ C-element in the implementation, and thus we can use C-element synthesis. The sy
 
 \end{figure}
 
-%%+ Algorithm for converting concepts to STGs
+%%+ Algorithm for translating concepts to STGs
 %%
 %%+ Using parallel and scenario composition to produce STGs for the whole system
 %%
@@ -1504,7 +1522,7 @@ looks similar to the STG in Figure~\ref{fig:zcAbsentScenario STG}
 but this features a branch from some $uv$ and $zc$ interaction.
 This is defined in the concept \textsf{zcLateScenario}, which does
 not describe the arc $zc^{+}\rightsquigarrow zc^{-}$ but this consistency
-is implied at conversion time by consistency loops.
+is implied at translation time by consistency loops.
 
 \subsubsection{ZC~early scenario}
 
@@ -1580,12 +1598,12 @@ be made.
 \item Signal consistency: in any trace the rising and falling phases of
 each signal alternate.
 \end{itemize}
-These properties are automatically checked in \noun{Workcraft }using
+These properties can be automatically checked in \noun{Workcraft }using
 the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
 }In the event that one of these properties does not hold, unless it
 can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
 In this case a problematic concept is identified and diagnostic information
-is printed out to help a designer to correct the issue.
+is printed out to help a designer correct the issue.
 
 Correctly produced scenarios may not necessarily work as the specification
 suggests, and this needs to be validated before using these scenarios
@@ -1654,8 +1672,8 @@ it only allows one of them to run at a time. The single token is consumed
 by whichever scenario runs, and the lack of token in \textsf{p1} after
 this stops any more scenarios running. The token is passed through
 the scenario, and after under-voltage is corrected the token is passed
-into \textsf{p2}. This token is then consumed by the over-current
-branch, and returned to \textsf{p1}\noun{ }and this allows only one
+into \textsf{p2}. This token is then consumed by the over-current branch when over-current signals, 
+and returns to \textsf{p1}, allowing only one
 of the scenarios to run again. 
 
 \vspace{-3mm}
@@ -1688,16 +1706,13 @@ full system specification, and can now be used in the next step.
 
 \vspace{-2.5mm}
 
-
-
 \subsection{Synthesis of a speed-independent controller}
 
 \vspace{-2.5mm}
 
-
 A fully working model of the system is only part way to having completed
 the process. The final step in this design flow is to synthesize this
-model. Synthesis is the process of finding Boolean equations to calculate
+specification. Synthesis is the process of finding Boolean equations to calculate
 the next state of the output signals based on the input signals and
 the current state of the circuit~\cite{Cortadella}. We can do this
 using \noun{Petrify} or \noun{Mpsat}, both of which are integrated
@@ -1716,7 +1731,6 @@ from this full model.
 \protect\caption{\label{fig:buck Circuit}Asynchronous logic gate implementation}
 \end{figure}
 
-
 When we have acquired a circuit design, it needs to be verified to
 ensure that the logic will perform as we expected before the circuit
 is fabricated. To verify this, the circuit is converted into a so-called
@@ -1724,8 +1738,6 @@ circuit Petri net, using a model for each logic gate and combining
 them by means of read-arcs. By reachability analysis of this Petri
 net one can verify that the corresponding circuit is deadlock-free,
 hazard-free and conforms to the specification~\cite{2008_poliakov_async}. 
-
-
 
 \vspace{-2mm}
 
@@ -1825,8 +1837,7 @@ requirements of the mode in a textual format. These can then be used
 to produce STGs that represent these operational modes, which can
 be combined to produce a model for the full system specification.
 
-
-This design method can reduce the time of designing an asynchronous
+Using concepts, a user can reduce the time of designing an asynchronous
 control circuit from the ground up, as well as allow reuse of components
 either as part of a scenario or entire scenarios to reduce the design-time
 of future projects. Composition of concepts and scenarios can help
@@ -1834,19 +1845,14 @@ reduce errors and save time in comparison to performing these manually.
 This method can help to make asynchronous circuits more appealing
 to industrial designers.
 
-This method currently works with Signal Transition Graphs, however
+Currently, this method works with Signal Transition Graphs, however
 it can be applied to other modelling disciplines, such as Finite State
 Machines~(FSM). In some cases, a designer may wish to view a scenario
 or full system model as an FSM as they can provide more information
 about a system, which can help with editing finer details of system,
-or when correcting errors. It would be possible to use concepts to
-create scenario FSMs that can be combined to produce a full system
-model in FSM form. STGs and FSMs could be interchangeable in this
-respect, for example, a scenario STG could be produced, and a designer
-may choose to view it as an FSM, which can be viewed by ``zooming
-in'' to a section of the STG, that will expand this to show states
-of the system, and possible transitions. Any edits to this can then
-be used to update the overall STG. 
+or when correcting errors. It could be possible to use concepts to
+create scenario FSMs that could then be combined to produce a full system
+model in FSM form. 
 
 In addition to FSMs and STGs, we also plan to extend this design method
 to support Conditional Partial Order Graphs~(CPOGs)~\cite{CPOG1}
