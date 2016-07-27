@@ -8,6 +8,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{setspace}
+\usepackage{array}
 
 \makeatletter
 
@@ -1775,8 +1776,28 @@ hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 \section{Related work}
 
 There are several existing methodologies which are similar to the
-one being proposed in this paper, however we found them limited in
-certain aspects as discussed below. 
+one being proposed in this paper, and there are a common set of features between these which can be compared. 
+In some cases, these cannot be used for asynchronous designs, but some of their other key features can still be compared.
+Table~\ref{tab:related_work} contains a comparison of these features.
+
+We have found these related works limited in
+certain aspects, and we discuss this below. 
+\begin{table*}[t]
+\caption{A comparison of features of related works and the proposed method \label{tab:related_work}}
+  \centering
+  \begin{tabular}[htb]{| m{1.5cm} | m{2cm} | m{1.2cm} | m{1.7cm} | m{1.5cm} | m{1.7cm} | m{1.7cm} | m{1.2cm} |}
+  \hline
+  Title                       & \,Asynchronous support & \,Tool support  & \,Composition & \,Gate-level design & \,Event-level design & \,Protocol-level design  & \,Design focus \\ \hline \hline
+  Concepts              & Yes                               & Yes                 & Yes               & Yes                       & Yes                         & Yes                              & \,Little digital \\ \hline
+  Balsa                     & Yes                               & Yes                 & No                & Yes                       & No                          & Yes                              & \,Big\,\,\,\, digital \\ \hline
+  Biscotti                  & Yes                               & Yes                 & No                & Yes                       & No                           & No                               & \,Big\,\,\,\, digital \\ \hline
+  Lava                      & Yes                               & Yes                 & No                & Yes                       & No                           & Yes                             & \,Big\,\,\,\, digital \\ \hline
+  C$\lambda$ash     & Yes                               & Yes                 & No                & Yes                       & No                           & Yes                             & \,Big\,\,\,\, digital \\ \hline
+  Snippets                & No                                & No                   & Yes               & No                        & No                          & No                                & \,Little digital \\ \hline
+  DI algebra             & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & \,Little digital \\ \hline
+  Structural design   & No                                & Yes                 & No                 & No                        & No                          & No                               & \,Modular circuits \\ \hline
+  \end{tabular} 
+\end{table*}
 
 A common approach of designing asynchronous circuits, \textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify operations for asynchronous circuits for both big-
 digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into format describing a network of handshaked components, which can be 
