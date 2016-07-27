@@ -800,8 +800,6 @@ be discussed. A method of synthesizing concepts directly also exists, which will
 
 \subsection{Translating concepts to STGs \label {sub:translating}}
 
-\textbf{INCLUDE A PSEUDOCODE ALGORITHM FOR THIS}
-
 As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
 a combination of concept types. When translating any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level, 
 signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
@@ -987,6 +985,39 @@ individually. Including the initial states, this would give us the STGs found in
 
 These STGs can now be passed into \noun{Pcomp}~\cite{PCOMP}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
 Figure~\ref{fig:cElement STG}.
+
+The algorithm for the translation from concepts to STGs can be found in Algorithm~\ref{alg:translation}.
+
+\begin{algorithm}[h]
+\begin{algorithmic}
+\caption{Concepts to STG translation algorithm \label{alg:translation}}
+\For {Each defined concept}
+  \State \textbf{add} signal-level concepts \textbf{to} conceptList
+\EndFor \\
+
+//Create consistency loops
+\For {Each signal in system}
+  \State \textbf{define} signal as input/output/internal
+  \State \textbf{add} transition \textbf{high}
+  \State \textbf{add} transition \textbf{low}
+  \State \textbf{add} place \textbf{signal-0}
+  \State \textbf{add} place \textbf{signal-1}
+  \State \textbf{connect} (transition \textbf{high}, place \textbf{signal-1})
+  \State \textbf{connect} (place \textbf{signal-1}, transition \textbf{low})
+  \State \textbf{connect} (transition \textbf{low}, place \textbf{signal-0})
+  \State \textbf{connect} (place \textbf{signal-0}, transition \textbf{high})
+\EndFor
+
+\For {Each causlity concept}
+  \State \textbf{connect-read}(place \textbf{following} cause, effect transition)
+\EndFor
+
+\For {Each initial state concept}
+  \State \textbf{add-token}(place \textbf{signal-}value)
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Scenario composition \label{sub:scenario-composition}}
 
