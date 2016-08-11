@@ -35,17 +35,29 @@ UK}}
 \maketitle
 
 \begin{abstract}
-Asynchronous circuits can be useful in many applications, however,
-they are yet to be widely used in industry. The main reason for this
-is a steep learning curve for concurrency models, such as Signal Transition
-Graphs, that are developed by the academic community for specification
-and synthesis of asynchronous circuits. In this article we introduce
-a compositional design flow for asynchronous circuits using \textit{concepts}
--- a set of formalised descriptions for system requirements. Our aim
-is to simplify the process of capturing system requirements in the
-form of a formal specification, and to promote concepts as a means
-for design reuse. The proposed design flow is applied to the development
-of an asynchronous buck converter. 
+Asynchronous circuits are becoming increasingly important in
+system design for Internet of Things, where they orchestrate
+the interface between big synchronous computation components
+and the analogue environment, which is inherently asynchronous
+and has high uncertainty with respect to power supply,
+temperature and long-term ageing effects.
+Wide adoption of asynchronous circuits by industrial users is
+hindered by a steep learning curve for asynchronous control models,
+such as Signal Transition Graphs, that are developed by the academic
+community for specification, verification and synthesis of
+asynchronous circuits.
+
+In this article we introduce a novel high-level description language
+for asynchronous circuits, which is based on behavioural
+\textit{concepts} -- high-level descriptions of asynchronous circuit
+requirements, that can be shared, reused and extended by users,
+and can be automatically translated to Signal Transition Graphs for
+further processing by conventional asynchronous and synchronous EDA tools.
+Our aim is to simplify the process of capturing system requirements in the
+form of a formal specification, and to promote behavioural concepts as a
+means for design reuse. The proposed design flow is fully automated in
+open-source toolsuite Workcraft, and is applied to the development of
+an asynchronous power regulator.
 \end{abstract}
 
 \sloppy
