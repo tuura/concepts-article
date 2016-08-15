@@ -676,7 +676,7 @@ $\,\mathsf{import}\, Tuura.ConceptConcat$
 
 \begin{flushleft}
 $\,\mathsf{circuit :: (Eq a) =>}\, a \rightarrow a \rightarrow  a \rightarrow  CircuitConcept\,a$
-$\begin{aligned}\mathsf{circuit \,a \,b \,c}= & \mathsf{\, outputRise}\,<>\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}\\<>
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c= & \mathsf{\, outputRise}\,<>\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}\\<>
 & \mathsf{\, inputRise}\,<>\,\mathsf{initialState}
 \end{aligned}
 $
@@ -748,7 +748,7 @@ and the same initial state concept:\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{circuit \,a \,b \,c}=\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
+$\mathsf{circuit} \,a \,b \,c=\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
 $\mathsf{where}$\\
 $\mathsf{environment}=\mathsf{inverter} \,c \,a \,\diamond\,\mathsf{inverter}\,c \,b$
 \end{minipage}\vspace{2mm}
@@ -773,7 +773,7 @@ the following equivalent specification:\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{circuit}=\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c$%
+$\mathsf{circuit}\,a \,b \,c=\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c$%
 \end{minipage}\vspace{2mm}
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
@@ -1459,8 +1459,9 @@ is signalled and produce the following list of concepts:
 \begin{minipage}[t]{1\columnwidth}%
 	
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReaction}\,\diamond\\
-& \,\mathsf{zcAbsent}
+$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\
+& \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReaction}\,\diamond
+\,\mathsf{zcAbsent}
 \end{aligned}
 $
 \par\end{flushleft}%
@@ -1568,7 +1569,8 @@ are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
+$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\ 
+& \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
 & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
@@ -1614,7 +1616,7 @@ several new concepts:
 \begin{minipage}[t]{1\columnwidth}%
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
+$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
 & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
