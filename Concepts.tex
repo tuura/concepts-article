@@ -134,9 +134,9 @@ time, and make asynchronous circuits more desirable for industry, so
 asynchronous circuits can be used in devices more commonly.
 
 The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.  
-This parses concepts and uses them to produce scenario STGs. 
-Combination of scenarios can also be performed by the \noun{Concepts} tool. 
-STGs produced by the tool, either scenario or full system STGs, are viewed, 
+This parses concepts and uses them to produce scenario STGs. We aim to implement
+combination of scenarios in the tool in the future.
+STGs produced, either scenario or full system, are viewed, 
 edited, simulated, verified and synthesised using the open-source \noun{Workcraft} 
 framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify} 
 and \noun{Mpsat} to perform these operations.
@@ -458,33 +458,33 @@ the behaviour of gates in asynchronous circuits. For example, a \emph{buffer}
 is a gate with one input signal $a\in A$ and one output signal $b\in A$,
 whose output transitions causally depend on the input ones:
 \[
-\mathsf{buffer}(a,b)=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
+\mathsf{buffer}\, a\, b=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
 \]
 An \emph{inverter} has a similar conceptual specification, but the
 output transition is inverted:
 \[
-\mathsf{inverter}(a,b)=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
+\mathsf{inverter}\,a \,b=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
 \]
 An \emph{SR-Latch} has two input signals, $s$ and $r$ each of which cause differing transitions with the output, $q$:
 \[
-\mathsf{SRLatch}(s,r,q)=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
+\mathsf{SRLatch}\,s \,r \,q=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
 \]
 This can be described as, the\emph{set} signal, $s$ when active, or high, will cause the gate to latch a high state, outputting this with signal $q$ being high. Conversely, the \emph{reset} signal, $r$, when active, or high, will cause the gate to latch a low state, and the output $q$ will be low in this case.
 Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter. 
 \[
-\mathsf{SRLatch}(s,r,q)=\mathsf{buffer}(s,q)\ \diamond\ \mathsf{inverter}(r,q)
+\mathsf{SRLatch}\,s \,r \,q=\mathsf{buffer}\,s \,q \ \diamond\ \mathsf{inverter}\,r \,q
 \]
 A \emph{C-element} is a gate with two inputs $a$ and $b$ and one
 output~$c$, which synchronises input transitions:
 \[
-\mathsf{cElement}(a,b,c)=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
+\mathsf{cElement}\,a \,b \,c=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
 \]
 In words, the rising output transition $c^{+}$ causally depends on
 both $a^{+}$ and $b^{+}$, and the falling output transition $c^{-}$
 causally depends on both $a^{-}$ and $b^{-}$. An alternative way
 to express the same concept is to reuse the buffer concept:
 \[
-\mathsf{cElement}(a,b,c)=\mathsf{buffer}(a,c)\ \diamond\ \mathsf{buffer}(b,c)
+\mathsf{cElement}\,a \,b \,c=\mathsf{buffer}\,a \,c \ \diamond\ \mathsf{buffer}\,b \,c
 \]
 Indeed, a C-element combines the constraints imposed on the output
 transitions by two `virtual' buffers.
@@ -502,7 +502,7 @@ and mutual exclusion mechanisms.
 Given two signals $a$ and $b$, a \emph{handshake} between them is
 the following composition of causality concepts:
 \[
-\mathsf{handshake}(a,b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
+\mathsf{handshake}\,a \,b=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
 \]
 Intuitively, we have a two-way asynchronous communication channel,
 where one party sends transitions $a^{+}$ and $a^{-}$ and the other
@@ -511,7 +511,7 @@ One can notice that the four causality concepts match those found
 in the buffer and inverter concepts, which leads to an alternative
 way to express a handshake between~$a$ and~$b$:
 \[
-\mathsf{handshake}(a,b)=\mathsf{buffer}(a,b)\diamond\mathsf{inverter}(b,a)
+\mathsf{handshake}\,a \,b=\mathsf{buffer}\,a \,b \diamond\mathsf{inverter}\,b \,a
 \]
 Indeed, this conceptual understanding of a handshake as being composed
 from a buffer and an inverter is often used by circuit designers as
@@ -523,10 +523,10 @@ For example, $\mathsf{initialise}(a,0)$ sets the state of the signal
 $a$ to $0$. We can compose an initial state concept with
 the handshake concept as follows:
 \[
-\mathsf{handshake00}(a,b)\!=\!\mathsf{handshake}(a,b)\, \diamond\,\mathsf{initialise}(a,0)\,\diamond \,
+\mathsf{handshake00}\,a \,b \!=\!\mathsf{handshake}\,a \,b \, \diamond\,\mathsf{initialise}\,a \,0 \,\diamond \,
 \]
 \[
-\mathsf{initialise}(b, 0)
+\mathsf{initialise}\,b \,0
 \]
 The resulting concept corresponds to a handshake between signals~$a$
 and~$b$ that are both initially $0$.
@@ -534,14 +534,14 @@ and~$b$ that are both initially $0$.
 The last important concept that requires an introduction is \emph{mutual
 exclusion} between two signals~$a$ and~$b$:
 \[
-\mathsf{me}(a,b)=a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}(a^{+})\wedge\mathsf{after}(b^{+})}
+\mathsf{me}\,a \,b =a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}\,a^{+} \, \wedge\mathsf{after}\,b^{+}\, }
 \]
 The concept comprises two parts: 1) in terms of causality, we say
 that rising transitions $a^{+}$ and $b^{+}$ can only occur after
 the opposite falling ones, 2) the initial states when $a=b=1$ are
 forbidden. Taken together these two parts guarantee that $a$ and
 $b$ are never set to $1$ at the same time, i.e. they are mutually
-exclusive. We also add $\overline{\mathsf{after}(a^{+})\wedge\mathsf{after}(b^{+})}$
+exclusive. We also add $\overline{\mathsf{after}\, a^{+} \, \wedge\mathsf{after}\ b^{+}\,}$
 to the invariant.
 
 We can now specify a \emph{mutual exclusion element}~\cite{2008_kinniment_synchronisation}
@@ -552,7 +552,7 @@ signals $g_{1}$ and $g_{2}$:
 \vspace{-3mm}
 {\small{}
 \[
-\mathsf{meElement}(r_{1},r_{2},g_{1},g_{2})\!=\mathsf{\! buffer}(r_{1},g_{1})\diamond\mathsf{buffer}(r_{2},g_{2})\diamond\mathsf{me}(g_{1},g_{2})
+\mathsf{meElement}\'r_{1} \,r_{2} \,g_{1} \,g_{2} \,\!=\mathsf{\! buffer}\,r_{1} \,g_{1} \,\diamond\mathsf{buffer}\,r_{2} \,g_{2} \,\diamond\mathsf{me}\,g_{1} \,g_{2} \,
 \]
 }{\small \par}
 
@@ -661,39 +661,51 @@ each of the inputs via an inverter. This is a simple example of a complete
 system, of a C-element with an environment, and will be used several 
 times as a simple example. 
 
-The following signal-level concepts describe this system: 
+The following is the file using the code to describe the example using signal-level concepts, which can be passed into
+the translation tool:
 
 \vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\,\mathsf{outputRise}=a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
+$\,\mathsf{module}\, Concept \, \mathsf{where}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputFall}=c^{+}\rightsquigarrow a^{-}\,\diamond\, c^{+}\rightsquigarrow b^{-}$
+$\,\mathsf{import}\, Tuura.ConceptConcat$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputFall}=a^{-}\rightsquigarrow c^{-}\,\diamond\, b^{-}\rightsquigarrow c^{-}$
+$\,\mathsf{circuit :: (Eq a) =>}\, a \rightarrow a \rightarrow  a \rightarrow  CircuitConcept\,a$
+$\begin{aligned}\mathsf{circuit \,a \,b \,c}= & \mathsf{\, outputRise}\,<>\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}\\<>
+& \mathsf{\, inputRise}\,<>\,\mathsf{initialState}
+\end{aligned}
+$
+$\,\mathsf{where}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputRise}=c^{-}\rightsquigarrow a^{+}\,\diamond\, c^{-}\rightsquigarrow b^{+}$
+$\,\mathsf{outputRise}=\mathsf{rise} \,a\rightsquigarrow \mathsf{rise} \,c\,<>\, \mathsf{rise} \,b\rightsquigarrow \mathsf{rise} \,c$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}(a, 0)\,\diamond\,\mathsf{initialise}(b,0)\,\diamond \\
- & \, \mathsf{initialise}(c,0)
+$\,\mathsf{inputFall}=\mathsf{rise} \,c\rightsquigarrow \mathsf{fall} \,a \,<>\, \mathsf{rise} \,c \rightsquigarrow \mathsf{fall} \,b$
+\par\end{flushleft}
+
+\begin{flushleft}
+$\,\mathsf{outputFall}=\mathsf{fall} \,a \rightsquigarrow \mathsf{fall} \,c \,<>\, \mathsf{fall} \,b \rightsquigarrow \mathsf{fall} \,c$
+\par\end{flushleft}
+
+\begin{flushleft}
+$\,\mathsf{inputRise}=\mathsf{fall} \,c \rightsquigarrow \mathsf{rise} \,a \,<>\, \mathsf{fall} \,c\rightsquigarrow \mathsf{rise} \,b$
+\par\end{flushleft}
+
+\begin{flushleft}
+$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}\,a \, 0\,<>\,\mathsf{initialise}\,b \,0\,<> \\
+ & \, \mathsf{initialise}\,c \,0 \,
 \end{aligned}
 $
 \par\end{flushleft}
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{system}= & \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\diamond\,\mathsf{outputFall\,\diamond}\\
- & \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}
-\end{aligned}
-$
-\par\end{flushleft}%
 \end{minipage}\vspace{2mm}
 
 
@@ -717,6 +729,15 @@ placed in the STG produced.
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
 
+Note: The code demonstrated in this example is the format required to work with the tool. 
+For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts. 
+We will omit the module declaration, and imports, as well as 
+the declaration of types for \emph{circuit}, as these are required, and as such will be included in all concepts.
+\emph{rise} and \emph{fall} are used in the code to represent a high and low transition respectively.  
+We replace \emph{rise} with '+' and \emph{fall} with '-'. Finally, the diamond composition operator in code is both a '<' and '>' as 
+a diamond character is not a standard keyboard character. In this article, we will use $\diamond$ to denote composition. 
+All examples in this article are available in the 
+format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
 
 This set of concepts is only one way of describing this C-element
 and the environment. Another way could be to use gate-level concepts
@@ -727,9 +748,9 @@ and the same initial state concept:\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{environment}=\mathsf{inverter}(c,a)\,\diamond\,\mathsf{inverter}(c,b)$
-
-$\mathsf{system}=\mathsf{cElement}(a,b,c)\,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$%
+$\mathsf{circuit \,a \,b \,c}=\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
+$\mathsf{where}$\\
+$\mathsf{environment}=\mathsf{inverter} \,c \,a \,\diamond\,\mathsf{inverter}\,c \,b$
 \end{minipage}\vspace{2mm}
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
@@ -752,7 +773,7 @@ the following equivalent specification:\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{system}=\mathsf{handshake00}(a,c)\,\diamond\,\mathsf{handshake00}(b,c)$%
+$\mathsf{circuit}=\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c$%
 \end{minipage}\vspace{2mm}
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
@@ -855,15 +876,15 @@ $\,c^{-}\rightsquigarrow b^{+}$
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}(a,0)$
+$\,\mathsf{initialise}\,a \,0 $
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}(b,0)$
+$\,\mathsf{initialise}\,b \,0 $
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}(c,0)$
+$\,\mathsf{initialise}\,c \,0 $
 \par\end{center}
 
 \end{minipage}
@@ -1436,6 +1457,18 @@ We start with describing the operational mode where no ZC condition
 is signalled and produce the following list of concepts:
 
 \begin{minipage}[t]{1\columnwidth}%
+	
+\begin{flushleft}
+$\begin{aligned}\mathsf{circuit}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReaction}\,\diamond\\
+& \,\mathsf{zcAbsent}
+\end{aligned}
+$
+\par\end{flushleft}%
+
+\par\begin{flushleft}
+$\mathsf{where}$
+\par\end{flushleft}
+
 \begin{flushleft}
 $\,\mathsf{uvFunc}=uv^{+}\rightsquigarrow gp^{+}\,\diamond\, uv^{+}\rightsquigarrow gn^{-}$
 \par\end{flushleft}
@@ -1453,23 +1486,26 @@ $\,\mathsf{ocReact}=gp\_ack^{-}\rightsquigarrow oc^{-}\,\diamond\, gn\_ack^{+}\r
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{environmentConstraint}=\mathsf{me}(uv,\, oc)$
+$\begin{aligned}\,\mathsf{environmentConstraint}=&\mathsf{me}\,uv\, oc \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\\ &\,\diamond\, gp\_ack^{-}\rightsquigarrow gn^{+}
+\end{aligned}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}(gn,\, gp)$
+$\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}\,gn\, gp$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{gpHandshake}=\mathsf{handshake}(gp,\, gp\_ack)$
+$\,\mathsf{gpHandshake}=\mathsf{handshake}\,gp\,gp\_ack$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{gnHandshake}=\mathsf{handshake}(gn,\, gn\_ack)$
+$\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
 \par\end{flushleft}
 
+
+
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{initialise}(uv,0)\,\diamond\,\mathsf{initialise}(oc,0)$~
+$\,\mathsf{initialState}=\mathsf{initialise} \, uv \, 0\,\diamond\,\mathsf{initialise}\,oc\,0$~
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1481,15 +1517,9 @@ $
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{zcAbsent}=\mathsf{silent}(zc^{+})\,\diamond\,\mathsf{silent}(zc^{-})$
+$\,\mathsf{zcAbsent}=\mathsf{silent}\,zc^{+}\,\diamond\,\mathsf{silent}\,zc^{-}$
 \par\end{flushleft}
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{zcAbsentScenario}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReaction}\,\diamond\\
- & \,\mathsf{zcAbsent}
-\end{aligned}
-$
-\par\end{flushleft}%
 \end{minipage}
 
 \begin{flushleft}
@@ -1538,15 +1568,20 @@ are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{-}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\begin{aligned}\mathsf{zcLateScenario}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
- & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}(zc,0)
+$\begin{aligned}\mathsf{circuit}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
+& \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,0
 \end{aligned}
 $
 \par\end{flushleft}%
+
+\par\begin{flushleft}
+$\mathsf{where}$
+\par\end{flushleft}
+
+\begin{flushleft}
+$\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{-}$
+\par\end{flushleft}
+
 \end{minipage}
 
 \begin{figure}[H]
@@ -1577,6 +1612,18 @@ several new concepts:
 
 \begin{onehalfspace}
 \begin{minipage}[t]{1\columnwidth}%
+
+\begin{flushleft}
+$\begin{aligned}\mathsf{circuit}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
+& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,0
+\end{aligned}
+$
+\par\end{flushleft}%	
+
+\begin{flushleft}
+$\mathsf{where}$
+\end{flushleft}
+	
 \begin{flushleft}
 $\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
 \par\end{flushleft}
@@ -1593,12 +1640,6 @@ $\,\mathsf{uvFunc'}=uv^{+}\rightsquigarrow gp^{+}$
 $\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigarrow uv^{-}\diamond\, gp\_ack^{+}\rightsquigarrow uv^{-}$
 \par\end{flushleft}
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{zcEarlyScenario}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
- & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}(zc,0)
-\end{aligned}
-$
-\par\end{flushleft}%
 \end{minipage}
 \end{onehalfspace}
 
@@ -1614,13 +1655,15 @@ concept.}
 
 \par\end{center}
 
+\vspace{-8mm}
+
 The obtained STG for the \textsf{zcEarlyScenario} concept is shown
 in Figure~\ref{fig:zcEarlyScenario STG}. We have now produced three
 scenario STGs, one for each operational mode in this system. However,
 we need to ensure they are correct both for the specification and
 as STG models before we can combine these. 
 
-\vspace{-2mm}
+
 
 
 
