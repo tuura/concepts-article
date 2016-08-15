@@ -519,14 +519,14 @@ a convenient way of reasoning.
 
 In order to specify the initial state of a handshake between signals~$a$
 and~$b$, we can use the function $\mathsf{initialise}$.
-For example, $\mathsf{initialise}(a,0)$ sets the state of the signal
+For example, $\mathsf{initialise}\,a \,False$ sets the state of the signal
 $a$ to $0$. We can compose an initial state concept with
 the handshake concept as follows:
 \[
-\mathsf{handshake00}\,a \,b \!=\!\mathsf{handshake}\,a \,b \, \diamond\,\mathsf{initialise}\,a \,0 \,\diamond \,
+\mathsf{handshake00}\,a \,b \!=\!\mathsf{handshake}\,a \,b \, \diamond\,\mathsf{initialise}\,a \,False \,\diamond \,
 \]
 \[
-\mathsf{initialise}\,b \,0
+\mathsf{initialise}\,b \,False
 \]
 The resulting concept corresponds to a handshake between signals~$a$
 and~$b$ that are both initially $0$.
@@ -700,8 +700,8 @@ $\,\mathsf{inputRise}=\mathsf{fall} \,c \rightsquigarrow \mathsf{rise} \,a \,<>\
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}\,a \, 0\,<>\,\mathsf{initialise}\,b \,0\,<> \\
- & \, \mathsf{initialise}\,c \,0 \,
+$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}\,a \, False\,<>\,\mathsf{initialise}\,b \,False\,<> \\
+ & \, \mathsf{initialise}\,c \,False \,
 \end{aligned}
 $
 \par\end{flushleft}
@@ -876,15 +876,15 @@ $\,c^{-}\rightsquigarrow b^{+}$
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}\,a \,0 $
+$\,\mathsf{initialise}\,a \,False $
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}\,b \,0 $
+$\,\mathsf{initialise}\,b \,False $
 \par\end{center}
 
 \begin{center}
-$\,\mathsf{initialise}\,c \,0 $
+$\,\mathsf{initialise}\,c \,False $
 \par\end{center}
 
 \end{minipage}
@@ -944,8 +944,8 @@ shown in Figure~\ref{fig:step-by-step9}
 
 \end{figure}
 
-At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}(a,0)$,
-$\,\mathsf{initialise}(b,0)$ and $\,\mathsf{initialise}(c,0)$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
+At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}\,a \,False$,
+$\,\mathsf{initialise}\,b \,False$ and $\,\mathsf{initialise}\,c \,False$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
 $b_0$ and $c_0$. This will produce the fully translated STG, which will look as follows:
 
 \begin{figure}[h]
@@ -1505,7 +1505,7 @@ $\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
 
 
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{initialise} \, uv \, 0\,\diamond\,\mathsf{initialise}\,oc\,0$~
+$\,\mathsf{initialState}=\mathsf{initialise} \, uv \, False\,\diamond\,\mathsf{initialise}\,oc\,False$~
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1569,7 +1569,7 @@ are as follows:
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
 $\begin{aligned}\mathsf{circuit}= & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
-& \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,0
+& \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
 \par\end{flushleft}%
@@ -1615,7 +1615,7 @@ several new concepts:
 
 \begin{flushleft}
 $\begin{aligned}\mathsf{circuit}= & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
-& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,0
+& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
 \par\end{flushleft}%	
