@@ -91,7 +91,7 @@ are commonly used for the specification,
 verification and synthesis of asynchronous control circuits as they are
 supported by multiple EDA tools, such as \noun{Petrify}~\cite{Cortadella},
 \noun{Mpsat}~\cite{khomenko2004detecting}, \noun{Versify}~[Y],
-\noun{Workcraft}~\cite{2007_poliakov_workcraft}[Z], and others.
+\noun{Workcraft}~\cite{2007_poliakov_workcraft}[W], and others.
 These tools take an STG specification of a complete controller and can
 formally verify its correctness, as well as synthesise an asynchronous
 circuit implementation that is \emph{speed-independent}, i.e. guaranteed
@@ -124,9 +124,9 @@ specification.
 %energy budget) or design-time ones (e.g., the number of processing
 %cores in a Network-on-Chip network), therefore concepts should also
 %support parameterisation.
-Concepts can be automatically translated into equivalent STGs that can
-be formally verified using standard tools, e.g.~\cite{2007_poliakov_workcraft}[W].
-After all scenarios have been translated to STGs and verified, they can be
+Concepts can be automatically translated into equivalent STGs and
+formally verified using standard tools, e.g. \noun{Workcraft}.
+When all scenarios have been translated to STGs and verified, they can be
 combined to produce a complete specification, and synthesised into an
 asynchronous circuit implementation targeting a chosen technology library.
 %Commented out, as this is probably too detailed for the intro.
@@ -134,7 +134,14 @@ asynchronous circuit implementation targeting a chosen technology library.
 %and will offer \emph{templates} for common scenario ordering requirements,
 %such as mode switching sequences and start-up scenarios. 
 
-TODO for Andrey: list of contributions with forward references to specific sections.
+Our contributions are as follows: (i) we formally introduce asynchronous
+concepts as a specification language (\S\ref{sec:Concepts}), (ii) we
+show how to use concepts for circuit specification
+(\S\ref{sec:Circuit-specification-with}) and automatically translate
+them to STGs (\S\ref{sec: interop-with-stg}), and (iii) we illustrate
+the proposed design method on a case study of an asynchronous power
+regulator (\S\ref{sec:case-study}).
+
 
 %Designing a controller for an analogue circuit using this method can
 %be beneficial. Any of the partial knowledge we have about any casual
