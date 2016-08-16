@@ -56,7 +56,7 @@ further processing by conventional asynchronous and synchronous EDA tools.
 Our aim is to simplify the process of capturing system requirements in the
 form of a formal specification, and to promote behavioural concepts as a
 means for design reuse. The proposed design flow is fully automated in
-open-source toolsuite Workcraft, and is applied to the development of
+open-source toolsuite \noun{Workcraft}, and is applied to the development of
 an asynchronous power regulator.
 \end{abstract}
 
@@ -135,20 +135,21 @@ asynchronous circuit implementation targeting a chosen technology library.
 %such as mode switching sequences and start-up scenarios. 
 
 Our contributions are as follows:
+\vspace{-1mm}
 \begin{itemize}
   \item We formally introduce asynchronous concepts as a specification
-  language (\S\ref{sec:Concepts}).
-  \item We show how to use concepts for circuit specification
-  (\S\ref{sec:Circuit-specification-with}) and automatically translate
-  concepts to STGs (\S\ref{sec: interop-with-stg}) for verification and 
-  synthesis using our open-source software tool \noun{Workcraft}.
+  language in \S\ref{sec:Concepts} and compare it to STGs in
+  \S\ref{sec:Circuit-specification-with}.
+  \item We present an algorithm for translating concepts to STGs
+  and integrate it into our open-source software tool \noun{Workcraft},
+  \S\ref{sec: interop-with-stg}.
   \item We demonstrate the proposed design method on a case study of an
   asynchronous power regulator (\S\ref{sec:case-study}).
 \end{itemize}
-
+\vspace{-1mm}
 \noindent
-We start with a motivational example in \S\ref{} and review related work
-in \S\ref{sec:related-work}.
+We start with a motivational example in \S\ref{sec:Motivating Example}, review related work
+in \S\ref{sec:related-work}, and discuss future work in \S\ref{sec:conclusions}.
 
 %Designing a controller for an analogue circuit using this method can
 %be beneficial. Any of the partial knowledge we have about any casual
@@ -1948,7 +1949,7 @@ we have attempted to address these issues and make concepts not only a powerful 
 %model of a system~(or a subsystem) has been obtained using the proposed
 %methodology. 
 
-\section{Conclusions and future work}
+\section{Conclusions and future work\label{sec:conclusions}}
 
 \vspace{-2mm}
 
