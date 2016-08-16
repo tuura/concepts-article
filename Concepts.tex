@@ -105,59 +105,62 @@ consistent specification is a major design challenge~\cite{2014_sokolov_ftfc}[Y]
 The STG models of components and operating modes are difficult to reuse
 when designing other specifications, and thus each new design must be built
 from the ground up. This further adds to the design time, hence making
-asynchronous circuits unattractive for use in industry.
+asynchronous circuits costly for use in industry.
 
-To address this issue, we propose a new method of asynchronous circuit
-design. The method splits a specification into several parts corresponding
+In this paper we address this issue by proposing a new method for design
+of asynchronous circuits based on \emph{behavioural concepts}.
+The method splits a specification into several parts corresponding
 to operational modes of the circuit (\emph{scenarios}). The features,
-constraints and requirements of each scenario\emph{ }(\emph{concepts}),
+constraints and requirements of each scenario (\emph{concepts}),
 are described in a formal notation, which we implemented as a domain
 specific language embedded in Haskell~\cite{1996_hudak_dsl}. Concepts can
-be defined at several levels; signal-, gate- and protocol-level. All concepts
-can be composed with other concepts, and one concept can be made up of multiple smaller
-concepts, thus supporting the design reuse at the level of system
-specification. Scenarios of reconfigurable systems~\cite{microadapt}
-can also be parameterised by run-time parameters (e.g., available
-energy budget) or design-time ones (e.g., the number of processing
-cores in a Network-on-Chip network), therefore concepts should also
-support parameterisation.
+be defined at several levels; specifically, we give examples of signal-,
+gate- and protocol-level concepts. It is possible to compose basic concepts
+into more complex ones, thus supporting the design reuse at the level of system
+specification. 
+%Commented out as I'm not sure we are actually talking about this in the paper:
+%Scenarios of reconfigurable systems~\cite{microadapt}
+%can also be parameterised by run-time parameters (e.g., available
+%energy budget) or design-time ones (e.g., the number of processing
+%cores in a Network-on-Chip network), therefore concepts should also
+%support parameterisation.
+Concepts can be automatically translated into equivalent STGs that can
+be formally verified using standard tools, e.g.~\cite{2007_poliakov_workcraft}[W].
+After all scenarios have been translated to STGs and verified, they can be
+combined to produce a complete specification, and synthesised into an
+asynchronous circuit implementation targeting a chosen technology library.
+%Commented out, as this is probably too detailed for the intro.
+%This step will also be automated,
+%and will offer \emph{templates} for common scenario ordering requirements,
+%such as mode switching sequences and start-up scenarios. 
 
-A set of concepts describing the operation of a scenario is then passed
-into a translation algorithm that automatically converts it into an
-equivalent STG, which satisfies all given concepts and can be model-checked
-using standard tools~\cite{2007_poliakov_workcraft}. When all scenarios
-have been translated to STGs and verified, they can be combined to
-produce a complete specification. This step will also be automated,
-and will offer \emph{templates} for common scenario ordering requirements,
-such as mode switching sequences and start-up scenarios. 
+TODO for Andrey: list of contributions with forward references to specific sections.
 
+%Designing a controller for an analogue circuit using this method can
+%be beneficial. Any of the partial knowledge we have about any casual
+%relationships between events in the environment can be naturally modelled
+%as concepts. When composed with other concepts describing these relationships
+%and concepts describing the control which reacts to the environment,
+%a model will be produced which shows how the environment and the control
+%system interacts. 
 
+%The idea is that our approach should reduce the complexity of designing
+%asynchronous circuits, so the number of errors should be reduced,
+%and easier to find and correct. This will in turn reduce the design
+%time, and make asynchronous circuits more desirable for industry, so 
+%asynchronous circuits can be used in devices more commonly.
 
-Designing a controller for an analogue circuit using this method can
-be beneficial. Any of the partial knowledge we have about any casual
-relationships between events in the environment can be naturally modelled
-as concepts. When composed with other concepts describing these relationships
-and concepts describing the control which reacts to the environment,
-a model will be produced which shows how the environment and the control
-system interacts. 
+%The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.  
+%This parses concepts and uses them to produce scenario STGs. We aim to implement
+%combination of scenarios in the tool in the future.
+%STGs produced, either scenario or full system, are viewed, 
+%edited, simulated, verified and synthesised using the open-source \noun{Workcraft} 
+%framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify} 
+%and \noun{Mpsat} to perform these operations.
 
-The idea is that our approach should reduce the complexity of designing
-asynchronous circuits, so the number of errors should be reduced,
-and easier to find and correct. This will in turn reduce the design
-time, and make asynchronous circuits more desirable for industry, so 
-asynchronous circuits can be used in devices more commonly.
-
-The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.  
-This parses concepts and uses them to produce scenario STGs. We aim to implement
-combination of scenarios in the tool in the future.
-STGs produced, either scenario or full system, are viewed, 
-edited, simulated, verified and synthesised using the open-source \noun{Workcraft} 
-framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify} 
-and \noun{Mpsat} to perform these operations.
-
-In this paper, we use real life industrial
-example of a buck converter~\cite{2014_sokolov_ftfc} to show our
-design flow, and test this design approach. \vspace{-2mm}
+%In this paper, we use real life industrial
+%example of a buck converter~\cite{2014_sokolov_ftfc} to show our
+%design flow, and test this design approach. \vspace{-2mm}
 
 \section{Motivating Example \label{sec:Motivating Example}}
 
