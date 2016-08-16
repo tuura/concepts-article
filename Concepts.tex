@@ -66,6 +66,8 @@ an asynchronous power regulator.
 \section{Introduction}
 \vspace{-2mm}
 
+%TODO: 1-3 recent references [X] by lead research groups to support
+%the opening statement. Talk to Alex & Danil.
 Analogue and mixed-signal circuits become more tightly integrated with
 digital systems, in particular in mobile and autonomous applications, 
 such as wearable consumer electronics and self-powered Internet-of-Things
@@ -81,21 +83,29 @@ This makes them particularly useful for interacting with analogue world,
 where the ability to quickly respond to non-digital input, e.g.
 dynamically changing loads across the chip, is essential for reliable
 operation and efficiency~\cite{2008_audy_isscc_tutorial}.
-%Capturing all these aspects
-%of system behaviour in a consistent specification becomes the major
-%design challenge~\cite{2014_sokolov_ftfc}.
 
-Signal Transition Graphs~(STGs) are commonly used for the specification
-of asynchronous control circuits as they are compatible with multiple
-synthesis tools, such as \noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}.
-These tools take an STG specification of a complete controller and
-produce a speed-independent circuit implementation~\cite{Muller_1959_ts}.
-Such a monolithic approach to designing asynchronous circuits has
+%TODO: ref [V] for Versify tool by Oriol Roig
+%TODO: ref [W] to Workcraft website
+%TODO: ref [Y] to ASYNC paper on multi-phase buck
+Signal Transition Graphs~(STGs) are commonly used for the specification,
+verification and synthesis of asynchronous control circuits as they are
+supported by multiple EDA tools, such as \noun{Petrify}~\cite{Cortadella},
+\noun{Mpsat}~\cite{khomenko2004detecting}, \noun{Versify}~[Y],
+\noun{Workcraft}~\cite{2007_poliakov_workcraft}[Z], and others.
+These tools take an STG specification of a complete controller and can
+formally verify its correctness, as well as synthesise an asynchronous
+circuit implementation that is \emph{speed-independent}, i.e. guaranteed
+to work correctly regardless of component delays~\cite{Muller_1959_ts}.
+Such a monolithic approach to designing asynchronous circuits has 
 poor scalability: as the system grows in complexity its monolithic
-specification becomes challenging to comprehend and debug. The STG
-models of components cannot be reused when designing other specifications,
-and thus each new design must be built from the ground up. This further
-adds to the design time, hence making asynchronous circuits undesirable for use in industry.
+specification becomes challenging to comprehend and debug. The problem
+becomes particularly severe when designing multi-mode systems, such as
+power regulators, where capturing all aspects of system behaviour in a
+consistent specification is a major design challenge~\cite{2014_sokolov_ftfc}[Y].
+The STG models of components and operating modes are difficult to reuse
+when designing other specifications, and thus each new design must be built
+from the ground up. This further adds to the design time, hence making
+asynchronous circuits unattractive for use in industry.
 
 To address this issue, we propose a new method of asynchronous circuit
 design. The method splits a specification into several parts corresponding
