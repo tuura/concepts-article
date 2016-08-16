@@ -134,14 +134,21 @@ asynchronous circuit implementation targeting a chosen technology library.
 %and will offer \emph{templates} for common scenario ordering requirements,
 %such as mode switching sequences and start-up scenarios. 
 
-Our contributions are as follows: (i) we formally introduce asynchronous
-concepts as a specification language (\S\ref{sec:Concepts}), (ii) we
-show how to use concepts for circuit specification
-(\S\ref{sec:Circuit-specification-with}) and automatically translate
-them to STGs (\S\ref{sec: interop-with-stg}), and (iii) we illustrate
-the proposed design method on a case study of an asynchronous power
-regulator (\S\ref{sec:case-study}).
+Our contributions are as follows:
+\begin{itemize}
+  \item We formally introduce asynchronous concepts as a specification
+  language (\S\ref{sec:Concepts}).
+  \item We show how to use concepts for circuit specification
+  (\S\ref{sec:Circuit-specification-with}) and automatically translate
+  concepts to STGs (\S\ref{sec: interop-with-stg}) for verification and 
+  synthesis using our open-source software tool \noun{Workcraft}.
+  \item We demonstrate the proposed design method on a case study of an
+  asynchronous power regulator (\S\ref{sec:case-study}).
+\end{itemize}
 
+\noindent
+We start with a motivational example in \S\ref{} and review related work
+in \S\ref{sec:related-work}.
 
 %Designing a controller for an analogue circuit using this method can
 %be beneficial. Any of the partial knowledge we have about any casual
@@ -1836,7 +1843,7 @@ hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 
 \vspace{-2mm}
 
-\section{Related work}
+\section{Related work\label{sec:related-work}}
 
 There are several existing methodologies which are similar to the
 one being proposed in this paper, and there are a common set of features between these which can be compared. 
