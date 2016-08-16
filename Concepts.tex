@@ -742,7 +742,8 @@ format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
 This set of concepts is only one way of describing this C-element
 and the environment. Another way could be to use gate-level concepts
 and describe the environment explicitly. In this case the environment
-allows the inputs to transition in the opposite direction to the output
+allows the inputs to transition in the opposite \\
+ion to the output
 $c$, as two inverters would. We can then compose this with the C-element
 and the same initial state concept:\vspace{1mm}
 
@@ -830,7 +831,9 @@ deemed to be correct, they can then be synthesized to produce a circuit implemen
 concept specifications to STGs in order to be used with these tools.
 
 In this section, we will discuss the algorithm which translates concepts to STGs. Once concepts have been translated, they can be composed and combined using tools, and this will also 
-be discussed. A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
+be discussed. 
+
+%A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
 
 \subsection{Translating concepts to STGs \label {sub:translating}}
 
@@ -976,8 +979,9 @@ Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a cor
 these can be done either with the concepts, which can be re-translated to view an updated STG, or to the STG directly.
 
 In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can 
-further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}, or using 
-\emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
+further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
+
+%or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
 
 \subsection{Parallel composition}
 
@@ -1106,115 +1110,115 @@ styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time. 
 
-\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
-
-It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
-functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
-best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
-
-\subsubsection{Algorithm of direct synthesis}
-
-When finding an implementation for a specification, we need only concern ourselves with the output signals. The input signals, the environment, can not be
-controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
-Boolean equations for the output signals. 
-
-Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as 
-$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such 
-as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
-will be combined using the \emph{AND} ($*$) operation.
-
-This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following 
-this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a 
-transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If 
-some concepts in this system are:
-
-\vspace{2mm}
-\begin{minipage}[t]{1\columnwidth}%
-\begin{center}
-$\,p^{+}\rightsquigarrow x^{+}$
-\par\end{center}
-
-\begin{center}
-$\,q^{+}\rightsquigarrow x^{+}$
-\par\end{center}
-
-\begin{center}
-$\,p^{+}\rightsquigarrow q^{+}$
-\par\end{center}
-
-\end{minipage}\vspace{2mm}
-
-The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however, 
-the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
-Boolean equations. 
-
-Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for 
-this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
-reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
-with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
-
-This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
-Synthesis is found in Algorithm~\ref{alg:direct-synth}
-
-\begin{algorithm}[h]
-\begin{algorithmic}
-\caption{Algorithm for direct synthesis \label{alg:direct-synth}}
-\For {Each scenario in system}
-  \For {Output signal $x$ in all output signals}
-    \For {Each signal transition $p$ that causes $x^{+}$}
-	\If {$p^{+}$}
-                \State setEq <- setEq $*$ $p$;
-          \Else
-	     \State setEq <- setEq  $*$ $\bar{p}$
-	\EndIf
-    \EndFor
-    \For {Each signal transition $p$ that causes $x^{-}$}
-         \If {$p^{+}$}
-                \State resetEq <- resetEq  $*$  $p$;
-          \Else
-	     \State resetEq <- resetEq  $*$  $\bar{p}$
-	\EndIf
-    \EndFor
-  \EndFor    
-  \State reduce(setEq)
-  \State reduce(resetEq)
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
-\subsubsection{Example of direct synthesis} 
-
-For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example, 
-the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals. 
-
-Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
-
-\vspace{2mm}
-\begin{minipage}[t]{1\columnwidth}%
-\begin{center}
-$\,c^{+}: a * b$
-\par\end{center}
-
-\begin{center}
-$\,c^{-}: \bar{a} * \bar{b}$
-\par\end{center}
-
-\end{minipage}\vspace{2mm}
-
-These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a 
-C-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
-
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.65]{Images/C-element-gate}
-\par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:c-element-gate}Implementation of C-element with environment}
-
-\par\end{centering}
-
-\end{figure}
+%\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
+%
+%It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
+%functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
+%best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
+%
+%\subsubsection{Algorithm of direct synthesis}
+%
+%When finding an implementation for a specification, we need only concern ourselves with the output signals. The input signals, the environment, can not be
+%controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
+%Boolean equations for the output signals. 
+%
+%Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as 
+%$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such 
+%as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
+%will be combined using the \emph{AND} ($*$) operation.
+%
+%This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following 
+%this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a 
+%transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If 
+%some concepts in this system are:
+%
+%\vspace{2mm}
+%\begin{minipage}[t]{1\columnwidth}%
+%\begin{center}
+%$\,p^{+}\rightsquigarrow x^{+}$
+%\par\end{center}
+%
+%\begin{center}
+%$\,q^{+}\rightsquigarrow x^{+}$
+%\par\end{center}
+%
+%\begin{center}
+%$\,p^{+}\rightsquigarrow q^{+}$
+%\par\end{center}
+%
+%\end{minipage}\vspace{2mm}
+%
+%The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however, 
+%the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
+%Boolean equations. 
+%
+%Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for 
+%this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
+%reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
+%with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
+%
+%This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
+%Synthesis is found in Algorithm~\ref{alg:direct-synth}
+%
+%\begin{algorithm}[h]
+%\begin{algorithmic}
+%\caption{Algorithm for direct synthesis \label{alg:direct-synth}}
+%\For {Each scenario in system}
+%  \For {Output signal $x$ in all output signals}
+%    \For {Each signal transition $p$ that causes $x^{+}$}
+%	\If {$p^{+}$}
+%                \State setEq <- setEq $*$ $p$;
+%          \Else
+%	     \State setEq <- setEq  $*$ $\bar{p}$
+%	\EndIf
+%    \EndFor
+%    \For {Each signal transition $p$ that causes $x^{-}$}
+%         \If {$p^{+}$}
+%                \State resetEq <- resetEq  $*$  $p$;
+%          \Else
+%	     \State resetEq <- resetEq  $*$  $\bar{p}$
+%	\EndIf
+%    \EndFor
+%  \EndFor    
+%  \State reduce(setEq)
+%  \State reduce(resetEq)
+%\EndFor
+%\end{algorithmic}
+%\end{algorithm}
+%
+%\subsubsection{Example of direct synthesis} 
+%
+%For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example, 
+%the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals. 
+%
+%Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
+%
+%\vspace{2mm}
+%\begin{minipage}[t]{1\columnwidth}%
+%\begin{center}
+%$\,c^{+}: a * b$
+%\par\end{center}
+%
+%\begin{center}
+%$\,c^{-}: \bar{a} * \bar{b}$
+%\par\end{center}
+%
+%\end{minipage}\vspace{2mm}
+%
+%These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a 
+%C-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
+%
+%\begin{figure}[h]
+%\begin{centering}
+%\includegraphics[scale=0.65]{Images/C-element-gate}
+%\par\end{centering}
+%
+%\begin{centering}
+%\protect\caption{\label{fig:c-element-gate}Implementation of C-element with environment}
+%
+%\par\end{centering}
+%
+%\end{figure}
 
 %%+ Algorithm for translating concepts to STGs
 %%
@@ -1427,16 +1431,11 @@ decreased below the reference value. ZC occurs when the coil current
 reduces to~0 and causes the NMOS transistor to switch \noun{Off},
 so that the NMOS acts like a diode and only conducts in one direction. 
 
-
-
 \vspace{-3mm}
-
-
 
 \subsection{Formal specification}
 
 \vspace{-3mm}
-
 
 From the informal buck specification and our knowledge of the signals,
 we can determine three separate operating conditions that occur in
@@ -1449,7 +1448,6 @@ During this process, it is useful to find any operations which occur
 between two or more operational modes, as these can then be reused
 in other scenarios. If this is defined in one list of concepts, it
 can then be referenced in concept lists for other scenarios by name, assuming these scenarios will be built as part of the same workspace. 
-
 
 \subsubsection{ZC~absent scenario}
 
@@ -1503,8 +1501,6 @@ $\,\mathsf{gpHandshake}=\mathsf{handshake}\,gp\,gp\_ack$
 $\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
 \par\end{flushleft}
 
-
-
 \begin{flushleft}
 $\,\mathsf{initialState}=\mathsf{initialise} \, uv \, False\,\diamond\,\mathsf{initialise}\,oc\,False$~
 \par\end{flushleft}
@@ -1547,8 +1543,9 @@ between them, mainly in the sequence of PMOS/NMOS activation during
 the charging cycle. Therefore it is natural to define a \textsf{chargeFunc}
 concept that can be reused when other operation modes are specified. 
 
-We also include for this scenario a~\emph{zcAbscent} concept. This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate that in this system, there is a signal $zc$ 
-but it has no bearing on the scenario.
+We also include for this scenario a~\emph{zcAbscent} concept. 
+This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate 
+that in this system, there is a signal $zc$ but it has no bearing on the scenario.
 
 Figure~\ref{fig:zcAbsentScenario STG} shows the STG produced from
 the final concept in the list, \textsf{zcAbsentScenario}. It contains
@@ -1556,7 +1553,6 @@ two tokens which are created based on the \textsf{initialState} concept.
 The analogue circuit is not guaranteed to signal either under-voltage
 or over-current first, and this needs to be noted in the concepts
 and the STG. 
-
 
 \subsubsection{ZC~late scenario}
 
@@ -1594,9 +1590,7 @@ $\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigar
 \protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario}
 concept.}
 
-
 \end{figure}
-
 
 Figure~\ref{fig:zcLateScenario STG} shows the STG produced, which
 looks similar to the STG in Figure~\ref{fig:zcAbsentScenario STG}
@@ -1665,14 +1659,9 @@ scenario STGs, one for each operational mode in this system. However,
 we need to ensure they are correct both for the specification and
 as STG models before we can combine these. 
 
-
-
-
-
 \subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
 
 \vspace{-2mm}
-
 
 To be combinable by our method, the produced STGs need to satisfy certain
 properties~\cite{Cortadella}:
@@ -1706,12 +1695,9 @@ concept, or as a scenario in another system.
 
 \vspace{-2mm}
 
-
-
 \subsection{Combining scenarios }
 
 \vspace{-2mm}
-
 
 Now we have scenario STGs that have been verified to ensure they conform
 to standards required of STGs, and simulated to ensure they work as
@@ -1742,7 +1728,6 @@ again, regardless of which solution ran previously.
 
 \end{figure}
 
-
 Figure~\ref{fig:buck STG} shows the full system specification STG
 that has been produced from combining the three scenario STGs as seen
 in Figures~\ref{fig:zcAbsentScenario STG},~\ref{fig:zcLateScenario STG},
@@ -1767,12 +1752,9 @@ of the scenarios to run again.
 
 \vspace{-3mm}
 
-
-
 \subsection{Verification and simulation}
 
 \vspace{-3mm}
-
 
 Like with the scenario models when they have been composed, we need
 to verify that this model satisfies certain properties after combination
