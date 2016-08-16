@@ -63,23 +63,27 @@ an asynchronous power regulator.
 \sloppy
 \thispagestyle{empty}\vspace{-2mm}
 
-
-
 \section{Introduction}
-
 \vspace{-2mm}
 
-
+Analogue and mixed-signal circuits become more tightly integrated with
+digital systems, in particular in mobile and autonomous applications, 
+such as wearable consumer electronics and self-powered Internet-of-Things
+nodes, where it is essential to have intelligent timing control and power
+regulation~[X].
+An on-chip power management system is an illustrative example: it relies
+on analogue circuitry for power regulation and conversion, and its behaviour
+is characterised by many operating modes with complex interplay and
+high-level decision logic that is digitally controlled.
 Asynchronous circuits are event-driven, i.e. they react to changes
 in a system at the rate they occur~\cite{sparso2001principles}.
-This makes them particularly useful for on-chip power management
-where the ability to quickly respond to dynamically changing loads
-across the chip is essential for reliable operation and efficiency~\cite{2008_audy_isscc_tutorial}.
-A power management system relies on analogue circuitry for power regulation
-and conversion whose behaviour is characterised by many operating
-modes and complexity of their interplay. Capturing all these aspects
-of system behaviour in a consistent specification becomes the major
-design challenge~\cite{2014_sokolov_ftfc}.
+This makes them particularly useful for interacting with analogue world,
+where the ability to quickly respond to non-digital input, e.g.
+dynamically changing loads across the chip, is essential for reliable
+operation and efficiency~\cite{2008_audy_isscc_tutorial}.
+%Capturing all these aspects
+%of system behaviour in a consistent specification becomes the major
+%design challenge~\cite{2014_sokolov_ftfc}.
 
 Signal Transition Graphs~(STGs) are commonly used for the specification
 of asynchronous control circuits as they are compatible with multiple
