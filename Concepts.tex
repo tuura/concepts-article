@@ -84,15 +84,12 @@ where the ability to quickly respond to non-digital input, e.g.
 dynamically changing loads across the chip, is essential for reliable
 operation and efficiency~\cite{2008_audy_isscc_tutorial}.
 
-%TODO: ref [V] for Versify tool by Oriol Roig
-%TODO: ref [W] to Workcraft website
-%TODO: ref [Y] to ASYNC paper on multi-phase buck
 Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn}
 are commonly used for the specification,
 verification and synthesis of asynchronous control circuits as they are
 supported by multiple EDA tools, such as \noun{Petrify}~\cite{Cortadella},
-\noun{Mpsat}~\cite{khomenko2004detecting}, \noun{Versify}~[Y],
-\noun{Workcraft}~\cite{2007_poliakov_workcraft}[W], and others.
+\noun{Mpsat}~\cite{khomenko2004detecting}, \noun{Versify}~\cite{i1997formal},
+\noun{Workcraft}~\cite{2007_poliakov_workcraft}\cite{Workcraft_website}, and others.
 These tools take an STG specification of a complete controller and can
 formally verify its correctness, as well as synthesise an asynchronous
 circuit implementation that is \emph{speed-independent}, i.e. guaranteed
@@ -102,7 +99,7 @@ poor scalability: as the system grows in complexity its monolithic
 specification becomes challenging to comprehend and debug. The problem
 becomes particularly severe when designing multi-mode systems, such as
 power regulators, where capturing all aspects of system behaviour in a
-consistent specification is a major design challenge~\cite{2014_sokolov_ftfc}[Y].
+consistent specification is a major design challenge~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
 The STG models of components and operating modes are difficult to reuse
 when designing other specifications, and thus each new design must be built
 from the ground up. This further adds to the design time, hence making
