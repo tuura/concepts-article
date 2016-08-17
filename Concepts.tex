@@ -61,7 +61,8 @@ an asynchronous power regulator.
 \end{abstract}
 
 \sloppy
-\thispagestyle{empty}\vspace{-2mm}
+\thispagestyle{empty}
+%\vspace{-4mm}
 
 \section{Introduction}
 
@@ -174,7 +175,8 @@ in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusio
 
 %In this paper, we use real life industrial
 %example of a buck converter~\cite{2014_sokolov_ftfc} to show our
-%design flow, and test this design approach. \vspace{-2mm}
+%design flow, and test this design approach. 
+%\vspace{-2mm}
 
 \section{Motivating Example \label{sec:Motivating Example}}
 
@@ -268,7 +270,7 @@ needing to change every single interaction.
 %%
 \section{Concepts \label{sec:Concepts}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 In this section we formally introduce \emph{concepts} that we propose
@@ -301,13 +303,13 @@ to build complex concepts from simpler ones. The order of composition
 does not matter, i.e., the concepts commute: $a\diamond b=b\diamond a$
 for all $a,b\in M$. 
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 
 \subsection{Abstract concepts}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 We first describe \emph{abstract concepts} that we use as building
@@ -399,13 +401,13 @@ and $\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{2}(s)$
 hold for all states $s\in S$, then $\mathsf{initial}_{1}(s)\diamond\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{1}(s)\diamond\mathsf{invariant}_{2}(s)$
 holds too.
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 
 \subsection{Concepts for asynchronous circuits\label{sub:Concepts-for-asynchronous}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 We now introduce concepts which are specific for the domain of asynchronous
@@ -580,14 +582,14 @@ that receives asynchronous requests $r_{1}$ and $r_{2}$ to a shared
 resource and grants access to it by corresponding mutually exclusive
 signals $g_{1}$ and $g_{2}$:
 
-\vspace{-3mm}
+%\vspace{-3mm}
 {\small{}
 \[
 \mathsf{meElement}\'r_{1} \,r_{2} \,g_{1} \,g_{2} \,\!=\mathsf{\! buffer}\,r_{1} \,g_{1} \,\diamond\mathsf{buffer}\,r_{2} \,g_{2} \,\diamond\mathsf{me}\,g_{1} \,g_{2} \,
 \]
 }{\small \par}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 \subsection{Signal types}
 
@@ -597,7 +599,7 @@ A discussion of signal types and how these are represented using concepts. The b
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 
@@ -614,13 +616,13 @@ A convenient formalism for specification of SI circuits is STGs~\cite{Chu_1987_p
 which is a special kind of Petri nets~\cite{Petri_1962_phd} whose
 transitions are associated with signal events. 
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 
 \subsection{Petri nets and STGs}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 Formally, a Petri net is defined as a tuple~$PN=\left\langle P,\, T,\, F,\, M_{0}\right\rangle $
@@ -670,11 +672,11 @@ tokens are depicted by dots. For simplicity, the places with one incoming
 and one outgoing arc are often hidden, allowing arcs~(with implicit
 places) between transitions.
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 \subsection{Composition of concepts \label{sub:Comp-of-concepts}}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 A single concept can be used to describe an initial state, invariant
@@ -695,7 +697,7 @@ times as a simple example.
 The following is the file using the code to describe the example using signal-level concepts, which can be passed into
 the translation tool:
 
-\vspace{2mm}
+%\vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
 $\,\mathsf{module}\, Concept \, \mathsf{where}$
@@ -737,7 +739,9 @@ $\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}\,a \, False\,<>\
 $
 \par\end{flushleft}
 
-\end{minipage}\vspace{2mm}
+\end{minipage}
+
+%\vspace{2mm}
 
 
 There are 6 concepts featured, the first 5 of which describe certain
@@ -776,14 +780,17 @@ and describe the environment explicitly. In this case the environment
 allows the inputs to transition in the opposite \\
 ion to the output
 $c$, as two inverters would. We can then compose this with the C-element
-and the same initial state concept:\vspace{1mm}
+and the same initial state concept:
+
+%\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
 $\mathsf{circuit} \,a \,b \,c=\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
 $\mathsf{where}$\\
 $\mathsf{environment}=\mathsf{inverter} \,c \,a \,\diamond\,\mathsf{inverter}\,c \,b$
-\end{minipage}\vspace{2mm}
+\end{minipage}
+%\vspace{2mm}
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity axioms of the underlying commutative monoid. Consequently,
@@ -801,12 +808,14 @@ involved in this specification.
 
 
 Finally, the designer can also rely on protocol-level concepts, producing
-the following equivalent specification:\vspace{1mm}
+the following equivalent specification:
+%\vspace{1mm}
 
 
 \begin{minipage}[t]{1\columnwidth}%
 $\mathsf{circuit}\,a \,b \,c=\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c$%
-\end{minipage}\vspace{2mm}
+\end{minipage}
+%\vspace{2mm}
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
 of available levels of abstraction, which could be used not only for
@@ -814,13 +823,13 @@ deriving simplest possible specifications but also for cross-checking
 the adequacy of specifications by \emph{refactoring} them according
 to the composition laws.
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 
 \subsection{Multiple behavioural scenarios \label{sub:scenarios}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 So far we have only considered systems operating in a single behavioural
@@ -851,7 +860,7 @@ the corresponding definitions.
 
 The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 \section{Interoperability with STG based tools \label{sec: interop-with-stg}}
@@ -874,7 +883,7 @@ signal-level concepts. As concepts are compositional, and gate- and protocol-lev
 of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts 
 found in Figure~\ref{fig:c-element-concepts}.
 
-\vspace{2mm}
+%\vspace{2mm}
 \begin{figure}[h]
 \begin{minipage}[h]{1\columnwidth}%
 \begin{center}
@@ -924,7 +933,7 @@ $\,\mathsf{initialise}\,c \,False $
 \end{minipage}
 \caption{Concepts for a C-element with environment\label{fig:c-element-concepts}}
 \end{figure}
-\vspace{2mm}
+%\vspace{2mm}
 
 With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
 file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
@@ -1402,7 +1411,7 @@ as well as design time.
 
 \section{Case study \label{sec:case-study}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 In this section we follow a case study to show the design flow of
@@ -1462,11 +1471,11 @@ decreased below the reference value. ZC occurs when the coil current
 reduces to~0 and causes the NMOS transistor to switch \noun{Off},
 so that the NMOS acts like a diode and only conducts in one direction. 
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 \subsection{Formal specification}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 From the informal buck specification and our knowledge of the signals,
 we can determine three separate operating conditions that occur in
@@ -1682,7 +1691,7 @@ concept.}
 
 \par\end{center}
 
-\vspace{-8mm}
+%\vspace{-8mm}
 
 The obtained STG for the \textsf{zcEarlyScenario} concept is shown
 in Figure~\ref{fig:zcEarlyScenario STG}. We have now produced three
@@ -1692,7 +1701,7 @@ as STG models before we can combine these.
 
 \subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 To be combinable by our method, the produced STGs need to satisfy certain
 properties~\cite{Cortadella}:
@@ -1724,11 +1733,11 @@ STG, or correct the design at the concept level. The latter is the
 preferable method if this design is to be reused either as a predefined
 concept, or as a scenario in another system. 
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 \subsection{Combining scenarios }
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 Now we have scenario STGs that have been verified to ensure they conform
 to standards required of STGs, and simulated to ensure they work as
@@ -1781,11 +1790,11 @@ into \textsf{p2}. This token is then consumed by the over-current branch when ov
 and returns to \textsf{p1}, allowing only one
 of the scenarios to run again. 
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 \subsection{Verification and simulation}
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 Like with the scenario models when they have been composed, we need
 to verify that this model satisfies certain properties after combination
@@ -1806,11 +1815,11 @@ in the order we expect according to the requirements of the system.
 If this is correct, we can guarantee that this model represents the
 full system specification, and can now be used in the next step.
 
-\vspace{-2.5mm}
+%\vspace{-2.5mm}
 
 \subsection{Synthesis of a speed-independent controller}
 
-\vspace{-2.5mm}
+%\vspace{-2.5mm}
 
 A fully working model of the system is only part way to having completed
 the process. The final step in this design flow is to synthesize this
@@ -1841,7 +1850,7 @@ them by means of read-arcs. By reachability analysis of this Petri
 net one can verify that the corresponding circuit is deadlock-free,
 hazard-free and conforms to the specification~\cite{2008_poliakov_async}. 
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 \section{Related work\label{sec:related-work}}
 
@@ -1950,7 +1959,7 @@ we have attempted to address these issues and make concepts not only a powerful 
 
 \section{Conclusions and future work\label{sec:conclusions}}
 
-\vspace{-2mm}
+%\vspace{-2mm}
 
 
 This document shows that it is possible to design a system by splitting
@@ -2005,13 +2014,13 @@ if there are certain specifications where one modelling method is
 better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits 
 using concepts, and this is something we aim to explore.
 
-\vspace{-3mm}
+%\vspace{-3mm}
 
 
 
 \section*{Acknowledgements}
 
-\vspace{-2.5mm}
+%\vspace{-2.5mm}
 
 
 The authors would like to thank the reviewers for their constructive
@@ -2020,7 +2029,7 @@ Asynchronous design for Analogue electronics' (EP/L025507/1) and
 the Royal Society research grant `Computation Alive: Design of a
 Processor with Survival Instincts'.
 
-\vspace{-2.5mm}
+%\vspace{-2.5mm}
 
 
 \bibliographystyle{unsrt}
