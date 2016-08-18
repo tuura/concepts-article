@@ -183,8 +183,10 @@ has helped us develop concepts.
 
 \subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
 
-The example we will use throughout this paper is that of a simple buck converter. A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
-serves as an example of how the monolithic design approach is carried out. Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
+The example we will use in the case study of this article is that of a simple buck converter. 
+A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
+serves as an example of how the monolithic design approach is carried out. 
+Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
 this STG is obtained using the monolithic approach.
 
 \begin{figure}[h]
@@ -741,17 +743,22 @@ $
 %\vspace{2mm}
 
 
-There are 6 concepts featured, the first 5 of which describe certain
-operations of the system. The sixth concept composes all of the first
-5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
-The first four are named according to what they represent, for example,
-\textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
-which cause the output to rise\textit{.} The fifth concept is the
-initial state concept. This is necessary for the algorithm to produce
-a scenario STG, as the STG produced will not be usable without knowing
-the states the signals will be in when the scenario is entered. The
-algorithm takes this concept and works out where tokens need to be
-placed in the STG produced. 
+The first concepts in this list is the \emph{circuit} concept, defined as the composition of the following 5. This is the concept which will be translated.
+The concepts defined after the \emph{where} describe certain operations of the system. The first four are named according to what they represent,
+for example, \textsf{\textit{\emph{outputRise}}} describes the events which cause the output to rise. The final concepts defines
+the initial states, necessary for the translation algorithm to produce an STG which is useable, as without the initial states, none of the signals will be 
+able to transition.
+
+%The sixth concept composes all of the first
+%5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
+%The first four are named according to what they represent, for example,
+%\textsf{\textit{\emph{outputRise}}}\textit{ }describes the events
+%which cause the output to rise\textit{.} The fifth concept is the
+%initial state concept. This is necessary for the algorithm to produce
+%a scenario STG, as the STG produced will not be usable without knowing
+%the states the signals will be in when the scenario is entered. The
+%algorithm takes this concept and works out where tokens need to be
+%placed in the STG produced. 
 
 \begin{figure}[h]
 \begin{centering}
@@ -774,8 +781,7 @@ format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
 This set of concepts is only one way of describing this C-element
 and the environment. Another way could be to use gate-level concepts
 and describe the environment explicitly. In this case the environment
-allows the inputs to transition in the opposite \\
-ion to the output
+allows the inputs to transition in the opposite direction to the output
 $c$, as two inverters would. We can then compose this with the C-element
 and the same initial state concept:
 
@@ -783,9 +789,13 @@ and the same initial state concept:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{circuit} \,a \,b \,c=\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\,\diamond\,\mathsf{initialState}$
+$\begin{aligned}\mathsf{circuit} \,a \,b \,c=&\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\\
+&\diamond\,\mathsf{initialState}
+\end{aligned}\\
+$
 $\mathsf{where}$\\
 $\mathsf{environment}=\mathsf{inverter} \,c \,a \,\diamond\,\mathsf{inverter}\,c \,b$
+\\
 \end{minipage}
 %\vspace{2mm}
 This specification is equivalent to the previous one; indeed one can
@@ -845,9 +855,9 @@ In some cases, a designer may find it easier to split the specification
 of operational modes further than scenarios and design certain elements
 separately. In this way, a model may be produced from concepts, which
 may not be an operational mode on its own, but can be composed and
-tested separately. In some cases, having several elements predefined
+tested separately. Having several elements predefined
 using concepts may become useful for quickly designing systems. A
-predefined logic gate, for example, could be useful to include quickly
+predefined logic gate, for example, could be useful to quickly include
 in any list of concepts when designing multiple scenarios. An STG
 produced of this element can be referenced in a list of concepts by
 name (provided that the definition is appropriately imported into
@@ -874,8 +884,7 @@ be discussed.
 
 \subsection{Translating concepts to STGs \label {sub:translating}}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. Either using signal-level concepts directly, using gate level concepts, or 
-a combination of concept types. When translating any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level, 
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. When translating any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level, 
 signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
 of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts 
 found in Figure~\ref{fig:c-element-concepts}.
@@ -955,7 +964,7 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
 in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a 
 token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains 
-a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition so consistency will not be held.
+a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition, so consistency will not be held.
 
 \begin{figure}[h]
 \begin{centering}
@@ -984,8 +993,8 @@ shown in Figure~\ref{fig:step-by-step9}
 
 \end{figure}
 
-At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are $\,\mathsf{initialise}\,a \,False$,
-$\,\mathsf{initialise}\,b \,False$ and $\,\mathsf{initialise}\,c \,False$. These state that the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
+At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are "$\,\mathsf{initialise}\,a \,False$",
+"$\,\mathsf{initialise}\,b \,False$" and "$\,\mathsf{initialise}\,c \,False$". These detaul the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
 $b_0$ and $c_0$. This will produce the fully translated STG, which will look as follows:
 
 \begin{figure}[h]
@@ -1094,11 +1103,12 @@ The algorithm for the translation from concepts to STGs can be found in Algorith
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Scenario composition \label{sub:scenario-composition}}
+\subsection{Scenario combination\label{sub:scenario-composition}}
 
-As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario, which can be tested and verified separately to allow for easier changes and additions 
-to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
-produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
+As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario. 
+%which can be tested and verified separately to allow for easier changes and additions 
+%to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
+%produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
 When combining scenarios, there are several things to consider in
 how the scenarios fit together. Depending on the application the circuit
@@ -1732,7 +1742,7 @@ concept, or as a scenario in another system.
 
 %\vspace{-2mm}
 
-\subsection{Combining scenarios }
+\subsection{Combining the scenarios }
 
 %\vspace{-2mm}
 
