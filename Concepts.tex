@@ -594,16 +594,37 @@ signals $g_{1}$ and $g_{2}$:
 
 \subsection{Signal types}
 
-\textbf{COULD THIS SECTION BE INCLUDED IN SIGNAL-LEVEL CONCEPTS? (SECTION~\ref{signal-level})}
+Specifying signal types is important when designing asynchronous circuits. How signals of different
+types interact is knowledge required for verification properties to be held, and for synthesis.
 
-A discussion of signal types and how these are represented using concepts. The benefits of this, for example we can block input -> input. 
+The information of which signals are \emph{inputs}, \emph{outputs} or \emph{internals} can further 
+speed the design process. Primarily, in the process of translating concepts, the resulting STGs can 
+be more quickly used for testing, verification, synthesis, etc. Without specifying the types, this 
+would require signals types to declared manually in the resulting STG.
+
+Signal types, or \emph{interfaces}, in concept-form, are described by listing the signals based on type:
+{\small{}
+\[
+\mathsf{\! inputs}\,[a, b]
+\]
+}{\small \par}
+{\small{}
+\[
+\mathsf{\! outputs}\,[p]
+\]
+}{\small \par}
+{\small{}
+\[
+\mathsf{\! internals}\,[x, y, z]
+\]
+}{\small \par}
+
+As with all concepts, interface concepts can be composed with eachother, or with any 
+other concept; signal-, gate- or protocol-level.
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
 
 %\vspace{-2mm}
-
-
-
 
 Here we present a method for deriving a circuit specification
 from a set of concepts that describe its different aspects. We focus
@@ -618,8 +639,6 @@ which is a special kind of Petri nets~\cite{Petri_1962_phd} whose
 transitions are associated with signal events. 
 
 %\vspace{-3mm}
-
-
 
 \subsection{Petri nets and STGs}
 
@@ -710,11 +729,17 @@ $\,\mathsf{import}\, Tuura.ConceptConcat$
 
 \begin{flushleft}
 $\,\mathsf{circuit :: (Eq a) =>}\, a \rightarrow a \rightarrow  a \rightarrow  CircuitConcept\,a$
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c= & \mathsf{\, outputRise}\,<>\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}\\<>
-& \mathsf{\, inputRise}\,<>\,\mathsf{initialState}
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{\,interface}\,<> \mathsf{\, outputRise}<>\\
+&\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}<>\\
+&\mathsf{\, inputRise}\,<>\,\mathsf{initialState}\\
 \end{aligned}
 $
+
 $\,\mathsf{where}$
+\par\end{flushleft}
+
+\begin{flushleft}
+$\,\mathsf{interface}=\mathsf{inputs}\,[a,b]<>\mathsf{outputs}\,[c]$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -791,7 +816,7 @@ and the same initial state concept:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\begin{aligned}\mathsf{circuit} \,a \,b \,c=&\mathsf{cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\\
+$\begin{aligned}\mathsf{circuit} \,a \,b \,c=&\mathsf{\,interface}\diamond\mathsf{\,cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\\
 &\diamond\,\mathsf{initialState}
 \end{aligned}\\
 $
@@ -822,7 +847,9 @@ the following equivalent specification:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\mathsf{circuit}\,a \,b \,c=\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c$%
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c \, \diamond\\
+&\mathsf{inputs}\,[a,b] \,\diamond \mathsf{outputs}\,[c]
+\end{aligned}$
 \end{minipage}
 %\vspace{2mm}
 This example demonstrates that the presented formal notation for capturing
@@ -886,9 +913,13 @@ be discussed.
 
 \subsection{Translating concepts to STGs \label {sub:translating}}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. When translating any form of concepts to an STG we pass them to an algorithm which begins by breaking down all concepts into a list of the lowest level, 
-signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple. Using the example 
-of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this algorithm would initially produce the list of concepts 
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. 
+When translating any concepts we pass them to an algorithm which begins by breaking down all concepts into a list of 
+signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.
+Interface concepts are used to set the signal types, and as such are not included in this part of the translation.
+
+Using the example of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this 
+algorithm would initially produce the list of concepts 
 found in Figure~\ref{fig:c-element-concepts}.
 
 %\vspace{2mm}
@@ -1518,6 +1549,12 @@ $\mathsf{where}$
 \par\end{flushleft}
 
 \begin{flushleft}
+$\begin{aligned}\mathsf{interface}=\,&\mathsf{inputs}\,[uv, oc, zc, gp\_ack, gn\_ack]\\
+& \,\diamond \mathsf{outputs}\,[gp, gn]
+\end{aligned}$
+\par\end{flushleft}%
+
+\begin{flushleft}
 $\,\mathsf{uvFunc}=uv^{+}\rightsquigarrow gp^{+}\,\diamond\, uv^{+}\rightsquigarrow gn^{-}$
 \par\end{flushleft}
 
@@ -1534,7 +1571,7 @@ $\,\mathsf{ocReact}=gp\_ack^{-}\rightsquigarrow oc^{-}\,\diamond\, gn\_ack^{+}\r
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\,\mathsf{environmentConstraint}=&\mathsf{me}\,uv\, oc \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\\ &\,\diamond\, gp\_ack^{-}\rightsquigarrow gn^{+}
+$\begin{aligned}\,\mathsf{environmentConstraint}=&\,\mathsf{me}\,uv\, oc \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\\ &\,\diamond\, gp\_ack^{-}\rightsquigarrow gn^{+}
 \end{aligned}$
 \par\end{flushleft}
 
@@ -1555,7 +1592,7 @@ $\,\mathsf{initialState}=\mathsf{initialise} \, uv \, False\,\diamond\,\mathsf{i
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{chargeFunc}= & \,\mathsf{ocFunc}\,\diamond\,\mathsf{ocReact}\,\diamond\\
+$\begin{aligned}\mathsf{chargeFunc}= & \mathsf{interface}\,\diamond\,\mathsf{ocFunc}\,\diamond\,\mathsf{ocReact}\,\diamond\\
  & \mathsf{\mathsf{\, environmentConstraint}\,\diamond\, circuitConstraint}\,\diamond\,\\
  & \mathsf{\, gpHandshake}\,\diamond\,\mathsf{gnHandshake}\,\diamond\,\mathsf{initialState}
 \end{aligned}
@@ -1586,10 +1623,14 @@ handshakes for $gp/gp\_ack$ and $gn/gn\_ack$, and transistor safety
 constraints which are described using protocol-level concepts. We
 also describe constraints provided by the environment that we are
 aware of, so this behaviour is captured in the resulting STG for testing and simulation purposes. 
+We also include an \textsf{interface} concepts in order to include the
+types of the signals involved in the scenario.
 
 The descriptions of the operational modes suggest that there are similarities
 between them, mainly in the sequence of PMOS/NMOS activation during
-the charging cycle. Therefore it is natural to define a \textsf{chargeFunc}
+the charging cycle. The signal types are also the same for all scenarios in the system, and
+thus it is unnecessary to redefine these for each scenario.
+Therefore it is natural to define a \textsf{chargeFunc}
 concept that can be reused when other operation modes are specified. 
 
 We also include for this scenario a~\emph{zcAbscent} concept. 
