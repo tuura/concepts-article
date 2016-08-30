@@ -849,11 +849,14 @@ the following equivalent specification:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c \, \diamond\\
+
+$\\\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c \, \diamond\\
 &\mathsf{inputs}\,[a,b] \,\diamond \mathsf{outputs}\,[c]
-\end{aligned}$
+\end{aligned}$\\
 \end{minipage}
 %\vspace{2mm}
+
+
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
 of available levels of abstraction, which could be used not only for
@@ -1573,7 +1576,7 @@ can then be referenced in concept lists for other scenarios by name, assuming th
 We start with describing the operational mode where no ZC condition
 is signalled and produce the following list of concepts:
 
-\begin{minipage}[t]{1\columnwidth}%
+\begin{minipage}[h]{1\columnwidth}%
 	
 \begin{flushleft}
 $\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\
@@ -1627,7 +1630,8 @@ $\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{initialise} \, uv \, False\,\diamond\,\mathsf{initialise}\,oc\,False$~
+$\,\mathsf{initialState}=\mathsf{initialise0}[uv,\, oc,\, zc,\, gp\_ack,\, gn\_ack,\, gp,\, gn]$
+%initialState = initialise0 [uv, oc, zc, gp_ack, gn_ack, gp, gn]
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1694,7 +1698,7 @@ are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\ 
+$\begin{aligned}\\\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\ 
 & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
 & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
