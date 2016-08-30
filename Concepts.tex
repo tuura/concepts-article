@@ -181,16 +181,70 @@ in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusio
 \section{Motivating Example \label{sec:Motivating Example}}
 
 Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become
-problematic however as designs become larger. In this section we will discuss this approach in detail and it's disadvantages. Following this, we will explore a way of viewing STGs which
-has helped us develop concepts.
+problematic however as designs become larger. 
+
+In this section we introduce the subject of the case study we will use to demonstrate the design flow for concepts in Section~\ref{sec:case-study}. We will then discuss the monolithic 
+design approach that has been used to design this, and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
 
 \subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
 
-The example we will use in the case study of this article is that of a simple buck converter. 
-A detailed description of this can be found in Section~\ref{sec:case-study}, but for this section it
-serves as an example of how the monolithic design approach is carried out. 
-Figure~\ref{fig:Monolithic-buck} contains the final STG for a simple buck converter, and we will discuss how 
-this STG is obtained using the monolithic approach.
+The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}. 
+A basic power regulator comprises an analogue buck and a digital controller,
+as shown in Figure~\ref{fig:buck-schematic}. The controller operates
+the power regulating PMOS and NMOS transistors of the buck~(using\textsf{
+$gp$} and $gn$ outputs) as a reaction to \emph{under-voltage}~(UV),
+\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions~(\textsf{$uv$,}
+\textsf{$oc$} and \textsf{$zc$} inputs, respectively). These conditions
+are detected and signalled by a set of specialised sensors implemented
+as comparators of measured current and voltage levels against some
+reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{V\_0}).
+Note that the $gp$ and $gn$ signals are buffered to drive the very
+large power regulating transistors and their effect on the buck can
+be significantly delayed. Therefore, the controller is explicitly
+notified~(by the $gp\_ack$ and $gn\_ack$ signals) when the power
+transistor threshold levels~(\textsf{Th\_pmos} and \textsf{Th\_nmos})
+are crossed.
+
+\begin{figure}[h]
+\begin{centering}
+\subfloat[\label{fig:buck-schematic}Schematic.]{\begin{centering}
+\includegraphics[scale=0.7]{Images/schematic-buck}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\begin{centering}
+\subfloat[\label{fig:buck-spec}Informal specification.]{\begin{centering}
+\includegraphics[scale=0.6]{Images/spec-buck}
+\par\end{centering}
+
+}
+\par\end{centering}
+
+\protect\caption{\label{fig:buck}Buck converter.}
+\end{figure}
+
+The operation of a power regulator is usually specified in an intuitive,
+but rather informal way, e.g. by enumerating the possible sequences
+of detected conditions and describing the intended reaction to these
+events, as shown in Figure~\ref{fig:buck-spec}. The diagram shows
+that UV should be handled by switching the NMOS transistor \noun{Off}
+and PMOS transistor \noun{On}, while OC should revert their state~--
+PMOS \noun{Off} and NMOS \noun{On}~(ZC~absent scenario). Detection of
+the ZC after UV does not change this behaviour~(ZC~late scenario).
+However, if ZC is detected before UV then both the PMOS and NMOS transistors
+remain \noun{Off} until the UV condition is indicated~(ZC~early scenario). 
+
+Note that ZC and UV are independent conditions that indicate separate
+physical effects and therefore the corresponding signals can happen
+in any order. UV indicates that the voltage supplied to the load has
+decreased below the reference value. ZC occurs when the coil current
+reduces to~0 and causes the NMOS transistor to switch \noun{Off},
+so that the NMOS acts like a diode and only conducts in one direction. 
+
+With the information provided here, a designer can then work to produce a formal specification using the monolithic approach.
+Figure~\ref{fig:Monolithic-buck} contains a completed STG specification for a simple buck controller.
 
 \begin{figure}[h]
 \begin{centering}
@@ -790,7 +844,7 @@ able to transition.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.28]{Images/stg-cElement}
+\includegraphics[scale=0.25]{Images/stg-cElement}
 \par\end{centering}
 
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
@@ -835,7 +889,7 @@ involved in this specification.
 
 \begin{figure}[t]
 \begin{centering}
-\includegraphics[scale=0.74]{Images/c-element-circuit-redo}
+\includegraphics[scale=0.62]{Images/c-element-circuit-redo}
 %\includegraphics[scale=0.6]{Images/c-element-circuit}
 \par\end{centering}
 
@@ -989,7 +1043,7 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.26]{Images/Step-by-step1}
+\includegraphics[scale=0.23]{Images/Step-by-step1}
 \par\end{centering}
 
 \begin{centering}
@@ -999,14 +1053,14 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 
 \end{figure}
 
-Next step in the algorithm is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
+The next step is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
 in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a 
 token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains 
 a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition, so consistency will not be held.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step2}
+\includegraphics[scale=0.23]{Images/Step-by-step2}
 \par\end{centering}
 
 \begin{centering}
@@ -1021,7 +1075,7 @@ shown in Figure~\ref{fig:step-by-step9}
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step9}
+\includegraphics[scale=0.23]{Images/Step-by-step9}
 \par\end{centering}
 
 \begin{centering}
@@ -1037,7 +1091,7 @@ $b_0$ and $c_0$. This will produce the fully translated STG, which will look as 
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step12}
+\includegraphics[scale=0.23]{Images/Step-by-step12}
 \par\end{centering}
 
 \begin{centering}
@@ -1062,8 +1116,8 @@ Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a cor
 \noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made 
 these can be done either with the concepts, which can be re-translated to view an updated STG, or to the STG directly.
 
-In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can 
-further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
+%In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can 
+%further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
 
 %or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
 
@@ -1080,7 +1134,7 @@ individually. Including the initial states, this would give us the STGs found in
 \begin{figure}[h]
 \begin{centering}
 \subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
-\includegraphics[scale=0.26]{Images/C-element}
+\includegraphics[scale=0.23]{Images/C-element}
 \par\end{centering}
 
 }
@@ -1088,7 +1142,7 @@ individually. Including the initial states, this would give us the STGs found in
 
 \begin{centering}
 \subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
-\includegraphics[scale=0.26]{Images/inverter(c,a)}
+\includegraphics[scale=0.23]{Images/inverter(c,a)}
 \par\end{centering}
 
 }
@@ -1096,7 +1150,7 @@ individually. Including the initial states, this would give us the STGs found in
 
 \begin{centering}
 \subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
-\includegraphics[scale=0.26]{Images/inverter(c,b)}
+\includegraphics[scale=0.23]{Images/inverter(c,b)}
 \par\end{centering}
 
 }
@@ -1171,7 +1225,7 @@ the scenarios may run, and this needs to be specified by the designer.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.45]{Images/sequential_combination}
+\includegraphics[scale=0.4]{Images/sequential_combination}
 \par\end{centering}
 
 \begin{centering}
@@ -1190,11 +1244,11 @@ can be limited by the number of tokens available at once.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.45]{Images/concurrent_combination}
+\includegraphics[scale=0.4]{Images/concurrent_combination}
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:sequential_combination}An example of concurrent combination}
+\protect\caption{\label{fig:concurrent_combination}An example of concurrent combination}
 
 \par\end{centering}
 
@@ -1208,11 +1262,11 @@ and this is returned when the scenario completes.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.45]{Images/non_deterministic_combination}
+\includegraphics[scale=0.4]{Images/non_deterministic_combination}
 \par\end{centering}
 
 \begin{centering}
-\protect\caption{\label{fig:sequential_combination}An example of non-deterministic combination}
+\protect\caption{\label{fig:non_deterministic_combination}An example of non-deterministic combination}
 
 \par\end{centering}
 
@@ -1493,71 +1547,15 @@ as well as design time.
 
 \section{Case study \label{sec:case-study}}
 
-%\vspace{-2mm}
+In Section~\ref{sec:Motivating Example} we introduced the example for this case study, a simple buck converter,
+in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in Section~\ref{sec:Concepts}, 
+and with examples explained how they can be used to design simple circuits, and how these can be translated to 
+provide us with an STG specification for use with standard tools. 
 
+Now we can use this information with the buck converter case study to detail the design flow for producing a
+specification for a buck converter.
 
-In this section we follow a case study to show the design flow of
-this method using an example from power management domain~\cite{2014_sokolov_ftfc}.
-A basic power regulator comprises an analogue buck and a digital controller,
-as shown in Figure~\ref{fig:buck-schematic}. The controller operates
-the power regulating PMOS and NMOS transistors of the buck~(using\textsf{
-$gp$} and $gn$ outputs) as a reaction to \emph{under-voltage}~(UV),
-\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions~(\textsf{$uv$,}
-\textsf{$oc$} and \textsf{$zc$} inputs, respectively). These conditions
-are detected and signalled by a set of specialised sensors implemented
-as comparators of measured current and voltage levels against some
-reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{V\_0}).
-Note that the $gp$ and $gn$ signals are buffered to drive the very
-large power regulating transistors and their effect on the buck can
-be significantly delayed. Therefore, the controller is explicitly
-notified~(by the $gp\_ack$ and $gn\_ack$ signals) when the power
-transistor threshold levels~(\textsf{Th\_pmos} and \textsf{Th\_nmos})
-are crossed.
-
-\begin{figure}[h]
-\begin{centering}
-\subfloat[\label{fig:buck-schematic}Schematic.]{\begin{centering}
-\includegraphics[scale=0.75]{Images/schematic-buck}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\begin{centering}
-\subfloat[\label{fig:buck-spec}Informal specification.]{\begin{centering}
-\includegraphics[scale=0.6]{Images/spec-buck}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\protect\caption{\label{fig:buck}Buck converter.}
-\end{figure}
-
-
-The operation of a power regulator is usually specified in an intuitive,
-but rather informal way, e.g. by enumerating the possible sequences
-of detected conditions and describing the intended reaction to these
-events, as shown in Figure~\ref{fig:buck-spec}. The diagram shows
-that UV should be handled by switching the NMOS transistor \noun{Off}
-and PMOS transistor \noun{On}, while OC should revert their state~--
-PMOS \noun{Off} and NMOS \noun{On}~(ZC~absent scenario). Detection of
-the ZC after UV does not change this behaviour~(ZC~late scenario).
-However, if ZC is detected before UV then both the PMOS and NMOS transistors
-remain \noun{Off} until the UV condition is indicated~(ZC~early scenario). 
-
-Note that ZC and UV are independent conditions that indicate separate
-physical effects and therefore the corresponding signals can happen
-in any order. UV indicates that the voltage supplied to the load has
-decreased below the reference value. ZC occurs when the coil current
-reduces to~0 and causes the NMOS transistor to switch \noun{Off},
-so that the NMOS acts like a diode and only conducts in one direction. 
-
-%\vspace{-3mm}
-
-\subsection{Formal specification}
-
-%\vspace{-3mm}
+\subsection{Formal specification using concepts}
 
 From the informal buck specification and our knowledge of the signals,
 we can determine three separate operating conditions that occur in
@@ -1630,7 +1628,7 @@ $\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{initialState}=\mathsf{initialise0}[uv,\, oc,\, zc,\, gp\_ack,\, gn\_ack,\, gp,\, gn]$
+$\mathsf{initialState}=\mathsf{initialise0}[uv,\, oc,\, zc,\, gp\_ack,\, gn\_ack,\, gp,\, gn]$
 %initialState = initialise0 [uv, oc, zc, gp_ack, gn_ack, gp, gn]
 \par\end{flushleft}
 
@@ -1642,9 +1640,9 @@ $\begin{aligned}\mathsf{chargeFunc}= & \mathsf{interface}\,\diamond\,\mathsf{ocF
 $
 \par\end{flushleft}
 
-\begin{flushleft}
-$\,\mathsf{zcAbsent}=\mathsf{silent}\,zc^{+}\,\diamond\,\mathsf{silent}\,zc^{-}$
-\par\end{flushleft}
+%\begin{flushleft}
+%$\,\mathsf{zcAbsent}=\mathsf{silent}\,zc^{+}\,\diamond\,\mathsf{silent}\,zc^{-}$
+%\par\end{flushleft}
 
 \end{minipage}
 
@@ -1665,8 +1663,10 @@ of both under-voltage and over-current. This includes concepts describing
 handshakes for $gp/gp\_ack$ and $gn/gn\_ack$, and transistor safety
 constraints which are described using protocol-level concepts. We
 also describe constraints provided by the environment that we are
-aware of, so this behaviour is captured in the resulting STG for testing and simulation purposes. 
-We also include an \textsf{interface} concepts in order to include the
+aware of, such as $oc$ and $uv$ never signalling at the same time, and ensuring that
+the acknowledge signal of transistors must be low before the other transistor can be switched on.
+Environment behaviour is included in the concepts so that it is captured in the resulting STG for testing and simulation purposes. 
+We also include an \textsf{interface} concept in order to include the
 types of the signals involved in the scenario.
 
 The descriptions of the operational modes suggest that there are similarities
@@ -1676,9 +1676,9 @@ thus it is unnecessary to redefine these for each scenario.
 Therefore it is natural to define a \textsf{chargeFunc}
 concept that can be reused when other operation modes are specified. 
 
-We also include for this scenario a~\emph{zcAbscent} concept. 
-This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate 
-that in this system, there is a signal $zc$ but it has no bearing on the scenario.
+%We also include for this scenario a~\emph{zcAbscent} concept. 
+%This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate 
+%that in this system, there is a signal $zc$ but it has no bearing on the scenario.
 
 Figure~\ref{fig:zcAbsentScenario STG} shows the STG produced from
 the final concept in the list, \textsf{zcAbsentScenario}. It contains
