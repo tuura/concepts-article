@@ -38,7 +38,7 @@ UK}}
 
 \begin{abstract}
 Asynchronous circuits are becoming increasingly important in
-system design for Internet of Things, where they orchestrate
+system design for Internet-of-Things, where they orchestrate
 the interface between big synchronous computation components
 and the analogue environment, which is inherently asynchronous
 and has high uncertainty with respect to power supply,
@@ -54,7 +54,8 @@ for asynchronous circuits, which is based on behavioural
 \textit{concepts} -- high-level descriptions of asynchronous circuit
 requirements, that can be shared, reused and extended by users,
 and can be automatically translated to Signal Transition Graphs for
-further processing by conventional asynchronous and synchronous EDA tools.
+further processing by conventional asynchronous and synchronous EDA tools, 
+such as \noun{Petrify} and \noun{MPSAT}.
 Our aim is to simplify the process of capturing system requirements in the
 form of a formal specification, and to promote behavioural concepts as a
 means for design reuse. The proposed design flow is fully automated in
@@ -203,11 +204,11 @@ this STG is obtained using the monolithic approach.
 
 \end{figure}
 
-This STG is quite large, and has several interconnected branches. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the 
-connections between these according to the description of operation of the system. With there being several branches, the designer could choose to design each branch separately, and 
-manually connect these depending on the similarities between these branches.
+This STG is quite large, and has several overlayed scenarios. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the 
+connections between these according to the description of operation of the system. With there being several scenarios, the designer could choose to design each separately, and 
+manually connect these depending on the similarities between these scenarios.
 
-In the event that a designer needs to add or remove signals or correct a fault with this design, editing this design can become difficult, due to the complexity and size. This can lead to
+In the event that a designer needs to add or remove signals or correct a fault, editing can become difficult, due to the complexity and size. This can lead to
 further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly. 
 
 A designer may even have to start from a 
@@ -216,9 +217,9 @@ debug and edit. This can slow the design process of a circuit, which is undesira
 ever shorter~\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
-In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be changed, 
-this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the changes, with a minimum 
-amount of time spent making the change.
+In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be corrected, 
+this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the corrections, with a minimum 
+amount of time spent making the corrections.
 
 This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
 allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example,
@@ -238,8 +239,8 @@ Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter w
 
 Studying this STG shows that there are some signal interactions that we can identify.  These are: 
 \begin{enumerate}
-\item Signals \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
-\item Signals \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
+\item High levels of \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
+\item High levels of \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
 \item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
 \item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
 \end{enumerate}
@@ -250,8 +251,8 @@ therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$
 \textsf{$gn$} respectively, forming two separate handshakes.
 
 Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between any of
-these signals, or any other signals included as part of a circuit will automatically include these protocols, which will avoid circuit breaking bugs in the testing phase. For example, an
-interaction involving \textsf{$uv$} will ensure that it is never set high at the same time as \textsf{$oc$}, as otherwise the mutual exclusion will not hold.
+these signal will be subject to these protocols, which will prevent circuit breaking bugs in the testing phase. For example, an
+interaction involving \textsf{$gp$} will ensure that it is never set high at the same time as \textsf{$gn$}, as otherwise the mutual exclusion will not hold.
 
 If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may 
 happen when using the monolithic approach.
@@ -834,7 +835,8 @@ involved in this specification.
 
 \begin{figure}[t]
 \begin{centering}
-\includegraphics[scale=0.6]{Images/c-element-circuit}
+\includegraphics[scale=0.74]{Images/c-element-circuit-redo}
+%\includegraphics[scale=0.6]{Images/c-element-circuit}
 \par\end{centering}
 
 \protect\caption{\label{fig:cElement-concepts}Example system specified using concepts.}
@@ -894,7 +896,7 @@ the current namespace). When a list of concepts is passed into the
 STG translation algorithm, all referenced concepts are replaced by
 the corresponding definitions. 
 
-The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
+%The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
 
 %\vspace{-3mm}
 
@@ -1144,14 +1146,15 @@ As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to pr
 %produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
 When combining scenarios, there are several things to consider in
-how the scenarios fit together. Depending on the application the circuit
-is being designed for, some scenarios may need to operate in certain
+how the scenarios fit together. Depending on the application,
+%the circuit is being designed for
+some scenarios may need to operate in certain
 orders, for example, one scenario may exist simply to initialise the
 circuit, therefore this scenario needs to run at start-up, before
 any of the other scenarios, and then never be run again while the
 system remains active. 
 
-To address this, when combining scenarios we offer some templates,
+To address this, when combining scenarios we aim offer some templates,
 each of which can be used to combine scenarios in various orders.
 With this the designer specifies in which ways the scenarios should
 be combined, and if an order is needed, the order the scenarios should
@@ -1163,6 +1166,18 @@ to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
 the scenarios may run, and this needs to be specified by the designer. 
 
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.45]{Images/sequential_combination}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:sequential_combination}An example of sequential combination}
+
+\par\end{centering}
+
+\end{figure}
+
 \textbf{Concurrent:} In this case there is no order, but one or more
 of the scenarios in a specification may run in parallel. This template
 will combine the scenarios in a way that will allow concurrency to
@@ -1170,17 +1185,41 @@ occur, limited to requirements of the specification, for instance,
 the number of scenarios that can be active at any one time, which
 can be limited by the number of tokens available at once. 
 
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.45]{Images/concurrent_combination}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:sequential_combination}An example of concurrent combination}
+
+\par\end{centering}
+
+\end{figure}
+
 \textbf{Non-deterministic choice:} This template will combine the
 scenarios in a way that allows any of the scenarios to run, but not
 according to any order to deal with the lack of determinism in the
 system, using one token which is used only by the running scenario,
 and this is returned when the scenario completes. 
 
-There may be some more complex requirements to combination, and it
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.45]{Images/non_deterministic_combination}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:sequential_combination}An example of non-deterministic combination}
+
+\par\end{centering}
+
+\end{figure}
+
+There may be more complex requirements to combination, and it
 is possible to combine some scenarios using one template, then including
 the result in a combination with other scenarios using another template. For example, a
 system which is non-deterministic may also have a scenario that runs
-at start up to initialise the system. In this case, a designer could
+at start up. In this case, a designer could
 combine all non-deterministic scenarios first, then combine the resulting
 STG with the initialising scenario, setting the order so this runs
 first. 
@@ -1749,39 +1788,39 @@ scenario STGs, one for each operational mode in this system. However,
 we need to ensure they are correct both for the specification and
 as STG models before we can combine these. 
 
-\subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
-
-%\vspace{-2mm}
-
-To be combinable by our method, the produced STGs need to satisfy certain
-properties~\cite{Cortadella}:
-\begin{itemize}
-\item Complete State Coding (CSC): each state of the models with different
-behaviour has differing signal encodings to avoid problems during
-synthesis. Note that in some cases it is possible to automatically
-resolve a CSC conflict.
-\item Deadlock freedom: no state is reachable from which no progress can
-be made.
-\item Output persistence: there are no race conditions in the STG.
-\item Signal consistency: in any trace the rising and falling phases of
-each signal alternate.
-\end{itemize}
-These properties can be automatically checked in \noun{Workcraft }using
-the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
-}In the event that one of these properties does not hold, unless it
-can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
-In this case a problematic concept is identified and diagnostic information
-is printed out to help a designer correct the issue.
-
-Correctly produced scenarios may not necessarily work as the specification
-suggests, and this needs to be validated before using these scenarios
-in any further designs. \noun{Workcraft} features a simulation tool,
-and this can be used by a designer to check that the signals can transition
-according to the initial requirements. If the simulation produces
-undesirable results, a designer can work to fix the error of the scenario
-STG, or correct the design at the concept level. The latter is the
-preferable method if this design is to be reused either as a predefined
-concept, or as a scenario in another system. 
+%\subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
+%
+%%\vspace{-2mm}
+%
+%To be combinable by our method, the produced STGs need to satisfy certain
+%properties~\cite{Cortadella}:
+%\begin{itemize}
+%\item Complete State Coding (CSC): each state of the models with different
+%behaviour has differing signal encodings to avoid problems during
+%synthesis. Note that in some cases it is possible to automatically
+%resolve a CSC conflict.
+%\item Deadlock freedom: no state is reachable from which no progress can
+%be made.
+%\item Output persistence: there are no race conditions in the STG.
+%\item Signal consistency: in any trace the rising and falling phases of
+%each signal alternate.
+%\end{itemize}
+%These properties can be automatically checked in \noun{Workcraft }using
+%the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
+%}In the event that one of these properties does not hold, unless it
+%can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
+%In this case a problematic concept is identified and diagnostic information
+%is printed out to help a designer correct the issue.
+%
+%Correctly produced scenarios may not necessarily work as the specification
+%suggests, and this needs to be validated before using these scenarios
+%in any further designs. \noun{Workcraft} features a simulation tool,
+%and this can be used by a designer to check that the signals can transition
+%according to the initial requirements. If the simulation produces
+%undesirable results, a designer can work to fix the error of the scenario
+%STG, or correct the design at the concept level. The latter is the
+%preferable method if this design is to be reused either as a predefined
+%concept, or as a scenario in another system. 
 
 %\vspace{-2mm}
 
@@ -1846,24 +1885,63 @@ of the scenarios to run again.
 
 %\vspace{-3mm}
 
-Like with the scenario models when they have been composed, we need
-to verify that this model satisfies certain properties after combination
-of multiple scenarios, as any issues at this stage will cause an implementation
-of the model to be wrong and this can cause the model to be unimplementable
-as an SI circuit. 
+To be combinable by our method, the produced scenario STGs need to satisfy certain
+properties~\cite{Cortadella}:
+\begin{itemize}
+\item Complete State Coding (CSC): each state of the models with different
+behaviour has differing signal encodings to avoid problems during
+synthesis. Note that in some cases it is possible to automatically
+resolve a CSC conflict.
+\item Deadlock freedom: no state is reachable from which no progress can
+be made.
+\item Output persistence: there are no race conditions in the STG.
+\item Signal consistency: in any trace the rising and falling phases of
+each signal alternate.
+\end{itemize}
+These properties can be automatically checked in \noun{Workcraft }using
+the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
+}In the event that one of these properties does not hold, unless it
+can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
+In this case a problematic concept can be identified and diagnostic information
+is printed out to help a designer correct the issue.
 
-The verification properties we need to satisfy are the same as for
-scenarios~(see~Section~\ref{sub:Verification-and-simulation}),
-and are corrected in similar ways, however the corrections can be
-done within the problematic scenario, by changing, adding or removing
-one or more concepts to avoid affecting any of the functionality of
-the whole system, or any of the correctly functioning scenarios. 
+Correctly produced scenarios may not necessarily work as the specification
+suggests, and this needs to be validated before using these scenarios
+in any further designs. \noun{Workcraft} features a simulation tool,
+and this can be used by a designer to check that the signals can transition
+according to the initial requirements. If the simulation produces
+undesirable results, a designer can work to fix the error of the scenario
+STG, or correct the design at the concept level. The latter is the
+preferable method if this design is to be reused either as a predefined
+concept, or as a scenario in another system. 
 
-When the full system model satisfies all of the verification properties,
-we can simulate this model and check that the signals can transition
-in the order we expect according to the requirements of the system.
-If this is correct, we can guarantee that this model represents the
-full system specification, and can now be used in the next step.
+After all scenarios have been combined, the result will be the STG specification
+for the full system. If each scenario used in the combination process satisfies
+the verification properties, it is possible no errors will exist within the full
+specification. However, certain unforeseen errors may be produced
+and thus, it is necessary to verify the resulting specification. This can
+be performed using \noun{Mpsat} as with the scenarios to ensure the same
+properties are held. The simulation tool built into \noun{Workcraft} can also
+be utilised for testing the functionality of a full system specification.
+
+%Like with the scenario models when they have been composed, we need
+%to verify that this model satisfies certain properties after combination
+%of multiple scenarios, as any issues at this stage will cause an implementation
+%of the model to be wrong and this can cause the model to be unimplementable
+%as an SI circuit. 
+%
+%The verification properties we need to satisfy are the same as for
+%scenarios~(see~Section~\ref{sub:Verification-and-simulation}),
+%and are corrected in similar ways, however the corrections can be
+%done within the problematic scenario, by changing, adding or removing
+%one or more concepts to avoid affecting any of the functionality of
+%the whole system, or any of the correctly functioning scenarios. 
+%
+%When the full system model satisfies all of the verification properties,
+%we can simulate this model and check that the signals can transition
+%in the order we expect according to the requirements of the system.
+%If this is correct, we can guarantee that this model represents the
+%full system specification, and can now be used in the next step.
 
 %\vspace{-2.5mm}
 
@@ -2009,9 +2087,9 @@ we have attempted to address these issues and make concepts not only a powerful 
 
 \section{Conclusions and future work\label{sec:conclusions}}
 
-This document shows that it is possible to design a system by splitting
+In this work we show that it is possible to design a system by splitting
 it into operational modes, and describing signal interactions and requirements
-of the mode in a textual format. These can the be used to produce STGs
+of the mode in a textual format. These can then be used to produce STGs
 that represent these operational modes, which can be combined to
 produce a model for the full system specification.
 
@@ -2023,7 +2101,7 @@ reduce errors and save time in comparison to performing these manually.
 This method can help to make asynchronous circuits more appealing
 to industrial designers.
 
-As the Internet-of-Things becomes more apparent, Asynchronous circuits
+As the Internet-of-Things becomes more apparent, asynchronous circuits
 will be key in designing nodes, for quick and efficient power management
 to increase the operation time of these devices. 
 
@@ -2051,9 +2129,8 @@ designer in reducing design time and errors.
 
 
 CPOG and Parameterised Graph models are also integrated into 
-\noun{Workcraft} as part of the \noun{Scenco} toolsuite
-\noun{~\cite{2015_workcraft_scenco},
-}allowing circuits to be described by algebraic equations in text
+\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco},
+allowing circuits to be described by algebraic equations in text
 form. \noun{Scenco} provides support for describing concept models
 to produce scenarios and then compose scenarios to produce full system
 implementations. 
