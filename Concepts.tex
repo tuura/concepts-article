@@ -188,21 +188,19 @@ design approach that has been used to design this, and it's disadvantages. Follo
 
 \subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
 
-The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}. 
-A basic power regulator comprises an analogue buck and a digital controller,
+The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
+A basic power regulator comprises an analog buck and a digital controller,
 as shown in Figure~\ref{fig:buck-schematic}. The controller operates
-the power regulating PMOS and NMOS transistors of the buck~(using\textsf{
-$gp$} and $gn$ outputs) as a reaction to \emph{under-voltage}~(UV),
-\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions~(\textsf{$uv$,}
-\textsf{$oc$} and \textsf{$zc$} inputs, respectively). These conditions
-are detected and signalled by a set of specialised sensors implemented
-as comparators of measured current and voltage levels against some
-reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{V\_0}).
-Note that the $gp$ and $gn$ signals are buffered to drive the very
-large power regulating transistors and their effect on the buck can
-be significantly delayed. Therefore, the controller is explicitly
-notified~(by the $gp\_ack$ and $gn\_ack$ signals) when the power
-transistor threshold levels~(\textsf{Th\_pmos} and \textsf{Th\_nmos})
+the power regulating PMOS and NMOS transistors of the buck (using \textsf{$gp$}
+and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
+\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions (\textsf{$uv$},
+\textsf{$oc$}, and \textsf{$zc$} inputs, respectively). These conditions
+are detected by a set of sensors that compare the measured current and voltage
+with some reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{I\_0}).
+Note that in order to avoid a short-circuit the PMOS and NMOS transistors of
+the buck must never be \noun{On} at the same time. Therefore, the controller
+is explicitly notified~(by the \textsf{$gp_ack$} and \textsf{$gn_ack$} signals)
+when the power transistor threshold levels~(\textsf{V\_pmos} and \textsf{V\_nmos})
 are crossed.
 
 \begin{figure}[h]
@@ -234,17 +232,9 @@ and PMOS transistor \noun{On}, while OC should revert their state~--
 PMOS \noun{Off} and NMOS \noun{On}~(ZC~absent scenario). Detection of
 the ZC after UV does not change this behaviour~(ZC~late scenario).
 However, if ZC is detected before UV then both the PMOS and NMOS transistors
-remain \noun{Off} until the UV condition is indicated~(ZC~early scenario). 
+remain \noun{Off} until the UV condition~(ZC~early scenario).
 
-Note that ZC and UV are independent conditions that indicate separate
-physical effects and therefore the corresponding signals can happen
-in any order. UV indicates that the voltage supplied to the load has
-decreased below the reference value. ZC occurs when the coil current
-reduces to~0 and causes the NMOS transistor to switch \noun{Off},
-so that the NMOS acts like a diode and only conducts in one direction. 
-
-With the information provided here, a designer can then work to produce a formal specification using the monolithic approach.
-Figure~\ref{fig:Monolithic-buck} contains a completed STG specification for a simple buck controller.
+With the information provided here, a designer can then work to produce a formal specification using the monolithic approach. Figure~\ref{fig:Monolithic-buck} contains a completed STG specification for a simple buck controller.
 
 \begin{figure}[h]
 \begin{centering}
@@ -267,8 +257,7 @@ further faults, and several iterations of design and tests until the new feature
 
 A designer may even have to start from a 
 blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, 
-debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and 
-ever shorter~\cite{2014_sokolov_ftfc}.
+debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
 In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be corrected, 
