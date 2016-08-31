@@ -18,7 +18,7 @@
    viewBox="3138 1902 4911 3703"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="schematic-basic_buck.svg">
   <metadata
      id="metadata238">
@@ -32,7 +32,24 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs236" />
+     id="defs236">
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4264"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4266"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4262"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4264-6"
+       is_visible="true" />
+  </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -46,9 +63,9 @@
      inkscape:window-height="1176"
      id="namedview234"
      showgrid="false"
-     inkscape:zoom="3.3835125"
-     inkscape:cx="154.21816"
-     inkscape:cy="116.25836"
+     inkscape:zoom="1.6917562"
+     inkscape:cx="53.6683"
+     inkscape:cy="181.72861"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -161,17 +178,12 @@
      style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:bevel"
      points="7500,3600 7500,4050 " />
   <ellipse
-     sodipodi:ry="38"
-     sodipodi:rx="75"
-     sodipodi:cy="0"
-     sodipodi:cx="0"
-     cy="0"
-     cx="0"
+     cy="3424.5369"
+     cx="6150"
      id="ellipse54"
      style="fill:none;stroke:#000000;stroke-width:7"
      ry="38"
-     rx="75"
-     transform="translate(6150,2626)" />
+     rx="75" />
   <polygon
      id="polygon56"
      style="fill:#ffffff;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter"
@@ -206,15 +218,11 @@
      id="polygon70"
      style="fill:#ffffff;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
      points="5385,4911 5390,4908 5396,4905 5400,4901 5404,4896 5407,4891 5409,4885 5410,4880 5410,4873 5410,4867 5408,4862 5405,4856 5402,4851 5398,4847 5393,4843 5388,4841 5382,4839 5376,4838 5370,4838 5364,4839 5358,4841 5353,4843 5348,4847 5344,4851 5341,4856 5338,4862 5336,4867 5336,4873 5336,4880 5337,4885 5339,4891 5342,4896 5346,4901 5350,4905 5356,4908 5361,4911 5367,4912 5373,4913 5373,4913 5379,4912 " />
-  <polyline
-     id="polyline72"
-     style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter"
-     points="4950,2400 3450,2400 3450,3000 3540,3000 " />
   <polygon
      id="polygon74"
      style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
      points="3546,3030 3546,3030 3606,3000 3546,2970 "
-     transform="translate(-26.617886,0)" />
+     transform="matrix(-1,0,0,-1,8272.0026,5397.4257)" />
   <polyline
      id="polyline76"
      style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter"
@@ -241,15 +249,6 @@
      id="polygon86"
      style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
      points="3546,3930 3546,3930 3606,3900 3546,3870 "
-     transform="translate(-26.617886,0)" />
-  <polyline
-     id="polyline88"
-     style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter"
-     points="4950,4800 3450,4800 3450,4200 3540,4200 " />
-  <polygon
-     id="polygon90"
-     style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
-     points="3546,4230 3546,4230 3606,4200 3546,4170 "
      transform="translate(-26.617886,0)" />
   <polyline
      id="polyline92"
@@ -309,9 +308,9 @@
      id="rect116"
      style="fill:none;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter"
      rx="0"
-     height="1950"
+     height="2650.1575"
      width="1050"
-     y="2625"
+     y="2286.7217"
      x="3600" />
   <polyline
      id="polyline118"
@@ -384,19 +383,11 @@
      style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
      points="7404,5295 7404,5295 7344,5325 7404,5355 "
      transform="translate(26.617886,0)" />
-  <polyline
-     id="polyline152"
-     style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter"
-     points="6225,2625 6450,2625 6450,2175 6209,2175 " />
   <polygon
      id="polygon154"
      style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
      points="6204,2145 6204,2145 6144,2175 6204,2205 "
      transform="translate(26.617886,0)" />
-  <polyline
-     id="polyline156"
-     style="fill:none;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter"
-     points="6150,3750 6450,3750 6450,5025 6209,5025 " />
   <polygon
      id="polygon158"
      style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
@@ -428,32 +419,32 @@
      style="fill:#ffffff;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter"
      points="6150,2250 6000,2100 6000,2100 6150,1950 " />
   <text
-     style="font-size:186.32521057px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:middle;fill:#000000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:186.32521057px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:middle;fill:#000000;stroke-width:0.025in"
      id="text172"
      font-size="144"
      font-weight="normal"
      font-style="normal"
-     y="2823.3821"
+     y="2796.7642"
      x="4125"
      xml:space="preserve">control</text>
   <text
-     style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#000000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:133.08943176px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:start;fill:#000000;stroke-width:0.025in"
      id="text174"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="4923.3823"
      x="5426.6177"
-     xml:space="preserve">Th_nmos</text>
+     xml:space="preserve">V_nmos</text>
   <text
-     style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#000000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:133.08943176px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:start;fill:#000000;stroke-width:0.025in"
      id="text176"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="2351.6179"
      x="5426.6177"
-     xml:space="preserve">Th_pmos</text>
+     xml:space="preserve">V_pmos</text>
   <text
      style="font-size:186.32521057px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:end;fill:#000000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
      id="text178"
@@ -473,14 +464,14 @@
      x="7676.6177"
      xml:space="preserve">V_ref</text>
   <text
-     style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#000000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:133.08943176px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:start;fill:#000000;stroke-width:0.025in"
      id="text182"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="5223.3823"
      x="6476.6177"
-     xml:space="preserve">V_0</text>
+     xml:space="preserve">I_0</text>
   <text
      xml:space="preserve"
      x="-4200.0283"
@@ -519,13 +510,13 @@
      x="6476.6177"
      xml:space="preserve">I_max</text>
   <text
-     style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#ff0000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:133.08943176px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:start;fill:#ff0000;stroke-width:0.025in"
      id="text194"
      font-size="108"
      font-weight="normal"
      font-style="normal"
-     y="3048.3821"
-     x="3648.3821"
+     y="2436.1699"
+     x="4127.5044"
      xml:space="preserve">gp_ack</text>
   <text
      style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#ff0000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
@@ -555,13 +546,13 @@
      x="3648.3821"
      xml:space="preserve">zc</text>
   <text
-     style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:start;fill:#ff0000;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:133.08943176px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:start;fill:#ff0000;stroke-width:0.025in"
      id="text202"
      font-size="108"
      font-weight="normal"
      font-style="normal"
-     y="4248.3823"
-     x="3648.3821"
+     y="4833.9712"
+     x="4123.5708"
      xml:space="preserve">gn_ack</text>
   <text
      style="font-size:133.08943176px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-anchor:end;fill:#0000ff;stroke-width:0.025in;font-family:Sans;-inkscape-font-specification:Sans"
@@ -582,32 +573,32 @@
      x="4601.6177"
      xml:space="preserve">gn</text>
   <text
-     style="font-size:159.70731707px;font-style:normal;font-weight:normal;text-anchor:end;fill:#000000;stroke-width:0.02500000000000000in;font-family:Sans;-inkscape-font-specification:Sans;font-stretch:normal;font-variant:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:159.70732117px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:end;fill:#000000;stroke-width:0.025in"
      id="text208"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="2025"
      x="6000"
-     xml:space="preserve">over-current (oc)</text>
+     xml:space="preserve">over-current</text>
   <text
-     style="font-size:159.70731707px;font-style:normal;font-weight:normal;text-anchor:end;fill:#000000;stroke-width:0.02500000000000000in;font-family:Sans;-inkscape-font-specification:Sans;font-stretch:normal;font-variant:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:159.70732117px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:end;fill:#000000;stroke-width:0.025in"
      id="text210"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="5550"
      x="7200"
-     xml:space="preserve">under-voltage (uv)</text>
+     xml:space="preserve">under-voltage</text>
   <text
-     style="font-size:159.70731707px;font-style:normal;font-weight:normal;text-anchor:end;fill:#000000;stroke-width:0.02500000000000000in;font-family:Sans;-inkscape-font-specification:Sans;font-stretch:normal;font-variant:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:159.70732117px;font-family:Sans;-inkscape-font-specification:Sans;text-anchor:end;fill:#000000;stroke-width:0.025in"
      id="text212"
      font-size="108"
      font-weight="normal"
      font-style="normal"
      y="5250"
      x="6000"
-     xml:space="preserve">zero-crossing (zc)</text>
+     xml:space="preserve">zero-crossing</text>
   <polyline
      id="polyline214"
      style="fill:#ffffff;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter"
@@ -669,16 +660,6 @@
   <circle
      sodipodi:ry="31"
      sodipodi:rx="31"
-     sodipodi:cy="3750"
-     sodipodi:cx="6150"
-     id="circle228"
-     style="fill:#000000;stroke:#000000;stroke-width:7"
-     r="31"
-     cy="3750"
-     cx="6150" />
-  <circle
-     sodipodi:ry="31"
-     sodipodi:rx="31"
      sodipodi:cy="3600"
      sodipodi:cx="7050"
      id="circle230"
@@ -696,4 +677,46 @@
      r="31"
      cy="3600"
      cx="7500" />
+  <polygon
+     id="polygon74-3"
+     style="fill:#000000;stroke:#000000;stroke-width:7;stroke-miterlimit:8"
+     points="3606,3000 3546,2970 3546,3030 3546,3030 "
+     transform="matrix(-0.99999995,0,0,-0.99999998,8271.2838,7797.7347)" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:6.65447145;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 4947.3961,4795.8692 -259.609,0"
+     id="path4260"
+     inkscape:path-effect="#path-effect4262"
+     inkscape:original-d="m 4947.3961,4795.8692 -259.609,0"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:6.65447145;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 4951.3295,2396.4529 -255.6754,0"
+     id="path4264"
+     inkscape:path-effect="#path-effect4266"
+     inkscape:original-d="m 4951.3295,2396.4529 -255.6754,0"
+     inkscape:connector-curvature="0" />
+  <ellipse
+     cy="3749.5667"
+     cx="6147.1045"
+     id="ellipse54-3"
+     style="fill:none;stroke:#000000;stroke-width:6.99999952"
+     ry="38"
+     rx="74.999992" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:6.6544714;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 6221.8403,3748.7516 226.0057,0 0,1274.4738 -233.6362,0"
+     id="path4262"
+     inkscape:path-effect="#path-effect4264"
+     inkscape:original-d="m 6221.8403,3748.7516 226.0057,0 0,1274.4738 -233.6362,0"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:6.65447092;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 6213.7937,2173.8402 245.673,0 0,1253.756 -233.6362,0"
+     id="path4262-7"
+     inkscape:path-effect="#path-effect4264-6"
+     inkscape:original-d="m 6213.7937,2173.8402 245.673,0 0,1253.756 -233.6362,0"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
 </svg>
