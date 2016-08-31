@@ -191,9 +191,9 @@ design approach that has been used to design this, and it's disadvantages. Follo
 The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
 A basic power regulator comprises an analog buck and a digital controller,
 as shown in Figure~\ref{fig:buck-schematic}. The controller operates
-the power regulating PMOS and NMOS transistors of the buck (using \textsf{$gp$}
+the power regulating PMOS and NMOS transistors of the buckï¿½(using \textsf{$gp$}
 and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
-\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions (\textsf{$uv$},
+\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditionsï¿½(\textsf{$uv$},
 \textsf{$oc$}, and \textsf{$zc$} inputs, respectively). These conditions
 are detected by a set of sensors that compare the measured current and voltage
 with some reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{I\_0}).
@@ -1151,7 +1151,7 @@ individually. Including the initial states, this would give us the STGs found in
 These STGs can now be passed into \noun{Pcomp}~\cite{PCOMP}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
 Figure~\ref{fig:cElement STG}.
 
-The algorithm for the translation from concepts to STGs can be found in Algorithm~\ref{alg:translation}.
+The algorithm for the translation from concepts to STGs can be found in Algorithm~\ref{alg:translation}.]
 
 \begin{algorithm}[h]
 \begin{algorithmic}
@@ -1214,7 +1214,7 @@ the scenarios may run, and this needs to be specified by the designer.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.4]{Images/sequential_combination}
+\includegraphics[scale=0.45]{Images/sequential_combination}
 \par\end{centering}
 
 \begin{centering}
@@ -1233,7 +1233,7 @@ can be limited by the number of tokens available at once.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.4]{Images/concurrent_combination}
+\includegraphics[scale=0.45]{Images/concurrent_combination}
 \par\end{centering}
 
 \begin{centering}
@@ -1251,7 +1251,7 @@ and this is returned when the scenario completes.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.4]{Images/non_deterministic_combination}
+\includegraphics[scale=0.45]{Images/non_deterministic_combination}
 \par\end{centering}
 
 \begin{centering}
@@ -1638,7 +1638,7 @@ $
 \begin{flushleft}
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/stg-UV_without_ZC}
+\includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
 \par\end{centering}
 
 \protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario}
@@ -1706,7 +1706,7 @@ $\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigar
 
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/stg-UV_before_ZC}
+\includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
 \par\end{centering}
 
 \protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario}
@@ -1764,7 +1764,7 @@ $\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigar
 \begin{center}
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/stg-UV_after_ZC}
+\includegraphics[scale=0.22]{Images/stg-UV_after_ZC}
 \par\end{centering}
 
 \protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario}
@@ -1840,7 +1840,7 @@ again, regardless of which solution ran previously.
 
 \begin{figure}[t]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/stg-buck}
+\includegraphics[scale=0.22]{Images/stg-buck-scenarios_merged}
 \par\end{centering}
 
 \begin{centering}
@@ -1853,24 +1853,22 @@ again, regardless of which solution ran previously.
 Figure~\ref{fig:buck STG} shows the full system specification STG
 that has been produced from combining the three scenario STGs as seen
 in Figures~\ref{fig:zcAbsentScenario STG},~\ref{fig:zcLateScenario STG},
-and~\ref{fig:zcEarlyScenario STG}. The first most notable part of
-this full system STG is that there is only one branch for over-current
-correction. As mentioned above, over-current is corrected in exactly
-the same way for each of these scenarios, and as such, to reduce the
-complexity of the model, these can be combined into a single branch
-that runs after any of the under-voltage correction branches have
-run. 
+and~\ref{fig:zcEarlyScenario STG}. It is possible to view each individual
+scenario in the system in this STG. There are redundancies iuncluded in 
+this STG, which can merged with other parts of the STG 
+to produce a more compact model. This would produce an STG 
+similar to that shown in Figure~\ref{fig:Monolithic-buck}.  It is a trivial
+step to simplify the STG, as these are functionally the same, and
+produce the same results during verification and synthesis.
 
-There are two explicit places in this model, \textsf{p1} and \textsf{p2}.
-\textsf{p1} holds a token initially, and this allows any of the scenarios
-to run. This place has no control over which scenario can run, but
-it only allows one of them to run at a time. The single token is consumed
-by whichever scenario runs, and the lack of token in \textsf{p1} after
-this stops any more scenarios running. The token is passed through
-the scenario, and after under-voltage is corrected the token is passed
-into \textsf{p2}. This token is then consumed by the over-current branch when over-current signals, 
-and returns to \textsf{p1}, allowing only one
-of the scenarios to run again. 
+There is an explicit place in this model which holds a token initially, 
+and this allows any of the scenarios to run. This place has no 
+control over which scenario can run, but it only allows one of 
+them to run at a time. The single token is consumed
+by whichever scenario runs, and the lack of token in the place
+after this stops any more scenarios running. The token is passed through
+the scenario, and after over-current is corrected the token is passed
+back into this place, allowing only one of the scenarios to run again. 
 
 %\vspace{-3mm}
 
@@ -1957,7 +1955,7 @@ from this full model.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.35]{Images/circuit-buck}
+\includegraphics[scale=0.3]{Images/circuit-buck}
 \par\end{centering}
 
 \protect\caption{\label{fig:buck Circuit}Asynchronous logic gate implementation}
@@ -2122,7 +2120,7 @@ designer in reducing design time and errors.
 
 
 CPOG and Parameterised Graph models are also integrated into 
-\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco},
+\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco}~\cite{Scenco_paper},
 allowing circuits to be described by algebraic equations in text
 form. \noun{Scenco} provides support for describing concept models
 to produce scenarios and then compose scenarios to produce full system
