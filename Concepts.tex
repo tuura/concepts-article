@@ -191,15 +191,15 @@ design approach that has been used to design this, and it's disadvantages. Follo
 The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
 A basic power regulator comprises an analog buck and a digital controller,
 as shown in Figure~\ref{fig:buck-schematic}. The controller operates
-the power regulating PMOS and NMOS transistors of the buck�(using \textsf{$gp$}
+the power regulating PMOS and NMOS transistors of the buck~(using \textsf{$gp$}
 and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
-\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions�(\textsf{$uv$},
+\emph{over-current}~(OC) and \emph{zero-crossing}~(ZC) conditions~(\textsf{$uv$},
 \textsf{$oc$}, and \textsf{$zc$} inputs, respectively). These conditions
 are detected by a set of sensors that compare the measured current and voltage
 with some reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{I\_0}).
 Note that in order to avoid a short-circuit the PMOS and NMOS transistors of
 the buck must never be \noun{On} at the same time. Therefore, the controller
-is explicitly notified~(by the \textsf{$gp_ack$} and \textsf{$gn_ack$} signals)
+is explicitly notified~(by the \textsf{$gp\_ack$} and \textsf{$gn\_ack$} signals)
 when the power transistor threshold levels~(\textsf{V\_pmos} and \textsf{V\_nmos})
 are crossed.
 
