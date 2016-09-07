@@ -1,5 +1,3 @@
-%% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
 \documentclass[british,compsoc]{IEEEtran}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
@@ -54,7 +52,7 @@ for asynchronous circuits, which is based on behavioural
 \textit{concepts} -- high-level descriptions of asynchronous circuit
 requirements, that can be shared, reused and extended by users,
 and can be automatically translated to Signal Transition Graphs for
-further processing by conventional asynchronous and synchronous EDA tools, 
+further processing by conventional asynchronous and synchronous EDA tools,
 such as \noun{Petrify} and \noun{MPSAT}.
 Our aim is to simplify the process of capturing system requirements in the
 form of a formal specification, and to promote behavioural concepts as a
@@ -65,14 +63,11 @@ an asynchronous power regulator.
 
 \sloppy
 \thispagestyle{empty}
-%\vspace{-4mm}
 
 \section{Introduction}
 
-%TODO: 1-3 recent references [X] by lead research groups to support
-%the opening statement. Talk to Alex & Danil.
 Analogue and mixed-signal circuits become more tightly integrated with
-digital systems, in particular in mobile and autonomous applications, 
+digital systems, in particular in mobile and autonomous applications,
 such as wearable consumer electronics and self-powered Internet-of-Things
 nodes, where it is essential to have intelligent timing control and power
 regulation~\cite{7287733}\cite{talbot2016holistic}\cite{6241632}.
@@ -97,7 +92,7 @@ These tools take an STG specification of a complete controller and can
 formally verify its correctness, as well as synthesise an asynchronous
 circuit implementation that is \emph{speed-independent}, i.e. guaranteed
 to work correctly regardless of component delays~\cite{Muller_1959_ts}.
-Such a monolithic approach to designing asynchronous circuits has 
+Such a monolithic approach to designing asynchronous circuits has
 poor scalability: as the system grows in complexity its monolithic
 specification becomes challenging to comprehend and debug. The problem
 becomes particularly severe when designing multi-mode systems, such as
@@ -118,7 +113,7 @@ specific language embedded in Haskell~\cite{1996_hudak_dsl}. Concepts can
 be defined at several levels; specifically, we give examples of signal-,
 gate- and protocol-level concepts. It is possible to compose basic concepts
 into more complex ones, thus supporting the design reuse at the level of system
-specification. 
+specification.
 %Commented out as I'm not sure we are actually talking about this in the paper:
 %Scenarios of reconfigurable systems~\cite{microadapt}
 %can also be parameterised by run-time parameters (e.g., available
@@ -133,7 +128,7 @@ asynchronous circuit implementation targeting a chosen technology library.
 %Commented out, as this is probably too detailed for the intro.
 %This step will also be automated,
 %and will offer \emph{templates} for common scenario ordering requirements,
-%such as mode switching sequences and start-up scenarios. 
+%such as mode switching sequences and start-up scenarios.
 
 Our contributions are as follows:
 \begin{itemize}
@@ -157,36 +152,55 @@ in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusio
 %as concepts. When composed with other concepts describing these relationships
 %and concepts describing the control which reacts to the environment,
 %a model will be produced which shows how the environment and the control
-%system interacts. 
+%system interacts.
 
 %The idea is that our approach should reduce the complexity of designing
 %asynchronous circuits, so the number of errors should be reduced,
 %and easier to find and correct. This will in turn reduce the design
-%time, and make asynchronous circuits more desirable for industry, so 
+%time, and make asynchronous circuits more desirable for industry, so
 %asynchronous circuits can be used in devices more commonly.
 
-%The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.  
+%The presented approach is automated as a Haskell tool~\cite{2016_concepts_github}.
 %This parses concepts and uses them to produce scenario STGs. We aim to implement
 %combination of scenarios in the tool in the future.
-%STGs produced, either scenario or full system, are viewed, 
-%edited, simulated, verified and synthesised using the open-source \noun{Workcraft} 
-%framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify} 
+%STGs produced, either scenario or full system, are viewed,
+%edited, simulated, verified and synthesised using the open-source \noun{Workcraft}
+%framework~\cite{2007_poliakov_workcraft}, which features back-end tools \noun{Petrify}
 %and \noun{Mpsat} to perform these operations.
 
 %In this paper, we use real life industrial
 %example of a buck converter~\cite{2014_sokolov_ftfc} to show our
-%design flow, and test this design approach. 
+%design flow, and test this design approach.
 %\vspace{-2mm}
 
-\section{Motivating Example \label{sec:Motivating Example}}
+\section{Motivating Example: Buck Converter\label{sec:Motivating Example}}
 
-Signal transition graphs are commonly used for the specification of asynchronous circuits, and a monolithic design approach is used when designing with STGs. This approach can become
-problematic however as designs become larger. 
+On-chip power management is essential for energy efficiency and reliability of
+IoT computation nodes. Power management units interface directly with the
+analogue world and can benefit from asynchronous implementation that allows
+them to react to changes in the system at the rate they occur, instead of
+sampling various analogue parameters by clock, which is both slow and
+energy-wasteful~\cite{2014_sokolov_ftfc}.
 
-In this section we introduce the subject of the case study we will use to demonstrate the design flow for concepts in Section~\ref{sec:case-study}. We will then discuss the monolithic 
-design approach that has been used to design this, and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
+In this section we provide background on asynchronous buck converters, and
+discuss challenges arising when designing asynchronous controllers using
+Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
+a common model for the specification of asynchronous circuits.
 
-\subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
+% A monolithic
+% design approach is used when designing with STGs, which can become problematic
+% as designs become larger.
+
+% [...] system is an illustrative example: it relies
+% on analogue circuitry for power regulation and conversion, and its behaviour
+% is characterised by many operating modes with complex interplay and
+% high-level decision logic that is digitally controlled.
+% Asynchronous circuits are event-driven, i.e. they react to changes
+
+% In this section we introduce the subject of the case study we will use to demonstrate the design flow for concepts in Section~\ref{sec:case-study}. We will then discuss the monolithic
+% design approach that has been used to design this, and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
+
+\subsection{Background on buck converters}
 
 The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
 A basic power regulator comprises an analog buck and a digital controller,
@@ -234,6 +248,8 @@ the ZC after UV does not change this behaviour~(ZC~late scenario).
 However, if ZC is detected before UV then both the PMOS and NMOS transistors
 remain \noun{Off} until the UV condition~(ZC~early scenario).
 
+\subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
+
 With the information provided here, a designer can then work to produce a formal specification using the monolithic approach. Figure~\ref{fig:Monolithic-buck} contains a completed STG specification for a simple buck controller.
 
 \begin{figure}[h]
@@ -248,20 +264,20 @@ With the information provided here, a designer can then work to produce a formal
 
 \end{figure}
 
-This STG is quite large, and has several overlayed scenarios. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the 
-connections between these according to the description of operation of the system. With there being several scenarios, the designer could choose to design each separately, and 
+This STG is quite large, and has several overlayed scenarios. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the
+connections between these according to the description of operation of the system. With there being several scenarios, the designer could choose to design each separately, and
 manually connect these depending on the similarities between these scenarios.
 
 In the event that a designer needs to add or remove signals or correct a fault, editing can become difficult, due to the complexity and size. This can lead to
-further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly. 
+further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly.
 
-A designer may even have to start from a 
-blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend, 
+A designer may even have to start from a
+blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend,
 debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
 
 \subsection{A new way of viewing STGs \label{sub:new-way}}
-In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be corrected, 
-this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the corrections, with a minimum 
+In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be corrected,
+this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the corrections, with a minimum
 amount of time spent making the corrections.
 
 This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
@@ -280,24 +296,24 @@ Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter w
 
 \end{figure}
 
-Studying this STG shows that there are some signal interactions that we can identify.  These are: 
+Studying this STG shows that there are some signal interactions that we can identify.  These are:
 \begin{enumerate}
 \item High levels of \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
-\item High levels of \textsf{$gp$} and \textsf{$gn$} are mutually exclusive 
+\item High levels of \textsf{$gp$} and \textsf{$gn$} are mutually exclusive
 \item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
 \item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
 \end{enumerate}
 
 These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually
-exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and 
-therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and 
+exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and
+therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and
 \textsf{$gn$} respectively, forming two separate handshakes.
 
 Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between any of
 these signal will be subject to these protocols, which will prevent circuit breaking bugs in the testing phase. For example, an
 interaction involving \textsf{$gp$} will ensure that it is never set high at the same time as \textsf{$gn$}, as otherwise the mutual exclusion will not hold.
 
-If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may 
+If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may
 happen when using the monolithic approach.
 
 With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without
@@ -346,7 +362,7 @@ in this section form \emph{commutative monoids}: they have identity
 elements corresponding to empty specifications, and can be composed
 to build complex concepts from simpler ones. The order of composition
 does not matter, i.e., the concepts commute: $a\diamond b=b\diamond a$
-for all $a,b\in M$. 
+for all $a,b\in M$.
 
 %\vspace{-3mm}
 
@@ -420,10 +436,10 @@ We therefore usually assume that $\mathsf{initial}(s)\Rightarrow\mathsf{invarian
 holds for all $s\in S$. Similarly, invariant concepts form a commutative
 monoid with~$e=\mathbf{1}$ and~$\diamond=\wedge$. Intuitively,
 if a system comprises two subsystems then its states should be permitted
-in both of the subsystems. 
+in both of the subsystems.
 
 One can derive other useful concepts from the three concepts described
-above, for instance, 
+above, for instance,
 \[
 \mathsf{silent}(e,s)=\overline{\mathsf{excited}(e,s)}
 \]
@@ -456,7 +472,7 @@ holds too.
 
 
 We now introduce concepts which are specific for the domain of asynchronous
-circuits and express them using the abstract concepts defined above. 
+circuits and express them using the abstract concepts defined above.
 
 \textbf{\label{signal-level}Signal-level concepts:} States and events of an asynchronous
 circuit are parameterised by a fixed set of signals $A$. A state
@@ -491,7 +507,7 @@ before it.
 
 Another key concept in asynchronous circuits is \emph{causality}:
 we say that a transition $\mathit{effect}\in E$ causally depends
-on transition $\mathit{cause}\in E$, denoted as 
+on transition $\mathit{cause}\in E$, denoted as
 \[
 \mathsf{causality}(\mathit{cause},\mathit{effect}):E\times S\rightarrow\mathbb{B}
 \]
@@ -513,7 +529,7 @@ is used in the partially applied form. We will use a short-hand notation
 for the causality concept for convenience.
 
 While this concept is called \emph{causality}, this doesn't necessarily imply timings, such as any $\mathit{cause}$ transition immediatley forcing the
-$\mathit{effect}$ transition it applies to. Causality can be used in order to list all possible $\mathit{cause}$ transitions which need to occur in order 
+$\mathit{effect}$ transition it applies to. Causality can be used in order to list all possible $\mathit{cause}$ transitions which need to occur in order
 for an $\mathit{effect}$ transition.
 
 For example, one can compose two causality concepts using the monoid composition.
@@ -548,7 +564,7 @@ An \emph{SR-Latch} has two input signals, $s$ and $r$ each of which cause differ
 \mathsf{SRLatch}\,s \,r \,q=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
 \]
 This can be described as, the\emph{set} signal, $s$ when active, or high, will cause the gate to latch a high state, outputting this with signal $q$ being high. Conversely, the \emph{reset} signal, $r$, when active, or high, will cause the gate to latch a low state, and the output $q$ will be low in this case.
-Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter. 
+Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter.
 \[
 \mathsf{SRLatch}\,s \,r \,q=\mathsf{buffer}\,s \,q \ \diamond\ \mathsf{inverter}\,r \,q
 \]
@@ -593,7 +609,7 @@ way to express a handshake between~$a$ and~$b$:
 \]
 Indeed, this conceptual understanding of a handshake as being composed
 from a buffer and an inverter is often used by circuit designers as
-a convenient way of reasoning. 
+a convenient way of reasoning.
 
 In order to specify the initial state of a handshake between signals~$a$
 and~$b$, we can use the function $\mathsf{initialise}$.
@@ -641,9 +657,9 @@ signals $g_{1}$ and $g_{2}$:
 Specifying signal types is important when designing asynchronous circuits. How signals of different
 types interact is knowledge required for verification properties to be held, and for synthesis.
 
-The information of which signals are \emph{inputs}, \emph{outputs} or \emph{internals} can further 
-speed the design process. Primarily, in the process of translating concepts, the resulting STGs can 
-be more quickly used for testing, verification, synthesis, etc. Without specifying the types, this 
+The information of which signals are \emph{inputs}, \emph{outputs} or \emph{internals} can further
+speed the design process. Primarily, in the process of translating concepts, the resulting STGs can
+be more quickly used for testing, verification, synthesis, etc. Without specifying the types, this
 would require signals types to declared manually in the resulting STG.
 
 Signal types, or \emph{interfaces}, in concept-form, are described by listing the signals based on type:
@@ -663,7 +679,7 @@ Signal types, or \emph{interfaces}, in concept-form, are described by listing th
 \]
 }{\small \par}
 
-As with all concepts, interface concepts can be composed with eachother, or with any 
+As with all concepts, interface concepts can be composed with eachother, or with any
 other concept; signal-, gate- or protocol-level.
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
@@ -680,7 +696,7 @@ wire forks as isochronic and add wire delays to the corresponding
 gate delays~(\emph{Quasi-Delay Insensitive}~(QDI) circuit class~\cite{Martin_1986_dc}).
 A convenient formalism for specification of SI circuits is STGs~\cite{Chu_1987_phd,Rosenblum_1985_tpn},
 which is a special kind of Petri nets~\cite{Petri_1962_phd} whose
-transitions are associated with signal events. 
+transitions are associated with signal events.
 
 %\vspace{-3mm}
 
@@ -703,7 +719,7 @@ is a mapping~$M:\, P\rightarrow\mathbb{N}$ denoting the number of
 \emph{1-safe} Petri nets). A transition $t$ is \emph{enabled} iff
 $\forall p,p\in\bullet t\Rightarrow M(p)>0$. The evolution of a Petri
 net is possible by \emph{firing} the enabled transitions. \emph{Firing}
-of a transition~$t$ results in a new marking $M'$ such that 
+of a transition~$t$ results in a new marking $M'$ such that
 \[
 M'\left(p\right)=\left\{ \begin{array}{cc}
 M(p)-1 & if\, p\in\bullet t\setminus t\bullet,\\
@@ -711,7 +727,7 @@ M(p)+1 & if\, p\in t\bullet\setminus\bullet t,\\
 M(p)\,\,\,\,\, & otherwise
 \end{array}\right.
 \]
- for all $p\in P$. 
+ for all $p\in P$.
 
 An STG is a 1-safe Petri net whose transitions are labelled by signal
 events, i.e. $STG=\left\langle P,\, T,\, F,\, M_{0},\,\lambda,\, Z,\, v_{0}\right\rangle $,
@@ -750,13 +766,13 @@ multiple events. We make use of the monoid composition of concepts
 to describe complex systems incrementally. Importantly we can mix
 several levels of system description and refer to signal, gate and
 protocol level concepts in one specification, depending on which level
-is more convenient in a particular situation. 
+is more convenient in a particular situation.
 
 Consider the example of a C-element, which has signals $a$ and $b$ as inputs,
-and signal $c$ is the output. The output of this C-element is connected to 
-each of the inputs via an inverter. This is a simple example of a complete 
-system, of a C-element with an environment, and will be used several 
-times as a simple example. 
+and signal $c$ is the output. The output of this C-element is connected to
+each of the inputs via an inverter. This is a simple example of a complete
+system, of a C-element with an environment, and will be used several
+times as a simple example.
 
 The following is the file using the code to describe the example using signal-level concepts, which can be passed into
 the translation tool:
@@ -817,7 +833,7 @@ $
 The first concepts in this list is the \emph{circuit} concept, defined as the composition of the following 5. This is the concept which will be translated.
 The concepts defined after the \emph{where} describe certain operations of the system. The first four are named according to what they represent,
 for example, \textsf{\textit{\emph{outputRise}}} describes the events which cause the output to rise. The final concepts defines
-the initial states, necessary for the translation algorithm to produce an STG which is useable, as without the initial states, none of the signals will be 
+the initial states, necessary for the translation algorithm to produce an STG which is useable, as without the initial states, none of the signals will be
 able to transition.
 
 %The sixth concept composes all of the first
@@ -829,7 +845,7 @@ able to transition.
 %a scenario STG, as the STG produced will not be usable without knowing
 %the states the signals will be in when the scenario is entered. The
 %algorithm takes this concept and works out where tokens need to be
-%placed in the STG produced. 
+%placed in the STG produced.
 
 \begin{figure}[h]
 \begin{centering}
@@ -839,14 +855,14 @@ able to transition.
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
 
-Note: The code demonstrated in this example is the format required to work with the tool. 
-For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts. 
-We will omit the module declaration, and imports, as well as 
+Note: The code demonstrated in this example is the format required to work with the tool.
+For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts.
+We will omit the module declaration, and imports, as well as
 the declaration of types for \emph{circuit}, as these are required, and as such will be included in all concepts.
-\emph{rise} and \emph{fall} are used in the code to represent a high and low transition respectively.  
-We replace \emph{rise} with '+' and \emph{fall} with '-'. Finally, the diamond composition operator in code is both a '<' and '>' as 
-a diamond character is not a standard keyboard character. In this article, we will use $\diamond$ to denote composition. 
-All examples in this article are available in the 
+\emph{rise} and \emph{fall} are used in the code to represent a high and low transition respectively.
+We replace \emph{rise} with '+' and \emph{fall} with '-'. Finally, the diamond composition operator in code is both a '<' and '>' as
+a diamond character is not a standard keyboard character. In this article, we will use $\diamond$ to denote composition.
+All examples in this article are available in the
 format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
 
 This set of concepts is only one way of describing this C-element
@@ -922,11 +938,11 @@ real-life systems often need to support multiple scenarios~ (e.g.,
 start-up and normal operation, different power modes~\cite{microadapt},
 etc.). This allows each individual scenario to be designed using concepts,
 and tested individually to ensure they work correctly, before these
-are combined to produce a full system specification. 
+are combined to produce a full system specification.
 
 To increase the re-usability of scenarios, which helps reduce design
 time of future systems, this method supports the use of pre-designed
-scenarios as concepts. 
+scenarios as concepts.
 
 In some cases, a designer may find it easier to split the specification
 of operational modes further than scenarios and design certain elements
@@ -940,7 +956,7 @@ produced of this element can be referenced in a list of concepts by
 name (provided that the definition is appropriately imported into
 the current namespace). When a list of concepts is passed into the
 STG translation algorithm, all referenced concepts are replaced by
-the corresponding definitions. 
+the corresponding definitions.
 
 %The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
 
@@ -951,23 +967,23 @@ the corresponding definitions.
 
 Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
 deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
-\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to translate 
+\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to translate
 concept specifications to STGs in order to be used with these tools.
 
-In this section, we will discuss the algorithm which translates concepts to STGs. Once concepts have been translated, they can be composed and combined using tools, and this will also 
-be discussed. 
+In this section, we will discuss the algorithm which translates concepts to STGs. Once concepts have been translated, they can be composed and combined using tools, and this will also
+be discussed.
 
 %A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
 
 \subsection{Translating concepts to STGs \label {sub:translating}}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts. 
-When translating any concepts we pass them to an algorithm which begins by breaking down all concepts into a list of 
+As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts.
+When translating any concepts we pass them to an algorithm which begins by breaking down all concepts into a list of
 signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.
 Interface concepts are used to set the signal types, and as such are not included in this part of the translation.
 
-Using the example of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this 
-algorithm would initially produce the list of concepts 
+Using the example of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this
+algorithm would initially produce the list of concepts
 found in Figure~\ref{fig:c-element-concepts}.
 
 %\vspace{2mm}
@@ -1043,8 +1059,8 @@ part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-ste
 \end{figure}
 
 The next step is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
-in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a 
-token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains 
+in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a
+token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains
 a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition, so consistency will not be held.
 
 \begin{figure}[h]
@@ -1090,7 +1106,7 @@ $b_0$ and $c_0$. This will produce the fully translated STG, which will look as 
 
 \end{figure}
 
-The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}. This can be 
+The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}. This can be
 resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
 
 \begin{figure}[h]
@@ -1101,11 +1117,11 @@ resynthesized using \noun{Petrify} to produce a more compact and easier to read 
 \protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
 \end{figure}
 
-Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with 
-\noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made 
+Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with
+\noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made
 these can be done either with the concepts, which can be re-translated to view an updated STG, or to the STG directly.
 
-%In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can 
+%In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can
 %further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
 
 %or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
@@ -1113,11 +1129,11 @@ these can be done either with the concepts, which can be re-translated to view a
 \subsection{Parallel composition}
 
 With this method of translating concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and translate this to an STG, it is also possible to
-translate smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using 
+translate smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using
 \emph{Parallel Composition}
 within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts 
+Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts
 individually. Including the initial states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
 
 \begin{figure}[h]
@@ -1186,9 +1202,9 @@ The algorithm for the translation from concepts to STGs can be found in Algorith
 
 \subsection{Scenario combination\label{sub:scenario-composition}}
 
-As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario. 
-%which can be tested and verified separately to allow for easier changes and additions 
-%to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to 
+As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario.
+%which can be tested and verified separately to allow for easier changes and additions
+%to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to
 %produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
 
 When combining scenarios, there are several things to consider in
@@ -1198,7 +1214,7 @@ some scenarios may need to operate in certain
 orders, for example, one scenario may exist simply to initialise the
 circuit, therefore this scenario needs to run at start-up, before
 any of the other scenarios, and then never be run again while the
-system remains active. 
+system remains active.
 
 To address this, when combining scenarios we aim offer some templates,
 each of which can be used to combine scenarios in various orders.
@@ -1210,7 +1226,7 @@ that will be offered before scenarios are combined:
 \textbf{Sequential:} Sequential combination will allow a designer
 to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
-the scenarios may run, and this needs to be specified by the designer. 
+the scenarios may run, and this needs to be specified by the designer.
 
 \begin{figure}[h]
 \begin{centering}
@@ -1229,7 +1245,7 @@ of the scenarios in a specification may run in parallel. This template
 will combine the scenarios in a way that will allow concurrency to
 occur, limited to requirements of the specification, for instance,
 the number of scenarios that can be active at any one time, which
-can be limited by the number of tokens available at once. 
+can be limited by the number of tokens available at once.
 
 \begin{figure}[h]
 \begin{centering}
@@ -1247,7 +1263,7 @@ can be limited by the number of tokens available at once.
 scenarios in a way that allows any of the scenarios to run, but not
 according to any order to deal with the lack of determinism in the
 system, using one token which is used only by the running scenario,
-and this is returned when the scenario completes. 
+and this is returned when the scenario completes.
 
 \begin{figure}[h]
 \begin{centering}
@@ -1268,33 +1284,33 @@ system which is non-deterministic may also have a scenario that runs
 at start up. In this case, a designer could
 combine all non-deterministic scenarios first, then combine the resulting
 STG with the initialising scenario, setting the order so this runs
-first. 
+first.
 
 This method of combination can allow for many possible scenario combination
 styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
-as well as design time. 
+as well as design time.
 
 %\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
 %
 %It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
-%functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the 
+%functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the
 %best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
 %
 %\subsubsection{Algorithm of direct synthesis}
 %
 %When finding an implementation for a specification, we need only concern ourselves with the output signals. The input signals, the environment, can not be
-%controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the 
-%Boolean equations for the output signals. 
+%controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the
+%Boolean equations for the output signals.
 %
-%Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as 
-%$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such 
-%as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario 
+%Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as
+%$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such
+%as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario
 %will be combined using the \emph{AND} ($*$) operation.
 %
-%This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following 
-%this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a 
-%transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If 
+%This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following
+%this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a
+%transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If
 %some concepts in this system are:
 %
 %\vspace{2mm}
@@ -1313,16 +1329,16 @@ as well as design time.
 %
 %\end{minipage}\vspace{2mm}
 %
-%The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however, 
-%the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the 
-%Boolean equations. 
+%The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however,
+%the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the
+%Boolean equations.
 %
-%Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for 
-%this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and 
-%reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this 
+%Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for
+%this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and
+%reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this
 %with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
 %
-%This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct 
+%This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct
 %Synthesis is found in Algorithm~\ref{alg:direct-synth}
 %
 %\begin{algorithm}[h]
@@ -1344,19 +1360,19 @@ as well as design time.
 %	     \State resetEq <- resetEq  $*$  $\bar{p}$
 %	\EndIf
 %    \EndFor
-%  \EndFor    
+%  \EndFor
 %  \State reduce(setEq)
 %  \State reduce(resetEq)
 %\EndFor
 %\end{algorithmic}
 %\end{algorithm}
 %
-%\subsubsection{Example of direct synthesis} 
+%\subsubsection{Example of direct synthesis}
 %
-%For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example, 
-%the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals. 
+%For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example,
+%the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals.
 %
-%Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$. 
+%Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$.
 %
 %\vspace{2mm}
 %\begin{minipage}[t]{1\columnwidth}%
@@ -1370,7 +1386,7 @@ as well as design time.
 %
 %\end{minipage}\vspace{2mm}
 %
-%These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a 
+%These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a
 %C-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
 %
 %\begin{figure}[h]
@@ -1403,7 +1419,7 @@ as well as design time.
 %mode of a full specification, and this needs to be combined with other
 %scenario STGs in order to produce a full system specification. In
 %this section we will discuss how this process is performed, from concepts,
-%to a set of scenario STGs, to a full system model. 
+%to a set of scenario STGs, to a full system model.
 %
 %\vspace{-2mm}
 %
@@ -1422,7 +1438,7 @@ as well as design time.
 %for use in the next step, but hidden from the user. However, how the
 %fragments are produced is important. For example, an STG fragment
 %converted from the concept \textsf{\textit{\emph{outputRise}}} in
-%the above C-element example is shown in Figure~\ref{fig:outputRise STG}. 
+%the above C-element example is shown in Figure~\ref{fig:outputRise STG}.
 %
 %\begin{figure}[h]
 %\begin{centering}
@@ -1444,7 +1460,7 @@ as well as design time.
 %tokens, and must not reach deadlock at any point, and this STG would
 %be incomplete without these back-pressure arcs used to show initial
 %states. These arcs are produced automatically by the algorithm, and
-%these fragments may be hidden from the user. 
+%these fragments may be hidden from the user.
 %
 %\vspace{-3mm}
 %
@@ -1463,13 +1479,13 @@ as well as design time.
 %this returns a single STG, created by composing all of the fragments.
 %It is necessary for all STG fragments to be complete, for example
 %using back-pressure arcs and including the initial states, as this
-%is used in the parallel composition process. 
+%is used in the parallel composition process.
 %
 %We can use this process to produce STGs for scenarios, which are then
 %verified and simulated in \noun{Workcraft} and used in the next step.
 %However, if this STG is not to be used as a scenario but as a predefined
 %concept, this can be verified and stored for further use as part of
-%scenario descriptions. 
+%scenario descriptions.
 %
 %\vspace{-3mm}
 %
@@ -1489,7 +1505,7 @@ as well as design time.
 %orders, for example, one scenario may exist simply to initialise the
 %circuit, therefore this scenario needs to run at start-up, before
 %any of the other scenarios, and then never be run again while the
-%system remains active. 
+%system remains active.
 %
 %To address this, when combining scenarios we offer some templates,
 %each of which can be used to combine scenarios in various orders.
@@ -1501,20 +1517,20 @@ as well as design time.
 %\textbf{Sequential:} Sequential combination will allow a designer
 %to select the order of all scenarios, so when combined, they will
 %run in a sequence. In this case, there may be a clear order in which
-%the scenarios may run, and this needs to be specified by the designer. 
+%the scenarios may run, and this needs to be specified by the designer.
 %
 %\textbf{Concurrent:} In this case there is no order, but one or more
 %of the scenarios in a specification may run in parallel. This template
 %will combine the scenarios in a way that will allow concurrency to
 %occur, limited to requirements of the specification, for instance,
 %the number of scenarios that can be active at any one time, which
-%can be limited by the number of tokens available at once. 
+%can be limited by the number of tokens available at once.
 %
 %\textbf{Non-deterministic choice:} This template will combine the
 %scenarios in a way that allows any of the scenarios to run, but not
 %according to any order to deal with the lack of determinism in the
 %system, using one token which is used only by the running scenario,
-%and this is returned when the scenario completes. 
+%and this is returned when the scenario completes.
 %
 %There may be some more complex requirements to combination, and it
 %is possible to combine some scenarios using one template, then including
@@ -1523,12 +1539,12 @@ as well as design time.
 %at start up to initialise the system. In this case, a designer could
 %combine all non-deterministic scenarios first, then combine the resulting
 %STG with the initialising scenario, setting the order so this runs
-%first. 
+%first.
 %
 %This method of combination can allow for many possible scenario combination
 %styles, and more complex systems can be combined automatically, which
 %in comparison to manual combination, could reduce the number of errors
-%as well as design time. 
+%as well as design time.
 %
 %\vspace{-3mm}
 %
@@ -1537,9 +1553,9 @@ as well as design time.
 \section{Case study \label{sec:case-study}}
 
 In Section~\ref{sec:Motivating Example} we introduced the example for this case study, a simple buck converter,
-in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in Section~\ref{sec:Concepts}, 
-and with examples explained how they can be used to design simple circuits, and how these can be translated to 
-provide us with an STG specification for use with standard tools. 
+in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in Section~\ref{sec:Concepts},
+and with examples explained how they can be used to design simple circuits, and how these can be translated to
+provide us with an STG specification for use with standard tools.
 
 Now we can use this information with the buck converter case study to detail the design flow for producing a
 specification for a buck converter.
@@ -1551,12 +1567,12 @@ we can determine three separate operating conditions that occur in
 the analogue circuit and the controller needs to react to. All of
 these can be produced from concepts separately and composed to produce
 scenario STGs, before combining these to produce a single full circuit
-STG. 
+STG.
 
 During this process, it is useful to find any operations which occur
 between two or more operational modes, as these can then be reused
 in other scenarios. If this is defined in one list of concepts, it
-can then be referenced in concept lists for other scenarios by name, assuming these scenarios will be built as part of the same workspace. 
+can then be referenced in concept lists for other scenarios by name, assuming these scenarios will be built as part of the same workspace.
 
 \subsubsection{ZC~absent scenario}
 
@@ -1564,7 +1580,7 @@ We start with describing the operational mode where no ZC condition
 is signalled and produce the following list of concepts:
 
 \begin{minipage}[h]{1\columnwidth}%
-	
+
 \begin{flushleft}
 $\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\
 & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond
@@ -1654,7 +1670,7 @@ constraints which are described using protocol-level concepts. We
 also describe constraints provided by the environment that we are
 aware of, such as $oc$ and $uv$ never signalling at the same time, and ensuring that
 the acknowledge signal of transistors must be low before the other transistor can be switched on.
-Environment behaviour is included in the concepts so that it is captured in the resulting STG for testing and simulation purposes. 
+Environment behaviour is included in the concepts so that it is captured in the resulting STG for testing and simulation purposes.
 We also include an \textsf{interface} concept in order to include the
 types of the signals involved in the scenario.
 
@@ -1663,10 +1679,10 @@ between them, mainly in the sequence of PMOS/NMOS activation during
 the charging cycle. The signal types are also the same for all scenarios in the system, and
 thus it is unnecessary to redefine these for each scenario.
 Therefore it is natural to define a \textsf{chargeFunc}
-concept that can be reused when other operation modes are specified. 
+concept that can be reused when other operation modes are specified.
 
-%We also include for this scenario a~\emph{zcAbscent} concept. 
-%This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate 
+%We also include for this scenario a~\emph{zcAbscent} concept.
+%This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate
 %that in this system, there is a signal $zc$ but it has no bearing on the scenario.
 
 Figure~\ref{fig:zcAbsentScenario STG} shows the STG produced from
@@ -1674,7 +1690,7 @@ the final concept in the list, \textsf{zcAbsentScenario}. It contains
 two tokens which are created based on the \textsf{initialState} concept.
 The analogue circuit is not guaranteed to signal either under-voltage
 or over-current first, and this needs to be noted in the concepts
-and the STG. 
+and the STG.
 
 \subsubsection{ZC~late scenario}
 
@@ -1687,7 +1703,7 @@ are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\begin{aligned}\\\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\ 
+$\begin{aligned}\\\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\
 & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
 & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
@@ -1736,12 +1752,12 @@ $\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \
 & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
-\par\end{flushleft}%	
+\par\end{flushleft}%
 
 \begin{flushleft}
 $\mathsf{where}$
 \end{flushleft}
-	
+
 \begin{flushleft}
 $\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
 \par\end{flushleft}
@@ -1779,7 +1795,7 @@ The obtained STG for the \textsf{zcEarlyScenario} concept is shown
 in Figure~\ref{fig:zcEarlyScenario STG}. We have now produced three
 scenario STGs, one for each operational mode in this system. However,
 we need to ensure they are correct both for the specification and
-as STG models before we can combine these. 
+as STG models before we can combine these.
 
 %\subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
 %
@@ -1813,7 +1829,7 @@ as STG models before we can combine these.
 %undesirable results, a designer can work to fix the error of the scenario
 %STG, or correct the design at the concept level. The latter is the
 %preferable method if this design is to be reused either as a predefined
-%concept, or as a scenario in another system. 
+%concept, or as a scenario in another system.
 
 %\vspace{-2mm}
 
@@ -1827,7 +1843,7 @@ expected according to the specification. These can now be combined
 to produce a full system implementation. As mentioned in Section~\ref{sub:scenario-composition},
 we can combine these scenarios in multiple ways, depending on whether
 there is some sort of required ordering to the way these scenarios
-must run. 
+must run.
 
 For a simple buck controller there is no required order of running
 these scenarios, and it is uncertain as to which scenario may be running
@@ -1836,7 +1852,7 @@ combine all of the scenarios in a non-deterministic fashion. The full
 system implementation produced should allow for only one of these
 scenarios to run at a time, but when the scenario has completed the
 system should return to a state where any of the scenarios could run
-again, regardless of which solution ran previously. 
+again, regardless of which solution ran previously.
 
 \begin{figure}[t]
 \begin{centering}
@@ -1854,21 +1870,21 @@ Figure~\ref{fig:buck STG} shows the full system specification STG
 that has been produced from combining the three scenario STGs as seen
 in Figures~\ref{fig:zcAbsentScenario STG},~\ref{fig:zcLateScenario STG},
 and~\ref{fig:zcEarlyScenario STG}. It is possible to view each individual
-scenario in the system in this STG. There are redundancies iuncluded in 
-this STG, which can merged with other parts of the STG 
-to produce a more compact model. This would produce an STG 
+scenario in the system in this STG. There are redundancies iuncluded in
+this STG, which can merged with other parts of the STG
+to produce a more compact model. This would produce an STG
 similar to that shown in Figure~\ref{fig:Monolithic-buck}.  It is a trivial
 step to simplify the STG, as these are functionally the same, and
 produce the same results during verification and synthesis.
 
-There is an explicit place in this model which holds a token initially, 
-and this allows any of the scenarios to run. This place has no 
-control over which scenario can run, but it only allows one of 
+There is an explicit place in this model which holds a token initially,
+and this allows any of the scenarios to run. This place has no
+control over which scenario can run, but it only allows one of
 them to run at a time. The single token is consumed
 by whichever scenario runs, and the lack of token in the place
 after this stops any more scenarios running. The token is passed through
 the scenario, and after over-current is corrected the token is passed
-back into this place, allowing only one of the scenarios to run again. 
+back into this place, allowing only one of the scenarios to run again.
 
 %\vspace{-3mm}
 
@@ -1904,7 +1920,7 @@ according to the initial requirements. If the simulation produces
 undesirable results, a designer can work to fix the error of the scenario
 STG, or correct the design at the concept level. The latter is the
 preferable method if this design is to be reused either as a predefined
-concept, or as a scenario in another system. 
+concept, or as a scenario in another system.
 
 After all scenarios have been combined, the result will be the STG specification
 for the full system. If each scenario used in the combination process satisfies
@@ -1919,14 +1935,14 @@ be utilised for testing the functionality of a full system specification.
 %to verify that this model satisfies certain properties after combination
 %of multiple scenarios, as any issues at this stage will cause an implementation
 %of the model to be wrong and this can cause the model to be unimplementable
-%as an SI circuit. 
+%as an SI circuit.
 %
 %The verification properties we need to satisfy are the same as for
 %scenarios~(see~Section~\ref{sub:Verification-and-simulation}),
 %and are corrected in similar ways, however the corrections can be
 %done within the problematic scenario, by changing, adding or removing
 %one or more concepts to avoid affecting any of the functionality of
-%the whole system, or any of the correctly functioning scenarios. 
+%the whole system, or any of the correctly functioning scenarios.
 %
 %When the full system model satisfies all of the verification properties,
 %we can simulate this model and check that the signals can transition
@@ -1967,19 +1983,19 @@ is fabricated. To verify this, the circuit is converted into a so-called
 circuit Petri net, using a model for each logic gate and combining
 them by means of read-arcs. By reachability analysis of this Petri
 net one can verify that the corresponding circuit is deadlock-free,
-hazard-free and conforms to the specification~\cite{2008_poliakov_async}. 
+hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 
 %\vspace{-2mm}
 
 \section{Related work\label{sec:related-work}}
 
 There are several existing methodologies which are similar to the
-one being proposed in this paper, and there are a common set of features between these which can be compared. 
+one being proposed in this paper, and there are a common set of features between these which can be compared.
 In some cases, these cannot be used for asynchronous designs, but some of their other key features can still be compared.
 Table~\ref{tab:related_work} contains a comparison of these features.
 
 We have found these related works limited in
-certain aspects, and we discuss this below. 
+certain aspects, and we discuss this below.
 \begin{table*}[t]
 \caption{A comparison of features of related works and the proposed method \label{tab:related_work}}
   \centering
@@ -1994,33 +2010,33 @@ certain aspects, and we discuss this below.
   Snippets                & No                                & No                   & Yes               & No                        & No                          & No                                & \,Little digital \\ \hline
   DI algebra             & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & \,Little digital \\ \hline
   Structural design   & No                                & Yes                 & No                 & No                        & No                          & No                               & \,Modular circuits \\ \hline
-  \end{tabular} 
+  \end{tabular}
 \end{table*}
 
 A common approach of designing asynchronous circuits, \textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify operations for asynchronous circuits for both big-
-digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into format describing a network of handshaked components, which can be 
-used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages 
-are used for synchronous design, and thus designers can adapt to Balsa more easily, however specifying a control system can lead to a complicated program which can be difficult to 
+digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into format describing a network of handshaked components, which can be
+used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages
+are used for synchronous design, and thus designers can adapt to Balsa more easily, however specifying a control system can lead to a complicated program which can be difficult to
 comprehend, in comparison to the STGs produced in the proposed approach, in which signal interactions can be visualised.
 
-\textbf{Biscotti}~\cite{5232351} is an approach which uses a C-style language, which can be easy to adapt to as designers are likely to have programming experience. It features 
-\emph{forever} blocks, in which code runs sequentially, but all these blocks run concurrently to each other. This design method starts by specifying a circuit which is then 
-\emph{compiled} into a Petri-net for verification with existing tools including \noun{Workcraft} and if successful, synthesis, similar to our approach with conversion of concepts to allow 
-use with multiple existing tools based on STGs. Biscotti is aimed at designing data-driven asynchronous systems however, and as with Balsa, specifying an asynchronous control system is 
-complex and difficult, especially as the number of signals involved increases.  
+\textbf{Biscotti}~\cite{5232351} is an approach which uses a C-style language, which can be easy to adapt to as designers are likely to have programming experience. It features
+\emph{forever} blocks, in which code runs sequentially, but all these blocks run concurrently to each other. This design method starts by specifying a circuit which is then
+\emph{compiled} into a Petri-net for verification with existing tools including \noun{Workcraft} and if successful, synthesis, similar to our approach with conversion of concepts to allow
+use with multiple existing tools based on STGs. Biscotti is aimed at designing data-driven asynchronous systems however, and as with Balsa, specifying an asynchronous control system is
+complex and difficult, especially as the number of signals involved increases.
 
-\cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define 
-functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava 
-generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However, 
-Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also 
-focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level. 
+\cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define
+functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava
+generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However,
+Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also
+focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level.
 
-\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell based tool, similar to Lava, focussed on asynchronous data circuits.  It has some cross-over 
-features with Lava, such as built-in verification, and the ability for users to define functions. C$\lambda$ash, however, uses existing Haskell constructs to directly synthesize as 
-asynchronous operations. C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of 
-specifying operations for asynchronous circuits, which may be more natural for designers, however Haskell as a language features huge differences to programming languages like 
-\noun{C}. The idea of a natural description is shared with Concepts, but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow 
-multiple levels, from low to high, when specifying. 
+\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell based tool, similar to Lava, focussed on asynchronous data circuits.  It has some cross-over
+features with Lava, such as built-in verification, and the ability for users to define functions. C$\lambda$ash, however, uses existing Haskell constructs to directly synthesize as
+asynchronous operations. C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of
+specifying operations for asynchronous circuits, which may be more natural for designers, however Haskell as a language features huge differences to programming languages like
+\noun{C}. The idea of a natural description is shared with Concepts, but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow
+multiple levels, from low to high, when specifying.
 
 \textbf{Snippets}~\cite{raey}, similar to concepts, are smaller
 state graph models which are used to compose full state graphs of
@@ -2055,10 +2071,10 @@ the full device designs. The ideas of this method are similar to that
 of the design methodology we are proposing to reduce design time.
 However, this method is at a much higher level, using fully designed
 and tested components where as we propose to allow re-usability when
-modelling at circuit level, using composed concepts. 
+modelling at circuit level, using composed concepts.
 
-Concepts have many beneficial features, such as reuse, natural description, multiple level description and composition, and more. Several of the discussed approaches feature similar 
-ideas which make them beneficial in certain ways, but we believe fall down at points where the inclusion of one or more of these features could make an approach better. With concepts, 
+Concepts have many beneficial features, such as reuse, natural description, multiple level description and composition, and more. Several of the discussed approaches feature similar
+ideas which make them beneficial in certain ways, but we believe fall down at points where the inclusion of one or more of these features could make an approach better. With concepts,
 we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible.
 
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
@@ -2074,7 +2090,7 @@ we have attempted to address these issues and make concepts not only a powerful 
 %are subsequently combined into a complete model. Resynthesis can still
 %be used at a later stage of the design process, once the complete
 %model of a system~(or a subsystem) has been obtained using the proposed
-%methodology. 
+%methodology.
 
 \section{Conclusions and future work\label{sec:conclusions}}
 
@@ -2094,37 +2110,37 @@ to industrial designers.
 
 As the Internet-of-Things becomes more apparent, asynchronous circuits
 will be key in designing nodes, for quick and efficient power management
-to increase the operation time of these devices. 
+to increase the operation time of these devices.
 
 Currently, this method works with Signal Transition Graphs, however
 it can be applied to other modelling disciplines, such as Finite State
-Machines~(FSM). In addition to FSMs and STGs, we also plan to extend 
-this design method to support Conditional Partial Order 
-Graphs~(CPOGs)~\cite{CPOG1} and Parameterised 
-Graphs~\cite{mokhov2014algebra} for modelling asynchronous circuits. 
-CPOGs can also be used for process mining, using tools such as 
-\noun{PGminer}~\cite{mokhov_2016_mining}\cite{pgminer}. Process mining 
-can be used for various purposes in conjunction with designing 
-asynchronous circuits. For example, process mining can find a 
-behavioural model if non exists, and can be 
-used to check that an existing specification is realistic, or find less 
-complex models. All of this can be performed automatically, and aid a 
-designer in reducing design time and errors. 
+Machines~(FSM). In addition to FSMs and STGs, we also plan to extend
+this design method to support Conditional Partial Order
+Graphs~(CPOGs)~\cite{CPOG1} and Parameterised
+Graphs~\cite{mokhov2014algebra} for modelling asynchronous circuits.
+CPOGs can also be used for process mining, using tools such as
+\noun{PGminer}~\cite{mokhov_2016_mining}\cite{pgminer}. Process mining
+can be used for various purposes in conjunction with designing
+asynchronous circuits. For example, process mining can find a
+behavioural model if non exists, and can be
+used to check that an existing specification is realistic, or find less
+complex models. All of this can be performed automatically, and aid a
+designer in reducing design time and errors.
 
 %In some cases, a designer may wish to view a scenario
 %or full system model as an FSM as they can provide more information
 %about a system, which can help with editing finer details of system,
 %or when correcting errors. It could be possible to use concepts to
 %create scenario FSMs that could then be combined to produce a full system
-%model in FSM form. 
+%model in FSM form.
 
 
-CPOG and Parameterised Graph models are also integrated into 
+CPOG and Parameterised Graph models are also integrated into
 \noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco}~\cite{Scenco_paper},
 allowing circuits to be described by algebraic equations in text
 form. \noun{Scenco} provides support for describing concept models
 to produce scenarios and then compose scenarios to produce full system
-implementations. 
+implementations.
 
 %In certain cases, an implementation may need to be changed based on
 %design parameters to produce the best result, and these may change
@@ -2132,7 +2148,7 @@ implementations.
 %and run-time reconfigurability~\cite{microadapt}, hence if
 %design parameters change, the design does not need to be recomposed
 %from another list of concepts, thus saving time. For this reason,
-%CPOGs could work very well with this design approach. 
+%CPOGs could work very well with this design approach.
 
 In certain cases, an implementation may need to be changed based on
 design parameters to produce the best result, and these may change
@@ -2140,17 +2156,17 @@ during run-time or after the fabrication stage. CPOGs support parameter
 and run-time reconfigurability~\cite{microadapt}, hence if
 design parameters change, the design does not need to be recomposed
 from another list of concepts, thus saving time. For this reason,
-CPOGs could work very well with this design approach. 
+CPOGs could work very well with this design approach.
 
 STGs and CPOGs both have their benefits when working with asynchronous
 systems, and it will be useful to compare these two methods, to see
 if either is better when designing a system from concepts, or see
 if there are certain specifications where one modelling method is
-better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits 
+better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits
 using concepts, and this is something we aim to explore.
 
 %\vspace{-2mm}
- 
+
 %
 %In addition to FSMs and STGs, we also plan to extend this design method
 %to support Conditional Partial Order Graphs~(CPOGs)~\cite{CPOG1}
@@ -2160,11 +2176,11 @@ using concepts, and this is something we aim to explore.
 %}allowing circuits to be described by algebraic equations in text
 %form. \noun{Scenco} provides support for describing concept models
 %to produce scenarios and then compose scenarios to produce full system
-%implementations. 
+%implementations.
 %
 %CPOGs can also be used for process mining, using tools such as \noun{PGminer}~\cite{mokhov_2016_mining, pgminer}.
-%Process mining can be used for various purposes in conjunction with designing asynchronous circuits. For example, process mining can find a behavioural model if non exists, and can be 
-%used to check that an existing specification is realistic, or find less complex model. All of this can be performed automatically, and aid a designer in reducing design time and errors. 
+%Process mining can be used for various purposes in conjunction with designing asynchronous circuits. For example, process mining can find a behavioural model if non exists, and can be
+%used to check that an existing specification is realistic, or find less complex model. All of this can be performed automatically, and aid a designer in reducing design time and errors.
 %
 
 %\vspace{-3mm}
