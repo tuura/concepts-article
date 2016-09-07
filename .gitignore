@@ -1,0 +1,6 @@
+*.log
+*.aux
+*.bbl
+*.blg
+*.synctex.gz
+/Concepts.pdf
