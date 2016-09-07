@@ -53,7 +53,7 @@ for asynchronous circuits, which is based on behavioural
 requirements, that can be shared, reused and extended by users,
 and can be automatically translated to Signal Transition Graphs for
 further processing by conventional asynchronous and synchronous EDA tools,
-such as \noun{Petrify} and \noun{MPSAT}.
+such as \noun{Petrify} and \noun{Mpsat}.
 Our aim is to simplify the process of capturing system requirements in the
 form of a formal specification, and to promote behavioural concepts as a
 means for design reuse. The proposed design flow is fully automated in
@@ -176,34 +176,45 @@ in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusio
 \section{Motivating Example: Buck Converter\label{sec:Motivating Example}}
 
 On-chip power management is essential for energy efficiency and reliability of
-IoT computation nodes. Power management units interface directly with the
-analogue world and can benefit from asynchronous implementation that allows
-them to react to changes in the system at the rate they occur, instead of
-sampling various analogue parameters by clock, which is both slow and
-energy-wasteful~\cite{2014_sokolov_ftfc}.
+IoT computation nodes~\cite{7287733}. Power management units need to interface
+with the analogue part of the system for sensing and controlling it, and can
+benefit from asynchronous implementation that allows them to react to changes
+in the system at the rate they occur, instead of sampling various analogue
+parameters by clock, which is both slow and energy-wasteful~\cite{2014_sokolov_ftfc}.
 
-In this section we provide background on asynchronous buck converters, and
-discuss challenges arising when designing asynchronous controllers using
-Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
-a common model for the specification of asynchronous circuits.
+In this section we first provide the background on asynchronous buck
+converters~\S\ref{sub:buck}, our main motivation example and case study.
+Buck converters rely on analogue circuitry for power regulation and
+conversion and their behaviour is typically characterised by many operating
+modes with complex interplay and high-level decision logic that is digitally
+controlled.
+We then discuss challenges arising in the design of asynchronous buck converters
+with Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
+a commonly used mathematical model for the specification of asynchronous
+circuits~\S\ref{sub:Monolithic}.
+Finally, we outline our new design approach~\S\ref{sub:new-way} wherein the
+behaviour of an asynchronous buck converter is decomposed into simple
+behaviours, that we later refer to as \emph{concepts}. The approach is
+described on an intuitive level, and will be formalised in the next
+section~\S\ref{sec:Concepts}.
 
-% A monolithic
-% design approach is used when designing with STGs, which can become problematic
-% as designs become larger.
+\begin{figure}[t]
+\begin{centering}
+\subfloat[\label{fig:buck-schematic}Schematic (digital control in analogue environment).]
+{\includegraphics[scale=0.7]{Images/schematic-buck}}
+\par
+\subfloat[\label{fig:buck-spec}Informal description of three behavioural scenarios.]
+{\includegraphics[scale=0.6]{Images/spec-buck}}
+\par
+\end{centering}
+\protect\caption{\label{fig:buck}Buck converter and its informal description.}
+\end{figure}
 
-% [...] system is an illustrative example: it relies
-% on analogue circuitry for power regulation and conversion, and its behaviour
-% is characterised by many operating modes with complex interplay and
-% high-level decision logic that is digitally controlled.
-% Asynchronous circuits are event-driven, i.e. they react to changes
+\subsection{Background on buck converters\label{sub:buck}}
 
-% In this section we introduce the subject of the case study we will use to demonstrate the design flow for concepts in Section~\ref{sec:case-study}. We will then discuss the monolithic
-% design approach that has been used to design this, and it's disadvantages. Following this, we will explore a way of viewing STGs which has helped us develop concepts.
-
-\subsection{Background on buck converters}
-
-The example we will use in the case study of this article is from the power management domain, a \emph{Multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
-A basic power regulator comprises an analog buck and a digital controller,
+Our motivating example comes from the power management domain, a
+\emph{multi-scenario power regulator}~\cite{2014_sokolov_ftfc}.
+A basic power regulator comprises an analogue buck and a digital controller,
 as shown in Figure~\ref{fig:buck-schematic}. The controller operates
 the power regulating PMOS and NMOS transistors of the buck~(using \textsf{$gp$}
 and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
@@ -211,33 +222,13 @@ and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
 \textsf{$oc$}, and \textsf{$zc$} inputs, respectively). These conditions
 are detected by a set of sensors that compare the measured current and voltage
 with some reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{I\_0}).
-Note that in order to avoid a short-circuit the PMOS and NMOS transistors of
+Note that in order to avoid a short-circuit, the PMOS and NMOS transistors of
 the buck must never be \noun{On} at the same time. Therefore, the controller
-is explicitly notified~(by the \textsf{$gp\_ack$} and \textsf{$gn\_ack$} signals)
+is explicitly notified~(by \textsf{$gp\_ack$} and \textsf{$gn\_ack$})
 when the power transistor threshold levels~(\textsf{V\_pmos} and \textsf{V\_nmos})
 are crossed.
 
-\begin{figure}[h]
-\begin{centering}
-\subfloat[\label{fig:buck-schematic}Schematic.]{\begin{centering}
-\includegraphics[scale=0.7]{Images/schematic-buck}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\begin{centering}
-\subfloat[\label{fig:buck-spec}Informal specification.]{\begin{centering}
-\includegraphics[scale=0.6]{Images/spec-buck}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\protect\caption{\label{fig:buck}Buck converter.}
-\end{figure}
-
-The operation of a power regulator is usually specified in an intuitive,
+The operation of a power regulator is usually described in an intuitive,
 but rather informal way, e.g. by enumerating the possible sequences
 of detected conditions and describing the intended reaction to these
 events, as shown in Figure~\ref{fig:buck-spec}. The diagram shows
@@ -248,76 +239,99 @@ the ZC after UV does not change this behaviour~(ZC~late scenario).
 However, if ZC is detected before UV then both the PMOS and NMOS transistors
 remain \noun{Off} until the UV condition~(ZC~early scenario).
 
-\subsection{Monolithic design approach for asynchronous circuits \label{sub:Monolithic}}
-
-With the information provided here, a designer can then work to produce a formal specification using the monolithic approach. Figure~\ref{fig:Monolithic-buck} contains a completed STG specification for a simple buck controller.
-
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/stg-buck}
+\par
+\protect\caption{\label{fig:Monolithic-buck}STG specification of a simple buck converter.}
 \par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:Monolithic-buck}STG of a simple buck converter.}
-
-\par\end{centering}
-
 \end{figure}
 
-This STG is quite large, and has several overlayed scenarios. The monolithic approach starts with a blank page, and a designer would have to manually insert signals and the
-connections between these according to the description of operation of the system. With there being several scenarios, the designer could choose to design each separately, and
-manually connect these depending on the similarities between these scenarios.
+\subsection{Monolithic STG-based design approach\label{sub:Monolithic}}
+
+Using the informal description of three behavioural scenarios, the designer can
+produce a formal specification, typically a monolithic STG describing the
+complete behaviour of the circuit. Figure~\ref{fig:Monolithic-buck} shows such
+a monolithic STG specification for the simple buck controller described above.
+Nodes of the STG correspond to signal rising ($+$) and falling ($-$) transitions,
+arcs model \emph{causality}, parallel branches correspond to concurrency, and
+a circle \emph{place} with a black dot (\emph{token}) represents the choice of
+the current scenario. We formally introduce STGs
+in~\S\ref{sec:Circuit-specification-with}.
+
+This STG is moderately large and captures all three scenarios by overlaying
+their common parts. In the monolithic design approach, the designer starts with
+a blank page and manually inserts signal transitions and the connections between
+them according to the informal description of the system's operation. With
+there being several scenarios, the designer could choose to design each
+separately, and then manually compose these taking advantage of the
+similarities between the scenarios.
 
 In the event that a designer needs to add or remove signals or correct a fault, editing can become difficult, due to the complexity and size. This can lead to
 further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly.
 
 A designer may even have to start from a
 blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend,
-debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}.
+debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
 
-\subsection{A new way of viewing STGs \label{sub:new-way}}
-In an attempt to streamline the design process, we aimed to find a way to create STGs which allows editing at various stages of the design. This way, if something needs to be corrected,
-this can be done to a small part, but we can reuse everything that works correctly. These can then be composed to produce a full STG which contains the corrections, with a minimum
+\subsection{Towards high-level asynchronous concepts\label{sub:new-way}}
+In an attempt to streamline the design process, we aimed to find a way to
+create STGs which allows editing and reuse at various stages of the design.
+This way, if something needs to be corrected, this can be done to a small part,
+but we can reuse everything that works correctly. These parts can then be
+composed to produce a full STG which contains the corrections, with a minimum
 amount of time spent making the corrections.
 
-This led us to take the example of a simple buck converter, and compare what the STG shows, and what the description of operation of the system, in particular it's signals, is. This
-allowed us to view interactions between certain signals which may not be obvious, but without which the STG would not be a correct representation of the design. For example,
-Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter with some points of interest highlighted.
+This led us to take the example of a simple buck converter, and compare what
+the STG shows, and what the description of operation of the system, in
+particular its signals, is. This allowed us to view interactions between
+certain signals which may not be obvious, but without which the STG would not
+be a correct representation of the design. For example,
+Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter
+with some points of interest highlighted.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.225]{Images/stg-breakdown}
-\par\end{centering}
-
-\begin{centering}
+\par
 \protect\caption{\label{fig:stg-breakdown}ZC absent scenario STG showing points of interest}
-
 \par\end{centering}
-
 \end{figure}
 
-Studying this STG shows that there are some signal interactions that we can identify.  These are:
-\begin{enumerate}
-\item High levels of \textsf{$uv$} and \textsf{$oc$} are mutually exclusive
-\item High levels of \textsf{$gp$} and \textsf{$gn$} are mutually exclusive
-\item Signals \textsf{$gp$} and \textsf{$gp\_ack$} form a handshake
-\item Signals \textsf{$gn$} and \textsf{$gn\_ack$} form a handshake
-\end{enumerate}
+Studying this STG shows that there are some high-level signal interactions that
+we can identify:
+\begin{itemize}
+\item High levels of $uv$ and $oc$ are mutually exclusive; indeed, $uv$ goes
+high (transition $uv+$) only after $oc$ goes low (transition $oc-$), and vice
+versa.
+\item High levels of $gp$ and $gn$ are also mutually exclusive.
+\item Signals $gp$ and $gp\_ack$ form a handshake, i.e. there is a cycle
+$gp+ \rightarrow gp\_ack+ \rightarrow gp- \rightarrow gp\_ack-$ etc.
+\item Signals $gn$ and $gn\_ack$ also form a handshake.
+\end{itemize}
 
-These interactions are described in the operation description by the fact that \textsf{$uv$} and \textsf{$oc$} indicate opposite conditions in the circuit and will naturally be mutually
-exclusive, \textsf{$gp$} and \textsf{$gn$} are used to switch PMOS and NMOS transistors respectively, and switching these transistors on at the same time will cause a short circuit and
-therefore should be mutually exclusive. \textsf{$gp\_ack$} and \textsf{$gn\_ack$} are used to acknowledge the state of these transistors, and thus will follow \textsf{$gp$} and
-\textsf{$gn$} respectively, forming two separate handshakes.
+These interactions are described in the operation description by the fact that
+$uv$ and $oc$ indicate opposite conditions in the circuit and will naturally be
+mutually exclusive, while $gp$ and $gn$ are used to switch PMOS and NMOS
+transistors respectively, and switching these transistors \noun{On} at the same
+time will cause a short circuit and is therefore prohibited. Signals $gp\_ack$
+and $gn\_ack$ are used to acknowledge the state of these transistors, and thus
+always follow $gp$ and $gn$, respectively, forming two separate handshakes.
 
-Knowing this information means that we can describe these protocols once, and include them in the design of any circuit involving these signals. Any other interactions between any of
-these signal will be subject to these protocols, which will prevent circuit breaking bugs in the testing phase. For example, an
-interaction involving \textsf{$gp$} will ensure that it is never set high at the same time as \textsf{$gn$}, as otherwise the mutual exclusion will not hold.
+Knowing this information means that we can describe these protocols once, and
+include them in the design of any circuit involving these signals. Any other
+interactions between any of these signal will be subject to these protocols,
+which will prevent circuit breaking bugs in the testing phase. For example, an
+interaction involving $gp$ will ensure that it is never set high at
+the same time as $gn$, as otherwise the mutual exclusion will not hold.
 
-If one of these signals is removed, then the protocols that this affects can be removed, and the unaffected protocols can continue to be used, avoiding a major re-design which may
-happen when using the monolithic approach.
+If one of these signals is removed, then the protocols that this affects can
+be removed, but the unaffected protocols can continue to be used, avoiding a
+major re-design which may happen when using the STG-based monolithic approach.
 
-With this idea in mind, we need to find a way to describe these protocols, as well as other signal interactions, in order to ensure that each different interaction can be edited without
-needing to change every single interaction.
+With this idea in mind, we need to find a way to describe these protocols, as
+well as other signal interactions, in order to ensure that each different
+interaction can be edited without needing to change every single interaction.
 
 %% + Here is the problem we are solving
 %%
