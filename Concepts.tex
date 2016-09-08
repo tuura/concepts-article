@@ -176,11 +176,16 @@ in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusio
 \section{Motivating Example: Buck Converter\label{sec:Motivating Example}}
 
 On-chip power management is essential for energy efficiency and reliability of
-IoT computation nodes~\cite{7287733}. Power management units need to interface
-with the analogue part of the system for sensing and controlling it, and can
-benefit from asynchronous implementation that allows them to react to changes
-in the system at the rate they occur, instead of sampling various analogue
-parameters by clock, which is both slow and energy-wasteful~\cite{2014_sokolov_ftfc}.
+IoT computation nodes~\cite{7287733}. According to a 2016 report by
+Research~\&~Markets, the global power management market will reach \$34.86~billion
+by 2022, driven by the increasing demand in various applications, including
+traditional IoT sectors such as wearable, automotive, industrial, retail and
+building control electronics. Unlike conventional digital components, power
+management units need to directly interface with the analogue part of the system
+for sensing and controlling it, and can therefore strongly benefit from asynchronous
+implementation that allows them to react to changes in the system at the rate
+they occur, instead of sampling various analogue parameters by clock, which is
+both slow and energy-wasteful~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
 
 In this section we first provide the background on asynchronous buck
 converters~\S\ref{sub:buck}, our main motivation example and case study.
