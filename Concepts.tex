@@ -137,7 +137,7 @@ Our contributions are as follows:
   \S\ref{sec:Circuit-specification-with}.
   \item We present an algorithm for translating concepts to STGs
   and integrate it into our open-source software toolsuite \noun{Workcraft},
-  \S\ref{sec: interop-with-stg}.
+  \S\ref{sec:interop-with-stg}.
   \item We demonstrate the proposed design method on a case study of an
   asynchronous power regulator, \S\ref{sec:case-study}.
 \end{itemize}
@@ -302,15 +302,15 @@ Studying this STG shows that there are some high-level signal interactions that
 we can identify:
 \begin{itemize}
 \item High levels of $uv$ and $oc$ are mutually exclusive; indeed, $uv$ goes
-high (transition $uv+$) only after $oc$ goes low (transition $oc-$), and vice
+high (transition $uv^{+}$) only after $oc$ goes low (transition $oc^{-}$), and vice
 versa.
 \item High levels of $gp$ and $gn$ are also mutually exclusive.
 \item Signals $gp$ and $gp\_ack$ form a handshake, i.e. there is a cycle
-$gp+ \rightarrow gp\_ack+ \rightarrow gp- \rightarrow gp\_ack-$ etc.
+$gp^{+} \rightarrow gp\_ack^{+} \rightarrow gp^{-} \rightarrow gp\_ack^{-}$ etc.
 \item Signals $gn$ and $gn\_ack$ also form a handshake.
 \end{itemize}
 
-These interactions are described in the operation description by the fact that
+These interactions can also be identified in the informal buck description:
 $uv$ and $oc$ indicate opposite conditions in the circuit and will naturally be
 mutually exclusive, while $gp$ and $gn$ are used to switch PMOS and NMOS
 transistors respectively, and switching these transistors \noun{On} at the same
@@ -362,7 +362,7 @@ etc. Furthermore,~$\mathbf{0}$ and~$\mathbf{1}$ stand for constant
 Boolean functions that discard their input and return values $0$
 and $1$, respectively.
 
-A\emph{ monoid} is a set $M$ and a binary operation $\diamond:M\times M\rightarrow M$
+A \emph{monoid} is a set $M$ and a binary operation $\diamond : M\times M\rightarrow M$
 satisfying two axioms:
 \begin{itemize}
 \item Identity: $e\diamond a=a\diamond e=a$ for any $a\in M$, where $e\in M$
@@ -422,10 +422,10 @@ form it is a function
 that given an event $e\in E$ and a state $s\in S$ checks whether
 $e$ is excited in $s$. In practice this concept is often realised
 using \emph{interpreted graph models} such as Finite State Machines
-and Petri Nets~\cite{Cortadella}, Conditional Partial Order Graphs~\cite{CPOG1},
-and others. A partial application of the excitation function is often
-useful: $\mathsf{excited}(e)$ captures all states where event $e$
-is excited; for example, if $\mathsf{excited}(e)=\mathbf{0}$ then
+and Petri Nets~\cite{Cortadella}, STGs, Conditional Partial Order
+Graphs~\cite{CPOG1}, and others. A partial application of the excitation
+function is often useful: $\mathsf{excited}(e)$ captures all states where
+event $e$ is excited; for example, if $\mathsf{excited}(e)=\mathbf{0}$ then
 $e$ is never excited or \emph{dead}. Event excitation concepts also
 form a commutative monoid with~$e=\mathbf{1}$ and~$\diamond=\wedge$.
 This definition corresponds to the \emph{parallel composition} operation,
@@ -464,13 +464,15 @@ the effects that different events have on the system state. Due to
 space limitations we only consider the three concepts defined above
 and their derivatives.
 
-All described concepts form monoids, hence their combinations are
-trivially monoids too. It is therefore convenient to consider triples
+All the above concepts are monoids, hence their combinations are
+trivially monoids too. It is convenient to consider triples
 of concepts $(\mathsf{initial},\mathsf{excited},\mathsf{invariant})$
 with $(\mathbf{1},\mathbf{1},\mathbf{1})$ representing the \emph{empty
-specification}, and composition $(\mathsf{initial}_{1},\mathsf{excited}_{1},\mathsf{invariant}_{1})\diamond(\mathsf{initial}_{2},\mathsf{excited}_{2},\mathsf{invariant}_{2})$
-defined as $(\mathsf{initial}_{1}\diamond\mathsf{initial}_{2},\mathsf{excited}_{1}\diamond\mathsf{excited}_{2},\mathsf{invariant}_{1}\diamond\mathsf{invariant}_{2})$.
-Importantly, composition of two non-contradictory specifications is
+specification}, and composition
+$(\mathsf{initial}_{1},\mathsf{excited}_{1},\mathsf{invariant}_{1})\diamond(\mathsf{initial}_{2},\mathsf{excited}_{2},\mathsf{invariant}_{2})$
+defined as
+$(\mathsf{initial}_{1}\diamond\mathsf{initial}_{2},\mathsf{excited}_{1}\diamond\mathsf{excited}_{2},\mathsf{invariant}_{1}\diamond\mathsf{invariant}_{2})$.
+Note that composition of two non-contradictory specifications is
 always non-contradictory, that is if both $\mathsf{initial}_{1}(s)\Rightarrow\mathsf{invariant}_{1}(s)$
 and $\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{2}(s)$
 hold for all states $s\in S$, then $\mathsf{initial}_{1}(s)\diamond\mathsf{initial}_{2}(s)\Rightarrow\mathsf{invariant}_{1}(s)\diamond\mathsf{invariant}_{2}(s)$
@@ -489,7 +491,7 @@ We now introduce concepts which are specific for the domain of asynchronous
 circuits and express them using the abstract concepts defined above.
 
 \textbf{\label{signal-level}Signal-level concepts:} States and events of an asynchronous
-circuit are parameterised by a fixed set of signals $A$. A state
+circuit are parameterised by a set of signals $A$. A state
 $s\in S$ is an assignment of Boolean values to signals, i.e. a function
 $s:A\rightarrow\mathbb{B}$, while an event $e\in E$ is a \emph{signal
 transition}, i.e. a pair $e:A\times\mathbb{B}$ comprising a signal
@@ -541,12 +543,11 @@ is used in the partially applied form. We will use a short-hand notation
 \mathit{cause}\rightsquigarrow\mathit{effect}
 \]
 for the causality concept for convenience.
-
-While this concept is called \emph{causality}, this doesn't necessarily imply timings, such as any $\mathit{cause}$ transition immediatley forcing the
-$\mathit{effect}$ transition it applies to. Causality can be used in order to list all possible $\mathit{cause}$ transitions which need to occur in order
-for an $\mathit{effect}$ transition.
-
-For example, one can compose two causality concepts using the monoid composition.
+% TODO: Maybe bring back later.
+% While this concept is called \emph{causality}, this doesn't necessarily imply timings, such as any $\mathit{cause}$ transition immediately forcing the
+% $\mathit{effect}$ transition it applies to. Causality can be used in order to list all possible $\mathit{cause}$ transitions which need to occur in order
+% for an $\mathit{effect}$ transition.
+One can compose two causality concepts using the monoid composition.
 \[
 a\rightsquigarrow c\ \diamond\ b\rightsquigarrow c
 \]
@@ -566,33 +567,34 @@ the behaviour of gates in asynchronous circuits. For example, a \emph{buffer}
 is a gate with one input signal $a\in A$ and one output signal $b\in A$,
 whose output transitions causally depend on the input ones:
 \[
-\mathsf{buffer}\, a\, b=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
+\mathsf{buffer}(a, b)=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
 \]
 An \emph{inverter} has a similar conceptual specification, but the
 output transition is inverted:
 \[
-\mathsf{inverter}\,a \,b=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
+\mathsf{inverter}(a, b)=a^{+}\rightsquigarrow b^{-}\ \diamond\ a^{-}\rightsquigarrow b^{+}
 \]
-An \emph{SR-Latch} has two input signals, $s$ and $r$ each of which cause differing transitions with the output, $q$:
-\[
-\mathsf{SRLatch}\,s \,r \,q=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
-\]
-This can be described as, the\emph{set} signal, $s$ when active, or high, will cause the gate to latch a high state, outputting this with signal $q$ being high. Conversely, the \emph{reset} signal, $r$, when active, or high, will cause the gate to latch a low state, and the output $q$ will be low in this case.
-Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter.
-\[
-\mathsf{SRLatch}\,s \,r \,q=\mathsf{buffer}\,s \,q \ \diamond\ \mathsf{inverter}\,r \,q
-\]
+% TODO: Maybe bring this back.
+% An \emph{SR-Latch} has two input signals, $s$ and $r$ each of which cause differing transitions with the output, $q$:
+% \[
+% \mathsf{SRLatch}\,s \,r \,q=s^{+}\!\rightsquigarrow\! q^{+}\ \diamond\ r^{+}\!\rightsquigarrow\! q^{-}\ \diamond\ s^{-}\!\rightsquigarrow\! q^{-}\ \diamond\ r^{-}\!\rightsquigarrow\! q^{+}
+% \]
+% This can be described as, the\emph{set} signal, $s$ when active, or high, will cause the gate to latch a high state, outputting this with signal $q$ being high. Conversely, the \emph{reset} signal, $r$, when active, or high, will cause the gate to latch a low state, and the output $q$ will be low in this case.
+% Another way of specifying this gate using concepts is to use the buffer and inverter concepts defined above, as the signals $s$ and $q$ have an interaction the same as a buffer, and signals $r$ and $q$ interaction is the same as an inverter.
+% \[
+% \mathsf{SRLatch}\,s \,r \,q=\mathsf{buffer}\,s \,q \ \diamond\ \mathsf{inverter}\,r \,q
+% \]
 A \emph{C-element} is a gate with two inputs $a$ and $b$ and one
 output~$c$, which synchronises input transitions:
 \[
-\mathsf{cElement}\,a \,b \,c=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
+\mathsf{cElement}(a, b, c)=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
 \]
 In words, the rising output transition $c^{+}$ causally depends on
 both $a^{+}$ and $b^{+}$, and the falling output transition $c^{-}$
 causally depends on both $a^{-}$ and $b^{-}$. An alternative way
 to express the same concept is to reuse the buffer concept:
 \[
-\mathsf{cElement}\,a \,b \,c=\mathsf{buffer}\,a \,c \ \diamond\ \mathsf{buffer}\,b \,c
+\mathsf{cElement}(a, b, c)=\mathsf{buffer}(a, c) \diamond \mathsf{buffer}(b, c)
 \]
 Indeed, a C-element combines the constraints imposed on the output
 transitions by two `virtual' buffers.
@@ -602,7 +604,8 @@ see our Haskell implementation~\cite{2016_concepts_github}.
 
 \textbf{Protocol-level concepts:} In addition to gate-level concepts
 described above it is often important to specify \emph{protocols}
-of interaction between multiple gates, components or signals, as shown in the example scenario STG in section~\ref{sub:new-way}.
+of interaction between multiple gates, components or signals, as
+discussed in the motivating example~\S\ref{sub:new-way}.
 
 Here we demonstrate how one can use concepts to specify asynchronous handshakes
 and mutual exclusion mechanisms.
@@ -610,7 +613,7 @@ and mutual exclusion mechanisms.
 Given two signals $a$ and $b$, a \emph{handshake} between them is
 the following composition of causality concepts:
 \[
-\mathsf{handshake}\,a \,b=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
+\mathsf{handshake}(a, b)=a^{+}\!\rightsquigarrow\! b^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! a^{-}\ \diamond\ a^{-}\!\rightsquigarrow\! b^{-}\ \diamond\ b^{-}\ \rightsquigarrow\! a^{+}
 \]
 Intuitively, we have a two-way asynchronous communication channel,
 where one party sends transitions $a^{+}$ and $a^{-}$ and the other
@@ -619,22 +622,23 @@ One can notice that the four causality concepts match those found
 in the buffer and inverter concepts, which leads to an alternative
 way to express a handshake between~$a$ and~$b$:
 \[
-\mathsf{handshake}\,a \,b=\mathsf{buffer}\,a \,b \diamond\mathsf{inverter}\,b \,a
+\mathsf{handshake}(a, b)=\mathsf{buffer}(a, b) \diamond\mathsf{inverter}(b, a)
 \]
 Indeed, this conceptual understanding of a handshake as being composed
 from a buffer and an inverter is often used by circuit designers as
 a convenient way of reasoning.
 
 In order to specify the initial state of a handshake between signals~$a$
-and~$b$, we can use the function $\mathsf{initialise}$.
-For example, $\mathsf{initialise}\,a \,False$ sets the state of the signal
-$a$ to $0$. We can compose an initial state concept with
-the handshake concept as follows:
+and~$b$, we use the $\mathsf{initialise}$ concept:
 \[
-\mathsf{handshake00}\,a \,b \!=\!\mathsf{handshake}\,a \,b \, \diamond\,\mathsf{initialise}\,a \,False \,\diamond \,
+\mathsf{initialise}(\mathit{signal},\mathit{value})=\mathsf{after}(signal, value)
 \]
+
+\noindent For example, $\mathsf{initialise}(a, 0)$ sets the state of the signal
+$a$ to $0$. We can compose an initial state concept with the handshake concept
+into a combined $\mathsf{handshake00}(a, b)$ concept as
 \[
-\mathsf{initialise}\,b \,False
+\mathsf{handshake}(a, b) \diamond \mathsf{initialise}(a, 0) \diamond \mathsf{initialise}(b, 0)
 \]
 The resulting concept corresponds to a handshake between signals~$a$
 and~$b$ that are both initially $0$.
@@ -642,7 +646,7 @@ and~$b$ that are both initially $0$.
 The last important concept that requires an introduction is \emph{mutual
 exclusion} between two signals~$a$ and~$b$:
 \[
-\mathsf{me}\,a \,b =a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}\,a^{+} \, \wedge\mathsf{after}\,b^{+}\, }
+\mathsf{me}(a, b) = a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}\,a^{+} \, \wedge\mathsf{after}\,b^{+}\, }
 \]
 The concept comprises two parts: 1) in terms of causality, we say
 that rising transitions $a^{+}$ and $b^{+}$ can only occur after
@@ -657,44 +661,53 @@ that receives asynchronous requests $r_{1}$ and $r_{2}$ to a shared
 resource and grants access to it by corresponding mutually exclusive
 signals $g_{1}$ and $g_{2}$:
 
-%\vspace{-3mm}
 {\small{}
 \[
-\mathsf{meElement}\'r_{1} \,r_{2} \,g_{1} \,g_{2} \,\!=\mathsf{\! buffer}\,r_{1} \,g_{1} \,\diamond\mathsf{buffer}\,r_{2} \,g_{2} \,\diamond\mathsf{me}\,g_{1} \,g_{2} \,
+\mathsf{meElement}(r_{1}, r_{2}, g_{1}, g_{2})\!=\!\mathsf{buffer}(r_{1}, g_{1}) \diamond \mathsf{buffer}(r_{2}, g_{2}) \diamond \mathsf{me}(g_{1}, g_{2})
 \]
 }{\small \par}
 
 %\vspace{-3mm}
 
-\subsection{Signal types}
-
-Specifying signal types is important when designing asynchronous circuits. How signals of different
-types interact is knowledge required for verification properties to be held, and for synthesis.
-
-The information of which signals are \emph{inputs}, \emph{outputs} or \emph{internals} can further
-speed the design process. Primarily, in the process of translating concepts, the resulting STGs can
-be more quickly used for testing, verification, synthesis, etc. Without specifying the types, this
-would require signals types to declared manually in the resulting STG.
-
-Signal types, or \emph{interfaces}, in concept-form, are described by listing the signals based on type:
-{\small{}
+\textbf{Interface concepts:} To specify the type of a signal (\emph{input},
+\emph{output} or \emph{internal}) we introduce the \textsf{interface} concept:
 \[
-\mathsf{\! inputs}\,[a, b]
+\mathsf{interface} : A \rightarrow \{\mathsf{Input}, \mathsf{Output}, \mathsf{Internal}\}
 \]
-}{\small \par}
-{\small{}
+Signal types are composed according to the following rules:
 \[
-\mathsf{\! outputs}\,[p]
+\begin{array}{|l||l|l|l|}
+\hline
+\multicolumn{1}{|c||}{\diamond} & \mathsf{Input}    & \mathsf{Output}   & \mathsf{Internal} \\ \hline \hline
+\mathsf{Input}   & \mathsf{Input}    & \mathsf{Output}   & \mathsf{Internal} \\ \hline
+\mathsf{Output}  & \mathsf{Output}   & \mathsf{Output}   & \mathsf{Internal} \\ \hline
+\mathsf{Internal}& \mathsf{Internal} & \mathsf{Internal} & \mathsf{Internal} \\ \hline
+\end{array}
 \]
-}{\small \par}
-{\small{}
-\[
-\mathsf{\! internals}\,[x, y, z]
-\]
-}{\small \par}
+The intuition is as follows:
+\begin{itemize}
+    \item If a signal is an input in one component of the system, but is an
+    output in another components, then in the composition it will be an output.
+    \item An internal signal is similar to an output signal in the sense
+    that it is driven by the circuit (not the environment), but it is hidden, i.e.
+    not accessible via the circuit interface. Once a signal is hidden and declared
+    internal it cannot be revealed.
+\end{itemize}
 
-As with all concepts, interface concepts can be composed with eachother, or with any
-other concept; signal-, gate- or protocol-level.
+\noindent Specifying signal types is important when designing asynchronous
+circuits, as it helps to quickly identify errors (e.g. an input transition is
+caused by a hidden internal transition), and reuse existing tools for circuit
+simulation, verification and synthesis. Signal type information is also used
+in the algorithm for automated translation of concepts to
+STGs~\S\ref{sec:interop-with-stg}.
+
+Concepts \textsf{inputs}, \textsf{outputs}, \textsf{internals} are defined for
+specifying types of sets of signals for convenience. For example, to specify
+that signals $a$ and $b$ are inputs, $c$ is an output, and $t$ is internal, it
+is possible to write:
+\[
+\mathsf{inputs}(\{a, b\}) \diamond \mathsf{outputs}(\{c\}) \diamond \mathsf{internals}(\{t\}).
+\]
 
 \section{Circuit specification with concepts \label{sec:Circuit-specification-with}}
 
@@ -977,7 +990,7 @@ the corresponding definitions.
 %\vspace{-3mm}
 
 
-\section{Interoperability with STG based tools \label{sec: interop-with-stg}}
+\section{Interoperability with STG based tools \label{sec:interop-with-stg}}
 
 Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
 deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
@@ -1423,7 +1436,7 @@ as well as design time.
 %\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
 %
 %\vspace{-3mm}
-%\textbf{This section needs to be edited to be included in section \ref{sec: interop-with-stg}}
+%\textbf{This section needs to be edited to be included in section \ref{sec:interop-with-stg}}
 %
 %\vspace{5mm}
 %
