@@ -394,7 +394,7 @@ for all $a,b\in M$.
 
 We first describe \emph{abstract concepts} that we use as building
 blocks for developing \emph{domain specific concepts}, such as those
-related to asynchronous circuits (Section~\ref{sub:Concepts-for-asynchronous}).
+related to asynchronous circuits (\S~\ref{sub:Concepts-for-asynchronous}).
 
 
 Abstract concepts are parameterised by finite sets of \emph{states}
@@ -985,7 +985,7 @@ the current namespace). When a list of concepts is passed into the
 STG translation algorithm, all referenced concepts are replaced by
 the corresponding definitions.
 
-%The process of combining scenarios is explained further in Section~\ref{sub:scenario-composition}
+%The process of combining scenarios is explained further in \S~\ref{sub:scenario-composition}
 
 %\vspace{-3mm}
 
@@ -1009,7 +1009,7 @@ When translating any concepts we pass them to an algorithm which begins by break
 signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.
 Interface concepts are used to set the signal types, and as such are not included in this part of the translation.
 
-Using the example of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this
+Using the example of a C-element with an environment, any representation mentioned in \S\ref{sub:Comp-of-concepts} when passed into this
 algorithm would initially produce a list of signal-level concepts found in Figure~\ref{fig:c-element-concepts}.
 
 %\vspace{2mm}
@@ -1017,7 +1017,8 @@ algorithm would initially produce a list of signal-level concepts found in Figur
 
 \begin{center}
 
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c=& \,a^{+}\rightsquigarrow c^{+} \diamond \,b^{+}\rightsquigarrow c^{+} \diamond \,c^{+}\rightsquigarrow a^{-} \diamond \,c^{+}\rightsquigarrow b^{-} \diamond \\ 
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c=& \,a^{+}\rightsquigarrow c^{+} \diamond \,b^{+}\rightsquigarrow c^{+} \diamond \,c^{+}\rightsquigarrow a^{-} \diamond \,c^{+}
+\rightsquigarrow b^{-} \diamond \\ 
 &\,a^{-}\rightsquigarrow c^{-} \diamond \,b^{-}\rightsquigarrow c^{-} \diamond \,c^{-}\rightsquigarrow a^{+} \diamond \,c^{-}\rightsquigarrow b^{+} \diamond \\
 &\,\mathsf{initialise}\,c \,0 \diamond \,\mathsf{initialise}\,b \,0 \diamond \,\mathsf{initialise}\,c \, 0
 \end{aligned}$
@@ -1113,7 +1114,7 @@ these can be done either with the concepts, which can be re-translated to view a
 %In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can
 %further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
 
-%or using \emph{Direct Synthesis}, which is discussed in Section~\ref{sub:direct-synth}.
+%or using \emph{Direct Synthesis}, which is discussed in \S\ref{sub:direct-synth}.
 
 \subsection{Parallel composition}
 
@@ -1122,7 +1123,7 @@ translate smaller collections of concepts, or even singular concepts, which are 
 \emph{Parallel Composition}
 within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts
+Using the example in \S\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts
 individually. Including the initial states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
 
 \begin{figure}[h]
@@ -1541,8 +1542,8 @@ as well as design time.
 
 \section{Case study \label{sec:case-study}}
 
-In Section~\ref{sec:Motivating Example} we introduced the example for this case study, a simple buck converter,
-in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in Section~\ref{sec:Concepts},
+In \S\ref{sec:Motivating Example} we introduced the example for this case study, a simple buck converter,
+in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in \S\ref{sec:Concepts},
 and with examples explained how they can be used to design simple circuits, and how these can be translated to
 provide us with an STG specification for use with standard tools.
 
@@ -1829,7 +1830,7 @@ as STG models before we can combine these.
 Now we have scenario STGs that have been verified to ensure they conform
 to standards required of STGs, and simulated to ensure they work as
 expected according to the specification. These can now be combined
-to produce a full system implementation. As mentioned in Section~\ref{sub:scenario-composition},
+to produce a full system implementation. As mentioned in \S\ref{sub:scenario-composition},
 we can combine these scenarios in multiple ways, depending on whether
 there is some sort of required ordering to the way these scenarios
 must run.
