@@ -1956,25 +1956,53 @@ using \noun{Petrify} or \noun{Mpsat}, both of which are integrated
 in \noun{Workcraft}. Passing this model through one of these tools
 will produce logic equations that describe how the outputs $gp$ and
 $gn$ can be produced using $uv$, $oc$, $zc$, $gp\_ack$, $gn\_ack$.
-Using logic gates, we can reproduce a circuit diagram for these equations.
-Figure~\ref{fig:buck Circuit} shows the logic circuit, synthesized
-from this full model.
+Using logic gates, we can reproduce a circuit diagram for these equations, which \noun{Workcraft} can automatically import.
+
+There are different types of synthesis which use different methods of generating the logic equations, 
+each of which produces a slightly different ciruit. For example, Figure~\ref{fig:complex-gate-circuit} shows the 
+circuit for this buck using \emph{Complex gate} synthesis.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.3]{Images/circuit-buck}
+\includegraphics[scale=0.3]{Images/complex-gate-circuit-buck}
 \par\end{centering}
 
-\protect\caption{\label{fig:buck Circuit}Asynchronous logic gate implementation}
+\protect\caption{\label{fig:complex-gate-circuit}Asynchronous complex gate implementation}
 \end{figure}
 
-When we have acquired a circuit design, it needs to be verified to
-ensure that the logic will perform as we expected before the circuit
-is fabricated. To verify this, the circuit is converted into a so-called
-circuit Petri net, using a model for each logic gate and combining
-them by means of read-arcs. By reachability analysis of this Petri
-net one can verify that the corresponding circuit is deadlock-free,
-hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
+Complex-gate synthesis does not use a gate library - the implementations they yield are Boolean functions of arbitrary complexity. These functions are often too 
+large to be implemented by a single gate available in the gate library. Unfortunately, breaking up a complex-gate into smaller ones, when performed naïvely, generally yields an incorrect 
+circuit - this happens due to the delays associated with the outputs of the newly introduced gates. In fact, logic decomposition in the context of speed-independent circuits is a very 
+difficult problem, that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations, but occasionally they fail to converge to a solution and a manual 
+intervention by the designer is required.
+
+Another type of synthesis is \emph{Technology mapping}. 
+This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library. 
+This then produces a implementation which will be different to the complex gate implementation.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.3]{Images/circuit-buck-mapped-pfy-wc.pdf}
+\par\end{centering}
+
+\protect\caption{\label{fig:tech-mapped-circuit}Asynchronous technology mapped implementation}
+\end{figure}
+
+Figure~\ref{fig:tech-mapped-circuit} is the technology mapped implementation.  The gate labels correspond to the gate names in the library. 
+The two inverters are shown with a dotted line through. This is because they have the Zero delay property expressing the assumption that their delays are negligible. 
+This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable; 
+moreover, this assumption introduces extra constraints that have to be satisfied during placing and routing.
+
+There are further synthesis types, and for the example of a buck controller, they provide differing implementations. 
+More information on the synthesis of this example can be found in the tutorials of the \noun{Workcraft} website~\cite{Workcraft_website}.
+
+%When we have acquired a circuit design via a chosen synthesis type, it needs to be verified to
+%ensure that the logic will perform as we expected before the circuit
+%is fabricated. To verify this, the circuit is converted into a so-called
+%circuit Petri net, using a model for each logic gate and combining
+%them by means of read-arcs. By reachability analysis of this Petri
+%net one can verify that the corresponding circuit is deadlock-free,
+%hazard-free and conforms to the specification~\cite{2008_poliakov_async}.
 
 %\vspace{-2mm}
 
