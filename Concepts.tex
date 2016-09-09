@@ -821,9 +821,9 @@ $\,\mathsf{import}\, Tuura.ConceptConcat$
 
 \begin{flushleft}
 $\,\mathsf{circuit :: (Eq a) =>}\, a \rightarrow a \rightarrow  a \rightarrow  CircuitConcept\,a$
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{\,interface}\,<> \mathsf{\, outputRise}<>\\
-&\,\mathsf{inputFall}\,<>\,\mathsf{outputFall}<>\\
-&\mathsf{\, inputRise}\,<>\,\mathsf{initialState}\\
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\\
+&\,\mathsf{inputFall}\,\diamond\,\mathsf{outputFall}\,\diamond\\
+&\mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
 \end{aligned}
 $
 
@@ -831,36 +831,32 @@ $\,\mathsf{where}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{interface}=\mathsf{inputs}\,[a,b]<>\mathsf{outputs}\,[c]$
+$\,\mathsf{interface}=\mathsf{inputs}\,[a,b]\diamond\mathsf{outputs}\,[c]$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputRise}=\mathsf{rise} \,a\rightsquigarrow \mathsf{rise} \,c\,<>\, \mathsf{rise} \,b\rightsquigarrow \mathsf{rise} \,c$
+$\,\mathsf{outputRise}=\mathsf{rise} \,a\rightsquigarrow \mathsf{rise} \,c\,\diamond\, \mathsf{rise} \,b\rightsquigarrow \mathsf{rise} \,c$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputFall}=\mathsf{rise} \,c\rightsquigarrow \mathsf{fall} \,a \,<>\, \mathsf{rise} \,c \rightsquigarrow \mathsf{fall} \,b$
+$\,\mathsf{inputFall}=\mathsf{rise} \,c\rightsquigarrow \mathsf{fall} \,a \,\diamond\, \mathsf{rise} \,c \rightsquigarrow \mathsf{fall} \,b$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputFall}=\mathsf{fall} \,a \rightsquigarrow \mathsf{fall} \,c \,<>\, \mathsf{fall} \,b \rightsquigarrow \mathsf{fall} \,c$
+$\,\mathsf{outputFall}=\mathsf{fall} \,a \rightsquigarrow \mathsf{fall} \,c \,\diamond\, \mathsf{fall} \,b \rightsquigarrow \mathsf{fall} \,c$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputRise}=\mathsf{fall} \,c \rightsquigarrow \mathsf{rise} \,a \,<>\, \mathsf{fall} \,c\rightsquigarrow \mathsf{rise} \,b$
+$\,\mathsf{inputRise}=\mathsf{fall} \,c \rightsquigarrow \mathsf{rise} \,a \,\diamond\, \mathsf{fall} \,c\rightsquigarrow \mathsf{rise} \,b$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{initialState}= & \, \mathsf{initialise}\,a \, False\,<>\,\mathsf{initialise}\,b \,False\,<> \\
- & \, \mathsf{initialise}\,c \,False \,
-\end{aligned}
-$
+$\mathsf{initialState}= \, \mathsf{initialise}\,a \, 0\,\diamond\,\mathsf{initialise}\,b \,0\,\diamond \, \mathsf{initialise}\,c \,0 \,$
 \par\end{flushleft}
 
 \end{minipage}
 
-%\vspace{2mm}
-
+\vspace{3mm}
 
 The first concepts in this list is the \emph{circuit} concept, defined as the composition of the following 5. This is the concept which will be translated.
 The concepts defined after the \emph{where} describe certain operations of the system. The first four are named according to what they represent,
@@ -927,7 +923,6 @@ involved in this specification.
 \begin{figure}[t]
 \begin{centering}
 \includegraphics[scale=0.62]{Images/c-element-circuit-redo}
-%\includegraphics[scale=0.6]{Images/c-element-circuit}
 \par\end{centering}
 
 \protect\caption{\label{fig:cElement-concepts}Example system specified using concepts.}
@@ -1015,57 +1010,19 @@ signal-level concepts. As concepts are compositional, and gate- and protocol-lev
 Interface concepts are used to set the signal types, and as such are not included in this part of the translation.
 
 Using the example of a C-element with an environment, any representation mentioned in Section~\ref{sub:Comp-of-concepts} when passed into this
-algorithm would initially produce the list of concepts
-found in Figure~\ref{fig:c-element-concepts}.
+algorithm would initially produce a list of signal-level concepts found in Figure~\ref{fig:c-element-concepts}.
 
 %\vspace{2mm}
 \begin{figure}[h]
-\begin{minipage}[h]{1\columnwidth}%
-\begin{center}
-$\,a^{+}\rightsquigarrow c^{+}$
-\par\end{center}
 
 \begin{center}
-$\,b^{+}\rightsquigarrow c^{+}$
-\par\end{center}
 
-\begin{center}
-$\,c^{+}\rightsquigarrow a^{-}$
-\par\end{center}
+$\begin{aligned}\mathsf{circuit}\,a \,b \,c=& \,a^{+}\rightsquigarrow c^{+} \diamond \,b^{+}\rightsquigarrow c^{+} \diamond \,c^{+}\rightsquigarrow a^{-} \diamond \,c^{+}\rightsquigarrow b^{-} \diamond \\ 
+&\,a^{-}\rightsquigarrow c^{-} \diamond \,b^{-}\rightsquigarrow c^{-} \diamond \,c^{-}\rightsquigarrow a^{+} \diamond \,c^{-}\rightsquigarrow b^{+} \diamond \\
+&\,\mathsf{initialise}\,c \,0 \diamond \,\mathsf{initialise}\,b \,0 \diamond \,\mathsf{initialise}\,c \, 0
+\end{aligned}$
 
-\begin{center}
-$\,c^{+}\rightsquigarrow b^{-}$
-\par\end{center}
-
-\begin{center}
-$\,a^{-}\rightsquigarrow c^{-}$
-\par\end{center}
-
-\begin{center}
-$\,b^{-}\rightsquigarrow c^{-}$
-\par\end{center}
-
-\begin{center}
-$\,c^{-}\rightsquigarrow a^{+}$
-\par\end{center}
-
-\begin{center}
-$\,c^{-}\rightsquigarrow b^{+}$
-\par\end{center}
-
-\begin{center}
-$\,\mathsf{initialise}\,a \,False $
-\par\end{center}
-
-\begin{center}
-$\,\mathsf{initialise}\,b \,False $
-\par\end{center}
-
-\begin{center}
-$\,\mathsf{initialise}\,c \,False $
-\par\end{center}
-
-\end{minipage}
+\end{center}
 \caption{Concepts for a C-element with environment\label{fig:c-element-concepts}}
 \end{figure}
 %\vspace{2mm}
