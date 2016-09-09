@@ -12,8 +12,8 @@
    width="310.89673"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="c-element-circuit-redo.pdf">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="c-element-circuit-redo.svg">
   <metadata
      id="metadata88">
     <rdf:RDF>
@@ -46,8 +46,8 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:zoom="1.8940178"
-     inkscape:cx="177.44556"
-     inkscape:cy="158.03504"
+     inkscape:cx="16.412226"
+     inkscape:cy="156.97908"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -66,12 +66,12 @@
        snapvisiblegridlinesonly="true" />
   </sodipodi:namedview>
   <rect
-     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.00103834000000000;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.00109719;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3762-3"
-     width="0.23802982"
-     height="0.47540304"
-     x="-0.3294228"
-     y="-0.4588812" />
+     width="0.23797098"
+     height="0.53094816"
+     x="-0.32939339"
+     y="-0.51445574" />
   <rect
      style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.00112985000000000;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
      id="rect3762-5"
@@ -80,12 +80,12 @@
      x="-0.07617709"
      y="-0.51444948" />
   <rect
-     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.00105855000000000;stroke-linejoin:miter;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.00111857;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3762"
-     width="0.24740447"
-     height="0.47536081"
-     x="0.20241509"
-     y="-0.45886013" />
+     width="0.24734445"
+     height="0.53092676"
+     x="0.2024451"
+     y="-0.51445609" />
   <line
      style="fill:none;stroke:#000000;stroke-width:0.00141327"
      x1="-0.29062745"
@@ -293,8 +293,7 @@
        cy="-0.2748445"
        r="0.012"
        style="fill:#ffffff;stroke:#000000;stroke-width:0.005"
-       id="circle38-6"
-       d="m -0.0170281,-0.2748445 c 0,0.006627 -0.0053726,0.012 -0.012,0.012 -0.0066274,0 -0.012,-0.005373 -0.012,-0.012 0,-0.006627 0.0053726,-0.012 0.012,-0.012 0.0066274,0 0.012,0.005373 0.012,0.012 z" />
+       id="circle38-6" />
   </g>
   <g
      id="g3288"
