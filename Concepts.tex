@@ -806,24 +806,14 @@ each of the inputs via an inverter. This is a simple example of a complete
 system, of a C-element with an environment, and will be used several
 times as a simple example.
 
-The following is the file using the code to describe the example using signal-level concepts, which can be passed into
-the translation tool:
+The following is a set of concepts used to describe this example:
 
 %\vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
-\begin{flushleft}
-$\,\mathsf{module}\, Concept \, \mathsf{where}$
-\par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{import}\, Tuura.ConceptConcat$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{circuit :: (Eq a) =>}\, a \rightarrow a \rightarrow  a \rightarrow  CircuitConcept\,a$
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\\
-&\,\mathsf{inputFall}\,\diamond\,\mathsf{outputFall}\,\diamond\\
-&\mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\ 
+&\diamond\,\mathsf{outputFall}\,\diamond \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
 \end{aligned}
 $
 
@@ -835,19 +825,19 @@ $\,\mathsf{interface}=\mathsf{inputs}\,[a,b]\diamond\mathsf{outputs}\,[c]$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputRise}=\mathsf{rise} \,a\rightsquigarrow \mathsf{rise} \,c\,\diamond\, \mathsf{rise} \,b\rightsquigarrow \mathsf{rise} \,c$
+$\,\mathsf{outputRise}=\,a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputFall}=\mathsf{rise} \,c\rightsquigarrow \mathsf{fall} \,a \,\diamond\, \mathsf{rise} \,c \rightsquigarrow \mathsf{fall} \,b$
+$\,\mathsf{inputFall}=c ^ {+} \rightsquigarrow a^{-} \diamond\, c ^ {+} \rightsquigarrow b^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputFall}=\mathsf{fall} \,a \rightsquigarrow \mathsf{fall} \,c \,\diamond\, \mathsf{fall} \,b \rightsquigarrow \mathsf{fall} \,c$
+$\,\mathsf{outputFall}= a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputRise}=\mathsf{fall} \,c \rightsquigarrow \mathsf{rise} \,a \,\diamond\, \mathsf{fall} \,c\rightsquigarrow \mathsf{rise} \,b$
+$\,\mathsf{inputRise}=c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -883,15 +873,21 @@ able to transition.
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
 
-Note: The code demonstrated in this example is the format required to work with the tool.
-For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts.
-We will omit the module declaration, and imports, as well as
-the declaration of types for \emph{circuit}, as these are required, and as such will be included in all concepts.
-\emph{rise} and \emph{fall} are used in the code to represent a high and low transition respectively.
-We replace \emph{rise} with '+' and \emph{fall} with '-'. Finally, the diamond composition operator in code is both a '<' and '>' as
-a diamond character is not a standard keyboard character. In this article, we will use $\diamond$ to denote composition.
-All examples in this article are available in the
-format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
+Note: The format of concepts used for examples in this work is used for clarity.
+The tool uses standard Haskell syntax for specifying concepts.
+The basis of the format used here is the same, but there are some minor differences, and some 
+requirements for a file containing concepts to be used with the tool. 
+The syntax used for the tool can be found both in examples and the manual, both of which are included with the tool~\cite{2016_concepts_github}.
+
+%Note: The code demonstrated in this example is the format required to work with the tool.
+%For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts.
+%We will omit the module declaration, and imports, as well as
+%the declaration of types for \emph{circuit}, as these are required, and as such will be included in all concepts.
+%\emph{rise} and \emph{fall} are used in the code to represent a high and low transition respectively.
+%We replace \emph{rise} with '+' and \emph{fall} with '-'. Finally, the diamond composition operator in code is both a '<' and '>' as
+%a diamond character is not a standard keyboard character. In this article, we will use $\diamond$ to denote composition.
+%All examples in this article are available in the
+%format used by the tool from it's GitHub repository~\cite{2016_concepts_github}.
 
 This set of concepts is only one way of describing this C-element
 and the environment. Another way could be to use gate-level concepts
@@ -904,12 +900,12 @@ and the same initial state concept:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\begin{aligned}\mathsf{circuit} \,a \,b \,c=&\mathsf{\,interface}\diamond\mathsf{\,cElement}\,a \,b \,c \,\diamond\,\mathsf{environment}\\
-&\diamond\,\mathsf{initialState}
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\, \diamond \\ 
+&\mathsf{environment}\diamond\,\mathsf{initialState}
 \end{aligned}\\
 $
 $\mathsf{where}$\\
-$\mathsf{environment}=\mathsf{inverter} \,c \,a \,\diamond\,\mathsf{inverter}\,c \,b$
+$\mathsf{environment}=\mathsf{inverter} (c, a) \,\diamond\,\mathsf{inverter}(c, b)$
 \\
 \end{minipage}
 %\vspace{2mm}
@@ -936,7 +932,7 @@ the following equivalent specification:
 
 \begin{minipage}[t]{1\columnwidth}%
 
-$\\\begin{aligned}\mathsf{circuit}\,a \,b \,c=&\mathsf{handshake00}\,a \,c \,\diamond\,\mathsf{handshake00}\,b \,c \, \diamond\\
+$\\\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{handshake00}(a, c) \diamond\,\mathsf{handshake00}(b, c)\, \diamond\\
 &\mathsf{inputs}\,[a,b] \,\diamond \mathsf{outputs}\,[c]
 \end{aligned}$\\
 \end{minipage}
@@ -1572,7 +1568,7 @@ is signalled and produce the following list of concepts:
 \begin{minipage}[h]{1\columnwidth}%
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\
+$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\
 & \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond
 \,\mathsf{zcAbsent}
 \end{aligned}
@@ -1606,20 +1602,21 @@ $\,\mathsf{ocReact}=gp\_ack^{-}\rightsquigarrow oc^{-}\,\diamond\, gn\_ack^{+}\r
 \par\end{flushleft}
 
 \begin{flushleft}
-$\begin{aligned}\,\mathsf{environmentConstraint}=&\,\mathsf{me}\,uv\, oc \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\\ &\,\diamond\, gp\_ack^{-}\rightsquigarrow gn^{+}
+$\begin{aligned}\mathsf{environmentConstraint}=&\,\mathsf{me}(uv, oc) \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\,\diamond\,\\
+& gp\_ack^{-}\rightsquigarrow gn^{+}
 \end{aligned}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}\,gn\, gp$
+$\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}(gn, gp)$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{gpHandshake}=\mathsf{handshake}\,gp\,gp\_ack$
+$\,\mathsf{gpHandshake}=\mathsf{handshake}(gp, gp\_ack)$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{gnHandshake}=\mathsf{handshake}\, gn\, gn\_ack$
+$\,\mathsf{gnHandshake}=\mathsf{handshake}(gn, gn\_ack)$
 \par\end{flushleft}
 
 \begin{flushleft}
@@ -1664,6 +1661,10 @@ Environment behaviour is included in the concepts so that it is captured in the 
 We also include an \textsf{interface} concept in order to include the
 types of the signals involved in the scenario.
 
+Within the \textsf{initialState} concepts, we use the \textsf{initialise0} concept, which applies the initial state of 0 to all listed signals.
+All signals in this system are initially 0, and this is a simpler way of specifying this. There also exists an \textsf{initialise1} function, which 
+applies the initial state of 1 to all listed signals.
+
 The descriptions of the operational modes suggest that there are similarities
 between them, mainly in the sequence of PMOS/NMOS activation during
 the charging cycle. The signal types are also the same for all scenarios in the system, and
@@ -1693,7 +1694,7 @@ are as follows:
 
 \begin{minipage}[t]{1\columnwidth}%
 \begin{flushleft}
-$\begin{aligned}\\\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn = \\
+$\begin{aligned}\\\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn) = \\
 & \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
 & \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
@@ -1738,7 +1739,7 @@ several new concepts:
 \begin{minipage}[t]{1\columnwidth}%
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}&\,uv \,oc \,zc \,gp\_ack \,gn\_ack \,gp \,gn= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
+$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
 & \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
 \end{aligned}
 $
@@ -2063,8 +2064,9 @@ However, this method is at a much higher level, using fully designed
 and tested components where as we propose to allow re-usability when
 modelling at circuit level, using composed concepts.
 
-Concepts have many beneficial features, such as reuse, natural description, multiple level description and composition, and more. Several of the discussed approaches feature similar
-ideas which make them beneficial in certain ways, but we believe fall down at points where the inclusion of one or more of these features could make an approach better. With concepts,
+Concepts have many advantageous features, such as reuse, natural description, multiple level description and composition, and more. 
+Several of these approaches feature similar ideas which make them beneficial in certain ways, 
+but we believe fall down where the inclusion of one or more of these features could make an approach better. With concepts,
 we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible.
 
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
