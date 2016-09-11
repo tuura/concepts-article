@@ -314,7 +314,7 @@ with some points of interest highlighted.
 \begin{centering}
 \includegraphics[scale=0.225]{Images/stg-breakdown}
 \par
-\protect\caption{\label{fig:stg-breakdown}Deconstructing the STG of the ZC absent scenario}
+\protect\caption{\label{fig:stg-breakdown}Deconstructing the STG of the ZC absent scenario.}
 \par\end{centering}
 \vspace{-4mm}
 \end{figure}
@@ -884,8 +884,8 @@ and the same \textsf{interface} and \textsf{initialState} concepts as follows:
 \vspace{-3mm}
 \[
 \begin{array}{lcl}
-\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\mathsf{interface}~\diamond~\mathsf{cElement}(a,b,c)\\
-~&\hspace{-2mm}\diamond&\mathsf{environment}\diamond\mathsf{initialState}\\
+\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}~\diamond~\mathsf{cElement}(a,b,c)\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{environment}\diamond\mathsf{initialState}\\
 \mathsf{where}&~&~\\
 \,\,\,\,\,\,\mathsf{environment}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{inverter}(c,a)~\diamond~\mathsf{inverter}(c,b)
 \end{array}
@@ -957,131 +957,162 @@ the corresponding definitions.
 
 %The process of combining scenarios is explained further in \S~\ref{sub:scenario-composition}
 \vspace{-1mm}
-\section{Interoperability with STG based tools \label{sec:interop-with-stg}}
+\section{Interoperability with STG based tools\label{sec:interop-with-stg}}
 
-Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
-deemed to be correct, they can then be synthesized to produce a circuit implementation. Several standard tools exist which automatically verify and synthesize specifications, such as
-\noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}, however these are designed to work with STG specifications. Thus it is necessary to translate
-concept specifications to STGs in order to be used with these tools.
-
-In this section, we will discuss the algorithm which translates concepts to STGs. Once concepts have been translated, they can be composed and combined using tools, and this will also
-be discussed.
+Concepts is a useful way of specifying asynchronous circuits, but
+specifications also need to be \emph{verified} against certain properties to ensure
+their correctness, and once they are deemed to be correct, they need to
+be \emph{synthesised} into efficient circuit implementations. Many software
+tools exist which automatically verify and synthesise STG specifications,
+such as \noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}.
+In order to reuse the tools developed by the community, it is
+necessary to be able to automatically translate concept specifications to STGs.
+In this section, we present a translation algorithm~(\S\ref{sub:translating})
+and discuss ways of composing multiple behavioural scenarios into a single STG specification~(\S\ref{sub:scenario-composition}).
 
 %A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
 
-\subsection{Translating concepts to STGs \label {sub:translating}}
+\vspace{-2mm}
+\subsection{Translating concepts to STGs\label{sub:translating}}
 
-As discussed in~\ref{sub:Comp-of-concepts}, there are multiple ways of representing a specification as concepts.
-When translating any concepts we pass them to an algorithm which begins by breaking down all concepts into a list of
-signal-level concepts. As concepts are compositional, and gate- and protocol-level concepts are composed of signal-level concepts, this process is simple.
-Interface concepts are used to set the signal types, and as such are not included in this part of the translation.
+As discussed in~\S\ref{sub:Comp-of-concepts}, there are multiple ways of
+representing a specification using concepts. However, all levels of
+abstraction available to the designer are built out of primitive low-level
+signal concepts such as causality. Given a specification, we can therefore
+break down all gate- and protocol-level constructs into `atoms', which
+significantly simplifies the translation task.
 
-Using the example of a C-element with an environment, any representation mentioned in \S\ref{sub:Comp-of-concepts} when passed into this
-algorithm would initially produce a list of signal-level concepts found in Figure~\ref{fig:c-element-concepts}.
+Using the example of a C-element with an environment, any representation
+mentioned in~\S\ref{sub:Comp-of-concepts} can be broken down into the following
+list of low-level concepts:
 
-%\vspace{2mm}
-\begin{figure}[h]
+\vspace{-3mm}
+\[
+\begin{array}{lcl}
+\hspace{-2mm}\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\hspace{-2mm}a^{+}\rightsquigarrow c^{+} \diamond b^{+}\rightsquigarrow c^{+} \diamond c^{+}\rightsquigarrow a^{-} \diamond c^{+}
+\rightsquigarrow b^{-}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}a^{-}\rightsquigarrow c^{-} \diamond b^{-}\rightsquigarrow c^{-} \diamond c^{-}\rightsquigarrow a^{+} \diamond c^{-}\rightsquigarrow b^{+}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{inputs}(\{a,b\})\diamond\mathsf{outputs}(\{c\})
+\end{array}
+\]
 
-\begin{center}
+\noindent One can see that the above list of primitive concepts matches
+the STG in Figure~\ref{fig:cElement STG composition} very closely, in particular
+the causality concepts match the arcs of the STG. Below we describe a general
+translation algorithm that in particular can produce this STG fully automatically.
+The algorithm is implemented and integrated in the open-source tool \noun{Workcraft},
+where it produces STGs in commonly used \textsf{*.g} file format.
 
-$\begin{aligned}\mathsf{circuit}\,a \,b \,c=& \,a^{+}\rightsquigarrow c^{+} \diamond \,b^{+}\rightsquigarrow c^{+} \diamond \,c^{+}\rightsquigarrow a^{-} \diamond \,c^{+}
-\rightsquigarrow b^{-} \diamond \\
-&\,a^{-}\rightsquigarrow c^{-} \diamond \,b^{-}\rightsquigarrow c^{-} \diamond \,c^{-}\rightsquigarrow a^{+} \diamond \,c^{-}\rightsquigarrow b^{+} \diamond \\
-&\,\mathsf{initialise}\,c \,0 \diamond \,\mathsf{initialise}\,b \,0 \diamond \,\mathsf{initialise}\,c \, 0
-\end{aligned}$
-
-\end{center}
-\caption{Concepts for a C-element with environment\label{fig:c-element-concepts}}
-\end{figure}
-%\vspace{2mm}
-
-With this list, we can now start to produce an STG. For this explanation, we will use images to illustrate the example, but the algorithm would produce an STG in the form of a \emph{.g}
-file. This file type is compatible with all standard tools, such as \noun{Petrify}, \noun{Mpsat} and \noun{Workcraft}.
-
-Initially the algorithm finds all signals in the system, and produces some \emph{consistency loops}. A consistency loop features both the high and low transitions of a signal, and places
-in between. These loops are used to ensure that an STG satisfies the property of \emph{consistency}, which states that a signal transition can only be excited in states that are before
-it~\cite{Cortadella}. The places are used to determine the current state of a signal, and each signal has it's own consistency loop. For the list of signal-level concepts, the first
-part of the resulting STG to be produced is shown in Figure~\ref{fig:step-by-step1}.
+Given a list of primitive concepts, the algorithm starts by creating so-called
+\emph{consistency loops} for each signal in the specified interface, which forces rising
+and falling transitions of each signal to alternate, thereby ensuring that the resulting
+STG satisfies the property of \emph{consistency}~\cite{Cortadella}.
+The places between the transitions of a signal determine its state.
+Figure~\ref{fig:step-by-step1} shows consistency loops created for the example.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step1}
-\par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:step-by-step1}The first step in translating concepts to an STG}
-
-\par\end{centering}
-
+\par
+\protect\caption{\label{fig:step-by-step1}The first step: create consistency loops.}
+\vspace{-2mm}
+\end{centering}
 \end{figure}
 
-The next step is to start connecting the signal transitions in the order of the list of signal-level concepts. First of all, $\,a^{+}\rightsquigarrow c^{+}$. To represent this
-in the STG, we need to connect the place after $a^{+}$ ($a_0$ in Figure~\ref{fig:step-by-step1}) which shows whether $a$ has already transitioned high or not, with the use of a
-token, being present if $a^{+}$ has occured, absent if it has yet to occur. This is connected to the the transition of $c^{+}$. We use a read-arc to connect these, as if $a_0$ contains
-a token, a read-arc will allow $c^{+}$ to transition without consuming the token, as consuming the token would block the $a^{-}$ transition, so consistency will not be held.
+The next step is to connect signal transitions according to the list of causality
+concepts. In the above example we start with $a^{+}\rightsquigarrow c^{+}$.
+To represent it in the STG, we connect the place after $a^{+}$ ($a_1$ in
+Figure~\ref{fig:step-by-step1}) to transition $c^{+}$ by a \emph{read arc},
+which allows $c^{+}$ to transition without consuming the token (consuming
+the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step2}
-\par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:step-by-step2}The second step in translating concepts to STGs}
-
-\par\end{centering}
-
+\par
+\protect\caption{\label{fig:step-by-step2}The second step: add causality concept $a^{+}\rightsquigarrow c^{+}$.}
+\vspace{-2mm}
+\end{centering}
 \end{figure}
 
-All concepts like this, signal-level concepts, can be added to the STG in the same way. The STG following insertion of all signal-level concepts in the above list, before the \emph{initialise} concepts, will produce an STG as
-shown in Figure~\ref{fig:step-by-step9}
+We continue translating the remaining causality concepts in the same manner
+obtaining the STG shown in Figure~\ref{fig:step-by-step9}.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step9}
+\par
+\protect\caption{\label{fig:step-by-step9}Finish the second step: add all causality concepts.}
 \par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:step-by-step9}The translated STG with all arcs added}
-
-\par\end{centering}
-
 \end{figure}
 
-At this point, all that is left to add is the initial states. This involves placing tokens in relevant places in the STG. The initial state concepts are "$\,\mathsf{initialise}\,a \,False$",
-"$\,\mathsf{initialise}\,b \,False$" and "$\,\mathsf{initialise}\,c \,False$". These detaul the initial states of all three signals is 0, and therefore we have to add a single token to places $a_0$,
-$b_0$ and $c_0$. This will produce the fully translated STG, which will look as follows:
+The final step of the translation algorithm is to add tokens to some of the places
+of the resulting STG according to the initial state concepts
+$\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)$, which declare the initial states of all three signals to be 0. We therefore
+add tokens to places $a_0$, $b_0$ and $c_0$, producing the fully translated STG in
+Figure~\ref{fig:step-by-step12}.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step12}
+\par
+\protect\caption{\label{fig:step-by-step12}The final step: set the initial state.}
 \par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:step-by-step12}The translated C-element with environment STG}
-
-\par\end{centering}
-
 \end{figure}
 
-The \emph{.g} file containing this STG can be imported into \noun{Workcraft}, where it can be viewed, and will look similar to Figure~\ref{fig:step-by-step12}. This can be
-resynthesized using \noun{Petrify} to produce a more compact and easier to read version of the STG, illustrated in Figure~\ref{fig:cElement STG}
+The resulting STG and the STG shown in Figure~\ref{fig:cElement STG composition}
+look very different but they are behaviourally equivalent. The latter is much more
+compact and easier to read though, and it would be preferable to show it to the
+designer instead of the one obtained by our translation algorithm. Our
+implementation supports automated \emph{resynthesis} of the resulting STG
+using \noun{Petrify}, and can therefore seamlessly produce the STG in
+Figure~\ref{fig:cElement STG composition} from the given specification.
 
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.28]{Images/stg-cElement}
-\par\end{centering}
-
-\protect\caption{\label{fig:cElement STG}Resynthesized STG for the example system.}
-\end{figure}
-
-Both Figure~\ref{fig:step-by-step12} and Figure~\ref{fig:cElement STG} are a correct specification for the C-element with environment. Either of these can be used with
-\noun{Workcraft} and existing tools. This allows a designer to visualize their designs as STGs, to test, verify and synthesize, and if there are any corrections or additions to be made
-these can be done either with the concepts, which can be re-translated to view an updated STG, or to the STG directly.
+By integrating concepts into \noun{Workcraft} we allow a designer to
+visualise their concept designs as STGs, to simulate, verify and synthesise them,
+and if there are any corrections or additions to be made these can be done either
+directly in the STG or in the original concept specification, which can then
+be re-translated into an updated STG.
 
 %In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can
 %further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
 
 %or using \emph{Direct Synthesis}, which is discussed in \S\ref{sub:direct-synth}.
+
+The described translation algorithm is shown in pseudocode
+in~Algorithm~\ref{alg:translation}.
+
+\begin{algorithm}[t]
+\begin{algorithmic}
+\caption{Algorithm for translating concepts to STGs\label{alg:translation}}
+\For {Each defined concept}
+  \State \textbf{add} signal-level concepts \textbf{to} conceptList
+\EndFor \\
+
+//Create consistency loops
+\For {Each signal in system}
+  \State \textbf{define} signal as input/output/internal
+  \State \textbf{add} transition \textbf{high}
+  \State \textbf{add} transition \textbf{low}
+  \State \textbf{add} place \textbf{signal-0}
+  \State \textbf{add} place \textbf{signal-1}
+  \State \textbf{connect} (transition \textbf{high}, place \textbf{signal-1})
+  \State \textbf{connect} (place \textbf{signal-1}, transition \textbf{low})
+  \State \textbf{connect} (transition \textbf{low}, place \textbf{signal-0})
+  \State \textbf{connect} (place \textbf{signal-0}, transition \textbf{high})
+\EndFor
+
+\For {Each causlity concept}
+  \State \textbf{connect-read}(place \textbf{following} cause, effect transition)
+\EndFor
+
+\For {Each initial state concept}
+  \State \textbf{add-token}(place \textbf{signal-}value)
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Parallel composition}
 
@@ -1123,39 +1154,6 @@ individually. Including the initial states, this would give us the STGs found in
 
 These STGs can now be passed into \noun{Pcomp}~\cite{PCOMP}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
 Figure~\ref{fig:cElement STG}.
-
-The algorithm for the translation from concepts to STGs can be found in Algorithm~\ref{alg:translation}.]
-
-\begin{algorithm}[h]
-\begin{algorithmic}
-\caption{Concepts to STG translation algorithm \label{alg:translation}}
-\For {Each defined concept}
-  \State \textbf{add} signal-level concepts \textbf{to} conceptList
-\EndFor \\
-
-//Create consistency loops
-\For {Each signal in system}
-  \State \textbf{define} signal as input/output/internal
-  \State \textbf{add} transition \textbf{high}
-  \State \textbf{add} transition \textbf{low}
-  \State \textbf{add} place \textbf{signal-0}
-  \State \textbf{add} place \textbf{signal-1}
-  \State \textbf{connect} (transition \textbf{high}, place \textbf{signal-1})
-  \State \textbf{connect} (place \textbf{signal-1}, transition \textbf{low})
-  \State \textbf{connect} (transition \textbf{low}, place \textbf{signal-0})
-  \State \textbf{connect} (place \textbf{signal-0}, transition \textbf{high})
-\EndFor
-
-\For {Each causlity concept}
-  \State \textbf{connect-read}(place \textbf{following} cause, effect transition)
-\EndFor
-
-\For {Each initial state concept}
-  \State \textbf{add-token}(place \textbf{signal-}value)
-\EndFor
-
-\end{algorithmic}
-\end{algorithm}
 
 \subsection{Scenario combination\label{sub:scenario-composition}}
 
@@ -1519,10 +1517,10 @@ specification for a buck converter. This design flow is implemented in \noun{Wor
 
 \begin{figure*}[t]
 \begin{centering}
-\includegraphics[scale=0.3]{Images/design_flow_wc_screenshot}
+\includegraphics[scale=0.4]{Images/design_flow_wc_screenshot}
 \par\end{centering}
 
-\protect\caption{\label{fig:workcraft_screenshot} Various steps of the design flow in Workcraft}
+\protect\caption{\label{fig:workcraft_screenshot}Stages of the design flow when using asunchronous concepts in \noun{Workcraft}}
 \end{figure*}
 
 \subsection{Formal specification using concepts}
