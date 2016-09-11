@@ -185,7 +185,27 @@ management units need to directly interface with the analogue part of the system
 for sensing and controlling it, and can therefore strongly benefit from asynchronous
 implementation that allows them to react to changes in the system at the rate
 they occur, instead of sampling various analogue parameters by clock, which is
-both slow and energy-wasteful~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
+slow and energy-wasteful~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
+As a compelling example, consider an asynchronous power management controller with
+1ns response time to stimuli from the analogue world. To match its performance
+with a synchronous equivalent, one would need to clock it at 2-3GHz, as two clock
+cycles are required just for a conventional two flip-flop
+synchroniser~\cite{2008_kinniment_synchronisation}. Bearing in mind that
+power management controllers spend most of their time doing nothing and
+waiting for relatively slow changes in the analogue environment, such
+a high-speed clock solution would clearly be inadequate.
+
+\begin{figure}[t]
+\begin{centering}
+\subfloat[\label{fig:buck-schematic}Schematic (digital control in analogue environment).]
+{\includegraphics[scale=0.7]{Images/schematic-buck}}
+\par
+\subfloat[\label{fig:buck-spec}Informal description of three behavioural scenarios.]
+{\includegraphics[scale=0.6]{Images/spec-buck}}
+\par
+\end{centering}
+\protect\caption{\label{fig:buck}Buck converter and its informal description.}
+\end{figure}
 
 In this section we first provide the background on asynchronous buck
 converters~\S\ref{sub:buck}, our main motivation example and case study.
@@ -200,20 +220,8 @@ circuits~\S\ref{sub:Monolithic}.
 Finally, we outline our new design approach~\S\ref{sub:new-way} wherein the
 behaviour of an asynchronous buck converter is decomposed into simple
 behaviours, that we later refer to as \emph{concepts}. The approach is
-described on an intuitive level, and will be formalised in the next
+described at an intuitive level, and will be formalised in the next
 section~\S\ref{sec:Concepts}.
-
-\begin{figure}[t]
-\begin{centering}
-\subfloat[\label{fig:buck-schematic}Schematic (digital control in analogue environment).]
-{\includegraphics[scale=0.7]{Images/schematic-buck}}
-\par
-\subfloat[\label{fig:buck-spec}Informal description of three behavioural scenarios.]
-{\includegraphics[scale=0.6]{Images/spec-buck}}
-\par
-\end{centering}
-\protect\caption{\label{fig:buck}Buck converter and its informal description.}
-\end{figure}
 
 \subsection{Background on buck converters\label{sub:buck}}
 
@@ -239,10 +247,10 @@ of detected conditions and describing the intended reaction to these
 events, as shown in Figure~\ref{fig:buck-spec}. The diagram shows
 that UV should be handled by switching the NMOS transistor \noun{Off}
 and PMOS transistor \noun{On}, while OC should revert their state~--
-PMOS \noun{Off} and NMOS \noun{On}~(ZC~absent scenario). Detection of
-the ZC after UV does not change this behaviour~(ZC~late scenario).
+PMOS \noun{Off} and NMOS \noun{On}~(\textbf{ZC~absent} scenario). Detection of
+the ZC after UV does not change this behaviour~(\textbf{ZC~late} scenario).
 However, if ZC is detected before UV then both the PMOS and NMOS transistors
-remain \noun{Off} until the UV condition~(ZC~early scenario).
+remain \noun{Off} until the UV condition~(\textbf{ZC~early} scenario).
 
 \begin{figure}[t]
 \begin{centering}
@@ -270,15 +278,22 @@ a blank page and manually inserts signal transitions and the connections between
 them according to the informal description of the system's operation. With
 there being several scenarios, the designer could choose to design each
 separately, and then manually compose these taking advantage of the
-similarities between the scenarios.
+similarities between the scenarios, as described
+in~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
 
-In the event that a designer needs to add or remove signals or correct a fault, editing can become difficult, due to the complexity and size. This can lead to
-further faults, and several iterations of design and tests until the new feature is added and deemed to be working correctly.
+In the event that a designer needs to add or remove signals or correct a fault,
+editing can become difficult, due to the complexity and size. This can lead to
+further faults, and several iterations of design and tests until the new
+feature is added and deemed to be working correctly.
 
-A designer may even have to start from a
-blank page in some cases, unable to reuse any of the previous design. The larger and more complex an STG is, and the more signals there are, the more difficult it is to comprehend,
-debug and edit. This can slow the design process of a circuit, which is undesirable in an industry where the time for a device to move from conception to market is becoming critical, and ever shorter~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
+A designer may even have to start from a blank page in some cases, unable to
+reuse any of the previous design. The larger and more complex an STG is, and
+the more signals there are, the more difficult it is to comprehend,
+debug and edit. This can slow the design process of a circuit, which is
+undesirable in an industry where the time for a device to move from conception
+to market is becoming critical, and ever shorter.
 
+\vspace{-2mm}
 \subsection{Towards high-level asynchronous concepts\label{sub:new-way}}
 In an attempt to streamline the design process, we aimed to find a way to
 create STGs which allows editing and reuse at various stages of the design.
@@ -295,12 +310,13 @@ be a correct representation of the design. For example,
 Figure~\ref{fig:stg-breakdown} shows one scenario of the simple buck converter
 with some points of interest highlighted.
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{centering}
 \includegraphics[scale=0.225]{Images/stg-breakdown}
 \par
-\protect\caption{\label{fig:stg-breakdown}ZC absent scenario STG showing points of interest}
+\protect\caption{\label{fig:stg-breakdown}Deconstructing the STG of the ZC absent scenario}
 \par\end{centering}
+\vspace{-4mm}
 \end{figure}
 
 Studying this STG shows that there are some high-level signal interactions that
@@ -812,7 +828,7 @@ The following is a set of concepts used to describe this example:
 \begin{minipage}[t]{1\columnwidth}%
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\ 
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\
 &\diamond\,\mathsf{outputFall}\,\diamond \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
 \end{aligned}
 $
@@ -875,8 +891,8 @@ able to transition.
 
 Note: The format of concepts used for examples in this work is used for clarity.
 The tool uses standard Haskell syntax for specifying concepts.
-The basis of the format used here is the same, but there are some minor differences, and some 
-requirements for a file containing concepts to be used with the tool. 
+The basis of the format used here is the same, but there are some minor differences, and some
+requirements for a file containing concepts to be used with the tool.
 The syntax used for the tool can be found both in examples and the manual, both of which are included with the tool~\cite{2016_concepts_github}.
 
 %Note: The code demonstrated in this example is the format required to work with the tool.
@@ -900,7 +916,7 @@ and the same initial state concept:
 
 
 \begin{minipage}[t]{1\columnwidth}%
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\, \diamond \\ 
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\, \diamond \\
 &\mathsf{environment}\diamond\,\mathsf{initialState}
 \end{aligned}\\
 $
@@ -1014,7 +1030,7 @@ algorithm would initially produce a list of signal-level concepts found in Figur
 \begin{center}
 
 $\begin{aligned}\mathsf{circuit}\,a \,b \,c=& \,a^{+}\rightsquigarrow c^{+} \diamond \,b^{+}\rightsquigarrow c^{+} \diamond \,c^{+}\rightsquigarrow a^{-} \diamond \,c^{+}
-\rightsquigarrow b^{-} \diamond \\ 
+\rightsquigarrow b^{-} \diamond \\
 &\,a^{-}\rightsquigarrow c^{-} \diamond \,b^{-}\rightsquigarrow c^{-} \diamond \,c^{-}\rightsquigarrow a^{+} \diamond \,c^{-}\rightsquigarrow b^{+} \diamond \\
 &\,\mathsf{initialise}\,c \,0 \diamond \,\mathsf{initialise}\,b \,0 \diamond \,\mathsf{initialise}\,c \, 0
 \end{aligned}$
@@ -1662,7 +1678,7 @@ We also include an \textsf{interface} concept in order to include the
 types of the signals involved in the scenario.
 
 Within the \textsf{initialState} concepts, we use the \textsf{initialise0} concept, which applies the initial state of 0 to all listed signals.
-All signals in this system are initially 0, and this is a simpler way of specifying this. There also exists an \textsf{initialise1} function, which 
+All signals in this system are initially 0, and this is a simpler way of specifying this. There also exists an \textsf{initialise1} function, which
 applies the initial state of 1 to all listed signals.
 
 The descriptions of the operational modes suggest that there are similarities
@@ -1958,8 +1974,8 @@ will produce logic equations that describe how the outputs $gp$ and
 $gn$ can be produced using $uv$, $oc$, $zc$, $gp\_ack$, $gn\_ack$.
 Using logic gates, we can reproduce a circuit diagram for these equations, which \noun{Workcraft} can automatically import.
 
-There are different types of synthesis which use different methods of generating the logic equations, 
-each of which produces a slightly different ciruit. For example, Figure~\ref{fig:complex-gate-circuit} shows the 
+There are different types of synthesis which use different methods of generating the logic equations,
+each of which produces a slightly different ciruit. For example, Figure~\ref{fig:complex-gate-circuit} shows the
 circuit for this buck using \emph{Complex gate} synthesis.
 
 \begin{figure}[h]
@@ -1970,14 +1986,14 @@ circuit for this buck using \emph{Complex gate} synthesis.
 \protect\caption{\label{fig:complex-gate-circuit}Asynchronous complex gate implementation}
 \end{figure}
 
-Complex-gate synthesis does not use a gate library - the implementations they yield are Boolean functions of arbitrary complexity. These functions are often too 
-large to be implemented by a single gate available in the gate library. Unfortunately, breaking up a complex-gate into smaller ones, when performed naïvely, generally yields an incorrect 
-circuit - this happens due to the delays associated with the outputs of the newly introduced gates. In fact, logic decomposition in the context of speed-independent circuits is a very 
-difficult problem, that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations, but occasionally they fail to converge to a solution and a manual 
+Complex-gate synthesis does not use a gate library - the implementations they yield are Boolean functions of arbitrary complexity. These functions are often too
+large to be implemented by a single gate available in the gate library. Unfortunately, breaking up a complex-gate into smaller ones, when performed naïvely, generally yields an incorrect
+circuit - this happens due to the delays associated with the outputs of the newly introduced gates. In fact, logic decomposition in the context of speed-independent circuits is a very
+difficult problem, that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations, but occasionally they fail to converge to a solution and a manual
 intervention by the designer is required.
 
-Another type of synthesis is \emph{Technology mapping}. 
-This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library. 
+Another type of synthesis is \emph{Technology mapping}.
+This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library.
 This then produces a implementation which will be different to the complex gate implementation.
 
 \begin{figure}[h]
@@ -1988,12 +2004,12 @@ This then produces a implementation which will be different to the complex gate 
 \protect\caption{\label{fig:tech-mapped-circuit}Asynchronous technology mapped implementation}
 \end{figure}
 
-Figure~\ref{fig:tech-mapped-circuit} is the technology mapped implementation.  The gate labels correspond to the gate names in the library. 
-The two inverters are shown with a dotted line through. This is because they have the Zero delay property expressing the assumption that their delays are negligible. 
-This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable; 
+Figure~\ref{fig:tech-mapped-circuit} is the technology mapped implementation.  The gate labels correspond to the gate names in the library.
+The two inverters are shown with a dotted line through. This is because they have the Zero delay property expressing the assumption that their delays are negligible.
+This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable;
 moreover, this assumption introduces extra constraints that have to be satisfied during placing and routing.
 
-There are further synthesis types, and for the example of a buck controller, they provide differing implementations. 
+There are further synthesis types, and for the example of a buck controller, they provide differing implementations.
 More information on the synthesis of this example can be found in the tutorials of the \noun{Workcraft} website~\cite{Workcraft_website}.
 
 %When we have acquired a circuit design via a chosen synthesis type, it needs to be verified to
@@ -2092,8 +2108,8 @@ However, this method is at a much higher level, using fully designed
 and tested components where as we propose to allow re-usability when
 modelling at circuit level, using composed concepts.
 
-Concepts have many advantageous features, such as reuse, natural description, multiple level description and composition, and more. 
-Several of these approaches feature similar ideas which make them beneficial in certain ways, 
+Concepts have many advantageous features, such as reuse, natural description, multiple level description and composition, and more.
+Several of these approaches feature similar ideas which make them beneficial in certain ways,
 but we believe fall down where the inclusion of one or more of these features could make an approach better. With concepts,
 we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible.
 
