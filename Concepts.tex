@@ -1985,6 +1985,18 @@ The two inverters are shown with a dotted line through. This is because they hav
 This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable;
 moreover, this assumption introduces extra constraints that have to be satisfied during placing and routing.
 
+We can try to decompose the implementation of $gp$ into gates/latches with at most two inputs. 
+Within \noun{Workcraft}, we can pass further commands to the back end tools, in this case \noun{Mpsat}, to limit the number of inputs in gates and latches.
+Figure~\ref{fig:circuit-buck-deco2} features the implementation of gp can be computed by doing this.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.3]{Images/circuit-buck-deco2-wc}
+\par\end{centering}
+
+\protect\caption{\label{fig:circuit-buck-deco2}Circuit with only two inputs on gates/latches}
+\end{figure}
+
 There are further synthesis types, and for the example of a buck controller, they provide differing implementations.
 More information on the synthesis of this example can be found in the tutorials of the \noun{Workcraft} website~\cite{Workcraft_website}.
 
