@@ -1524,80 +1524,46 @@ can then be referenced in concept lists for other scenarios by name, assuming th
 We start with describing the operational mode where no ZC condition
 is signalled and produce the following list of concepts:
 
-\begin{minipage}[h]{1\columnwidth}%
+\vspace{-4mm}
+\[
+\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\]
+\vspace{-6mm}
+\[
+~~=~\mathsf{chargeFunc}~\diamond~\mathsf{uvFunc}~\diamond~\mathsf{uvReact}~\diamond~\mathsf{zcAbsent}
+\]
+\vspace{-5mm}
+\[
+\begin{array}{lcl}
+\mathsf{where}&~&\\
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\
-& \,\mathsf{chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond
-\,\mathsf{zcAbsent}
-\end{aligned}
-$
-\par\end{flushleft}%
+~~~~\mathsf{interface}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{inputs}~[uv, oc, zc, gp\_ack, gn\_ack]\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{outputs}~[gp, gn]\\
 
-\par\begin{flushleft}
-$\mathsf{where}$
-\par\end{flushleft}
+~~~~\mathsf{uvFunc}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow gp^{+}~\diamond~ uv^{+}\rightsquigarrow gn^{-}\\
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{interface}=\,&\mathsf{inputs}\,[uv, oc, zc, gp\_ack, gn\_ack]\\
-& \,\diamond \mathsf{outputs}\,[gp, gn]
-\end{aligned}$
-\par\end{flushleft}%
+~~~~\mathsf{ocFunc}&\hspace{-2mm}=&\hspace{-2mm}oc^{+}\rightsquigarrow gp^{-}~\diamond~ oc^{+}\rightsquigarrow gn^{+}\\
 
-\begin{flushleft}
-$\,\mathsf{uvFunc}=uv^{+}\rightsquigarrow gp^{+}\,\diamond\, uv^{+}\rightsquigarrow gn^{-}$
-\par\end{flushleft}
+~~~~\mathsf{uvReact}&\hspace{-2mm}=&\hspace{-2mm}gp\_ack^{+}\rightsquigarrow uv^{-}~\diamond~gn\_ack^{-}\rightsquigarrow uv^{-}\\
+~~~~\mathsf{ocReact}&\hspace{-2mm}=&\hspace{-2mm}gp\_ack^{-}\rightsquigarrow oc^{-}~\diamond~gn\_ack^{+}\rightsquigarrow oc^{-}\\
+~~~~\mathsf{environment}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{me}(uv, oc)\\
+~~~~\mathsf{\mathsf{noShortcircuit}}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{me}(gn, gp)\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}gn\_ack^{-}\rightsquigarrow gp^{+}~\diamond~gp\_ack^{-}\rightsquigarrow gn^{+}\\
+~~~~\mathsf{gpHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gp,gp\_ack)\\
+~~~~\mathsf{gnHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gn,gn\_ack)\\
+~~~~\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise0}[uv,oc,zc,gp\_ack,~ gn\_ack,~ gp,~ gn]\\
+~~~~\mathsf{chargeFunc}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}~\diamond~\mathsf{ocFunc}~\diamond~\mathsf{ocReact}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{environment}~\diamond~\mathsf{noShortcircuit}~\diamond~\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{gpHandshake}~\diamond~\mathsf{gnHandshake}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{initialState}
 
-\begin{flushleft}
-$\,\mathsf{ocFunc}=oc^{+}\rightsquigarrow gp^{-}\,\diamond\, oc^{+}\rightsquigarrow gn^{+}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{uvReact}=gp\_ack^{+}\rightsquigarrow uv^{-}\,\diamond\, gn\_ack^{-}\rightsquigarrow uv^{-}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{ocReact}=gp\_ack^{-}\rightsquigarrow oc^{-}\,\diamond\, gn\_ack^{+}\rightsquigarrow oc^{-}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\begin{aligned}\mathsf{environmentConstraint}=&\,\mathsf{me}(uv, oc) \,\diamond\, gn\_ack^{-}\rightsquigarrow gp^{+}\,\diamond\,\\
-& gp\_ack^{-}\rightsquigarrow gn^{+}
-\end{aligned}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{\mathsf{circuitConstraint}}=\mathsf{me}(gn, gp)$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{gpHandshake}=\mathsf{handshake}(gp, gp\_ack)$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\mathsf{gnHandshake}=\mathsf{handshake}(gn, gn\_ack)$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\mathsf{initialState}=\mathsf{initialise0}[uv,\, oc,\, zc,\, gp\_ack,\, gn\_ack,\, gp,\, gn]$
-%initialState = initialise0 [uv, oc, zc, gp_ack, gn_ack, gp, gn]
-\par\end{flushleft}
-
-\begin{flushleft}
-$\begin{aligned}\mathsf{chargeFunc}= & \mathsf{interface}\,\diamond\,\mathsf{ocFunc}\,\diamond\,\mathsf{ocReact}\,\diamond\\
- & \mathsf{\mathsf{\, environmentConstraint}\,\diamond\, circuitConstraint}\,\diamond\,\\
- & \mathsf{\, gpHandshake}\,\diamond\,\mathsf{gnHandshake}\,\diamond\,\mathsf{initialState}
-\end{aligned}
-$
-\par\end{flushleft}
+\end{array}
+\]
 
 %\begin{flushleft}
 %$\,\mathsf{zcAbsent}=\mathsf{silent}\,zc^{+}\,\diamond\,\mathsf{silent}\,zc^{-}$
 %\par\end{flushleft}
 
-\end{minipage}
-
-\begin{flushleft}
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
@@ -1606,8 +1572,6 @@ $
 \protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario}
 concept.}
 \end{figure}
-
-\par\end{flushleft}
 
 In this list, we introduce concepts which describe the correction
 of both under-voltage and over-current. This includes concepts describing
