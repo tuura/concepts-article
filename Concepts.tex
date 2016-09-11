@@ -747,6 +747,7 @@ STGs~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
 which is a special kind of Petri nets~\cite{Petri_1962_phd} whose
 transitions are associated with signal events.
 
+\vspace{-1mm}
 \subsection{Petri nets and STGs}
 
 Formally, a Petri net is defined as a tuple~$PN=\left\langle P,\, T,\, F,\, M_{0}\right\rangle $
@@ -765,13 +766,12 @@ $\forall p,p\in\bullet t\Rightarrow M(p)>0$. The evolution of a Petri
 net is possible by \emph{firing} the enabled transitions. \emph{Firing}
 of a transition~$t$ results in a new marking $M'$ such that
 \[
-M'\left(p\right)=\left\{ \begin{array}{cc}
-M(p)-1 & if\, p\in\bullet t\setminus t\bullet,\\
-M(p)+1 & if\, p\in t\bullet\setminus\bullet t,\\
-M(p)\,\,\,\,\, & otherwise
+\forall p~M'(p)=\left\{ \begin{array}{ll}
+M(p)-1 & \textit{if}\, p\in\bullet t\setminus t\bullet,\\
+M(p)+1 & \textit{if}\, p\in t\bullet\setminus\bullet t,\\
+M(p)\,\,\,\,\, & \textit{otherwise}.
 \end{array}\right.
 \]
- for all $p\in P$.
 
 An STG is a 1-safe Petri net whose transitions are labelled by signal
 events, i.e. $STG=\left\langle P,\, T,\, F,\, M_{0},\,\lambda,\, Z,\, v_{0}\right\rangle $,
@@ -779,7 +779,7 @@ where $\lambda$ is a \emph{labelling~function}, $Z$ is a set of
 \emph{signals} and $v_{0}\in\left\{ 0,\,1\right\} ^{\left|Z\right|}$
 is a \emph{vector~of}~\emph{initial~signal~values}. The labelling
 function $\lambda:T\rightarrow Z^{\pm}$ maps transitions into \emph{signal~events}
-$Z^{\pm}=Z\times\left\{ +,-\right\}$. The signal events labelled $z^{+}$
+$Z^{\pm}=Z\times\left\{+,-\right\}$. The signal events labelled $z^{+}$
 and $z^{-}$ denote the transitions of signals $z\in Z$ from 0~to~1~(rising
 edge), or from 1~to~0~(falling edge), respectively. The labelling
 function does not have to be 1-to-1, i.e. transitions with the same
@@ -791,19 +791,21 @@ STGs inherit the operational semantics of their underlying PNs, including
 the notions of transition enabling and firing.
 
 Graphically, the places are represented as circles, transitions as
-text labels, consuming and producing arcs are shown by arrows, and
-tokens are depicted by dots. For simplicity, the places with one incoming
+text labels, arcs are shown by arrows, and tokens are depicted by dots.
+For simplicity, the places with one incoming
 and one outgoing arc are often hidden, allowing arcs~(with implicit
 places) between transitions.
 
 \begin{figure}[t]
 \begin{centering}
-\includegraphics[scale=0.62]{Images/c-element-circuit-redo}
+\includegraphics[scale=0.51]{Images/C-element-with-environment}
 \par\end{centering}
-
+\vspace{-1mm}
 \protect\caption{\label{fig:cElement-concepts}Example system specified using concepts.}
+\vspace{-5mm}
 \end{figure}
 
+\vspace{-1mm}
 \subsection{Composition of concepts\label{sub:Comp-of-concepts}}
 
 A single concept can be used to describe an initial state, invariant
@@ -821,45 +823,20 @@ each of the inputs via an inverter. This is a simple example of a complete
 system, of a C-element with an environment, see Figure~\ref{fig:cElement-concepts}.
 The example can be described by the following script:
 
-\vspace{2mm}
-\begin{minipage}[t]{1\columnwidth}%
-
-\begin{flushleft}
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\,\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\
-\diamond\, &\,\,\mathsf{outputFall}\,\diamond \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
-\end{aligned}
-$
-
-$\,\mathsf{where}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{interface}=\mathsf{inputs}(\{a,b\})\diamond\mathsf{outputs}(\{c\})$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{outputRise}=\,a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{inputFall}=c ^ {+} \rightsquigarrow a^{-} \diamond\, c ^ {+} \rightsquigarrow b^{-}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{outputFall}= a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{inputRise}=c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}$
-\par\end{flushleft}
-
-\begin{flushleft}
-$\,\,\,\,\,\,\mathsf{initialState}=\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)$
-\par\end{flushleft}
-
-\end{minipage}
-
-\vspace{3mm}
+\vspace{-3mm}
+\[
+\begin{array}{lcl}
+\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}~\diamond~\mathsf{outputRise}~\diamond~\mathsf{inputFall}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{outputFall}~\diamond~\mathsf{inputRise}~\diamond~\mathsf{initialState}\\
+\mathsf{where}&~&\\
+\,\,\,\,\,\,\mathsf{interface}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{inputs}(\{a,b\})\diamond\mathsf{outputs}(\{c\})\\
+\,\,\,\,\,\,\mathsf{outputRise}&\hspace{-2mm}=&\hspace{-2mm}\,a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}\\
+\,\,\,\,\,\,\mathsf{inputFall}&\hspace{-2mm}=&\hspace{-2mm}c ^ {+} \rightsquigarrow a^{-} \diamond\, c ^ {+} \rightsquigarrow b^{-}\\
+\,\,\,\,\,\,\mathsf{outputFall}&\hspace{-2mm}=&\hspace{-2mm}a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}\\
+\,\,\,\,\,\,\mathsf{inputRise}&\hspace{-2mm}=&\hspace{-2mm}c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}\\
+\,\,\,\,\,\,\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)\\
+\end{array}
+\]
 
 The first concepts in this list is the \textsf{circuit} concept, defined as a
 composition of the following five listed after the \textsf{where} keyword.
@@ -902,19 +879,19 @@ and the environment. Another way could be to use gate-level concepts
 and describe the environment explicitly. In this case the environment
 allows the inputs to transition in the opposite direction to the output
 $c$, as two inverters would. We can then compose this with the C-element
-and the same interface and initial state concepts as follows.
+and the same \textsf{interface} and \textsf{initialState} concepts as follows:
 
-\begin{minipage}[t]{1\columnwidth}
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\\
-\diamond\, &\,\mathsf{environment}\diamond\,\mathsf{initialState}
-\end{aligned}\\
-$
-$\mathsf{where}$\\
-$\mathsf{\,\,\,\,\,\,environment}=\mathsf{inverter} (c, a) \,\diamond\,\mathsf{inverter}(c, b)$
-\\
-\end{minipage}
-%\vspace{2mm}
-This specification is equivalent to the previous one; indeed one can
+\vspace{-3mm}
+\[
+\begin{array}{lcl}
+\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\mathsf{interface}~\diamond~\mathsf{cElement}(a,b,c)\\
+~&\hspace{-2mm}\diamond&\mathsf{environment}\diamond\mathsf{initialState}\\
+\mathsf{where}&~&~\\
+\,\,\,\,\,\,\mathsf{environment}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{inverter}(c,a)~\diamond~\mathsf{inverter}(c,b)
+\end{array}
+\]
+
+\noindent This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
 and associativity of the underlying commutative monoid. Consequently,
 this specification will be translated to the same STG shown in
@@ -924,27 +901,32 @@ Figure~\ref{fig:cElement STG composition}.
 \begin{centering}
 \includegraphics[scale=0.25]{Images/stg-cElement}
 \par\end{centering}
-
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
+\vspace{-4mm}
 \end{figure}
 
 Finally, the designer can also rely on protocol-level concepts, producing
 the following equivalent specification:
 
-\begin{minipage}[t]{1\columnwidth}%
+\vspace{-3mm}
+\[
+\begin{array}{lcl}
+\mathsf{circuit}(a,b,c)&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{handshake00}(a,c)~\diamond~\mathsf{handshake00}(b,c)\\
+\end{array}
+\]
 
-$\\\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,handshake00}(a, c) \diamond\,\mathsf{handshake00}(b, c)\\
-\diamond\, &\mathsf{\,interface}
-\end{aligned}$\\
-\end{minipage}
+\noindent Indeed, at the high level the circuit can be seen simply as two
+handshakes synchronised on a common signal.
 
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
 of available levels of abstraction, which could be used not only for
 deriving simplest possible specifications but also for cross-checking
 the adequacy of specifications by \emph{refactoring} them according
-to the composition laws.
+to the concept composition laws.
 
+\vspace{-1mm}
 \subsection{Multiple behavioural scenarios\label{sub:scenarios}}
 
 So far we have only considered systems operating in a single behavioural
@@ -974,10 +956,7 @@ STG translation algorithm, all referenced concepts are replaced by
 the corresponding definitions.
 
 %The process of combining scenarios is explained further in \S~\ref{sub:scenario-composition}
-
-%\vspace{-3mm}
-
-
+\vspace{-1mm}
 \section{Interoperability with STG based tools \label{sec:interop-with-stg}}
 
 Concepts may be a useful way of specifying asynchronous circuits, but specifications need to be verified against certain properties to ensure they will work correctly, and once they are
@@ -1536,7 +1515,7 @@ and with examples explained how they can be used to design simple circuits, and 
 provide us with an STG specification for use with standard tools.
 
 Now we can use this information with the buck converter case study to detail the design flow for producing a
-specification for a buck converter. This design flow is implemented in \noun{Workcraft}. 
+specification for a buck converter. This design flow is implemented in \noun{Workcraft}.
 
 \begin{figure*}[t]
 \begin{centering}
@@ -1897,7 +1876,7 @@ be made.
 each signal alternate.
 \end{itemize}
 These properties can be automatically checked in \noun{Workcraft} using
-the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool. 
+the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool.
 It is also possible use custom properties as verification tools, by entering the code to check for these.
 Figure~\ref{fig:custom_assertion} contains an example custom asserstion we created for this case study.
 In this we test that there is no shortcircuit in the system, by checking that $gp$ and $gn$ are not hight at the same time.
@@ -2010,7 +1989,7 @@ The two inverters are shown with a dotted line through. This is because they hav
 This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable;
 moreover, this assumption introduces extra constraints that have to be satisfied during placing and routing.
 
-We can try to decompose the implementation of $gp$ into gates/latches with at most two inputs. 
+We can try to decompose the implementation of $gp$ into gates/latches with at most two inputs.
 Within \noun{Workcraft}, we can pass further commands to the back end tools, in this case \noun{Mpsat}, to limit the number of inputs in gates and latches.
 Figure~\ref{fig:circuit-buck-deco2} features the implementation of gp can be computed by doing this.
 
