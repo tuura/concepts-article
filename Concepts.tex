@@ -364,10 +364,8 @@ interaction can be edited without needing to change every single interaction.
 %%
 %%+ STGs mix many different concerns in one single graph -- show how one could split the specification into what we call concepts.
 %%
+\vspace{-2mm}
 \section{Concepts \label{sec:Concepts}}
-
-%\vspace{-2mm}
-
 
 In this section we formally introduce \emph{concepts} that we propose
 to employ for the specification of asynchronous circuits. Below we
@@ -380,7 +378,7 @@ with the same domain $X$, we lift Boolean operators (disjunction~$\vee$,
 conjunction~$\wedge$, implication $\Rightarrow$, etc.) in the usual
 manner: $h=f\vee g$ means $h(x)=f(x)\vee g(x)$ for all $x\in X$,
 etc. Furthermore,~$\mathbf{0}$ and~$\mathbf{1}$ stand for constant
-Boolean functions that discard their input and return values $0$
+Boolean functions that discard their input and return $0$
 and $1$, respectively.
 
 A \emph{monoid} is a set $M$ and a binary operation $\diamond : M\times M\rightarrow M$
@@ -399,19 +397,12 @@ to build complex concepts from simpler ones. The order of composition
 does not matter, i.e., the concepts commute: $a\diamond b=b\diamond a$
 for all $a,b\in M$.
 
-%\vspace{-3mm}
-
-
-
+\vspace{-1mm}
 \subsection{Abstract concepts}
-
-%\vspace{-3mm}
-
 
 We first describe \emph{abstract concepts} that we use as building
 blocks for developing \emph{domain specific concepts}, such as those
-related to asynchronous circuits (\S~\ref{sub:Concepts-for-asynchronous}).
-
+related to asynchronous circuits (\S\ref{sub:Concepts-for-asynchronous}).
 
 Abstract concepts are parameterised by finite sets of \emph{states}
 $S$ and \emph{events} $E$. The \emph{initial state concept} captures
@@ -590,6 +581,7 @@ whose output transitions causally depend on the input ones:
 \[
 \mathsf{buffer}(a, b)=a^{+}\rightsquigarrow b^{+}\ \diamond\ a^{-}\rightsquigarrow b^{-}
 \]
+
 An \emph{inverter} has a similar conceptual specification, but the
 output transition is inverted:
 \[
@@ -605,15 +597,24 @@ output transition is inverted:
 % \[
 % \mathsf{SRLatch}\,s \,r \,q=\mathsf{buffer}\,s \,q \ \diamond\ \mathsf{inverter}\,r \,q
 % \]
+
+An \emph{AND gate} has two inputs $a$ and $b$ and one output~$c$, which
+synchronises rising transitions via AND-causality and falling transitions
+via OR-causality:
+\[
+\mathsf{and}(a, b, c)=a^{+}\!\rightsquigarrow\!c^{+} \diamond\ b^{+}\!\rightsquigarrow\! c^{+} \diamond\ \mathsf{orCausality}(a^{-},b^{-},c^{-})
+\]
+
 A \emph{C-element} is a gate with two inputs $a$ and $b$ and one
-output~$c$, which synchronises input transitions:
+output~$c$, which synchronises both rising and falling input transitions
+via AND-causality (see an example in~\S\ref{sub:Comp-of-concepts}):
 \[
 \mathsf{cElement}(a, b, c)=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
 \]
-In words, the rising output transition $c^{+}$ causally depends on
-both $a^{+}$ and $b^{+}$, and the falling output transition $c^{-}$
-causally depends on both $a^{-}$ and $b^{-}$. An alternative way
-to express the same concept is to reuse the buffer concept:
+% In words, the rising output transition $c^{+}$ causally depends on
+% both $a^{+}$ and $b^{+}$, and the falling output transition $c^{-}$
+% causally depends on both $a^{-}$ and $b^{-}$.
+An alternative way to express the same concept is to reuse the buffer concept:
 \[
 \mathsf{cElement}(a, b, c)=\mathsf{buffer}(a, c) \diamond \mathsf{buffer}(b, c)
 \]
@@ -621,7 +622,7 @@ Indeed, a C-element combines the constraints imposed on the output
 transitions by two `virtual' buffers.
 
 Behaviour of other gates can be similarly defined using concepts,
-see our Haskell implementation~\cite{2016_concepts_github}.
+see our open-source implementation~\cite{2016_concepts_github}.
 
 \textbf{Protocol-level concepts:} In addition to gate-level concepts
 described above it is often important to specify \emph{protocols}
@@ -669,10 +670,10 @@ exclusion} between two signals~$a$ and~$b$:
 \[
 \mathsf{me}(a, b) = a^{-}\rightsquigarrow b^{+}\ \diamond\ b^{-}\rightsquigarrow a^{+}\diamond\overline{\mathsf{after}\,a^{+} \, \wedge\mathsf{after}\,b^{+}\, }
 \]
-The concept comprises two parts: 1) in terms of causality, we say
+The concept comprises two parts: i) in terms of causality, we say
 that rising transitions $a^{+}$ and $b^{+}$ can only occur after
-the opposite falling ones, 2) the initial states when $a=b=1$ are
-forbidden. Taken together these two parts guarantee that $a$ and
+the opposite falling ones, ii) the initial states when $a=b=1$ are
+forbidden. Taken together these parts guarantee that $a$ and
 $b$ are never set to $1$ at the same time, i.e. they are mutually
 exclusive. We also add $\overline{\mathsf{after}\, a^{+} \, \wedge\mathsf{after}\ b^{+}\,}$
 to the invariant.
@@ -682,13 +683,12 @@ that receives asynchronous requests $r_{1}$ and $r_{2}$ to a shared
 resource and grants access to it by corresponding mutually exclusive
 signals $g_{1}$ and $g_{2}$:
 
-{\small{}
+\vspace{-3mm}
+{\small
 \[
 \mathsf{meElement}(r_{1}, r_{2}, g_{1}, g_{2})\!=\!\mathsf{buffer}(r_{1}, g_{1}) \diamond \mathsf{buffer}(r_{2}, g_{2}) \diamond \mathsf{me}(g_{1}, g_{2})
-\]
-}{\small \par}
-
-%\vspace{-3mm}
+\]}
+\vspace{-3mm}
 
 \textbf{Interface concepts:} To specify the type of a signal (\emph{input},
 \emph{output} or \emph{internal}) we introduce the \textsf{interface} concept:
@@ -802,7 +802,7 @@ places) between transitions.
 
 %\vspace{-3mm}
 
-\subsection{Composition of concepts \label{sub:Comp-of-concepts}}
+\subsection{Composition of concepts\label{sub:Comp-of-concepts}}
 
 %\vspace{-3mm}
 
