@@ -1896,9 +1896,26 @@ be made.
 \item Signal consistency: in any trace the rising and falling phases of
 each signal alternate.
 \end{itemize}
-These properties can be automatically checked in \noun{Workcraft }using
-the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
-}In the event that one of these properties does not hold, unless it
+These properties can be automatically checked in \noun{Workcraft} using
+the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool. 
+It is also possible use custom properties as verification tools, by entering the code to check for these.
+Figure~\ref{fig:custom_assertion} contains an example custom asserstion we created for this case study.
+In this we test that there is no shortcircuit in the system, by checking that $gp$ and $gn$ are not hight at the same time.
+As seen in this image, the property correctly holds, as expected.
+
+\begin{figure}[h]
+\begin{centering}
+\includegraphics[scale=0.75]{Images/screenshot-custom-assertion}
+\par\end{centering}
+
+\begin{centering}
+\protect\caption{\label{fig:buck STG}Custom verification of no shortcircuit}
+
+\par\end{centering}
+
+\end{figure}
+
+In the event that one of these properties does not hold, unless it
 can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
 In this case a problematic concept can be identified and diagnostic information
 is printed out to help a designer correct the issue.
@@ -1916,7 +1933,7 @@ concept, or as a scenario in another system.
 After all scenarios have been combined, the result will be the STG specification
 for the full system. If each scenario used in the combination process satisfies
 the verification properties, it is possible no errors will exist within the full
-specification. However, certain unforeseen errors may be produced
+specification. However,  unforeseen errors may be produced
 and thus, it is necessary to verify the resulting specification. This can
 be performed using \noun{Mpsat} as with the scenarios to ensure the same
 properties are held. The simulation tool built into \noun{Workcraft} can also
