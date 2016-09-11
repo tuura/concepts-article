@@ -1044,6 +1044,7 @@ obtaining the STG shown in Figure~\ref{fig:step-by-step9}.
 \includegraphics[scale=0.23]{Images/Step-by-step9}
 \par
 \protect\caption{\label{fig:step-by-step9}Finish the second step: add all causality concepts.}
+\vspace{-2mm}
 \par\end{centering}
 \end{figure}
 
@@ -1058,6 +1059,7 @@ Figure~\ref{fig:step-by-step12}.
 \includegraphics[scale=0.23]{Images/Step-by-step12}
 \par
 \protect\caption{\label{fig:step-by-step12}The final step: set the initial state.}
+\vspace{-2mm}
 \par\end{centering}
 \end{figure}
 
@@ -1088,9 +1090,8 @@ in~Algorithm~\ref{alg:translation}.
 \caption{Algorithm for translating concepts to STGs\label{alg:translation}}
 \For {Each defined concept}
   \State \textbf{add} signal-level concepts \textbf{to} conceptList
-\EndFor \\
-
-//Create consistency loops
+\EndFor
+%//Create consistency loops
 \For {Each signal in system}
   \State \textbf{define} signal as input/output/internal
   \State \textbf{add} transition \textbf{high}
@@ -1110,138 +1111,116 @@ in~Algorithm~\ref{alg:translation}.
 \For {Each initial state concept}
   \State \textbf{add-token}(place \textbf{signal-}value)
 \EndFor
-
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Parallel composition}
+\vspace{-1mm}
+\subsection{Partial translation and parallel composition}
 
-With this method of translating concepts to STGs this allows alternative use of tools. While we can specify an entire scenario as concepts and translate this to an STG, it is also possible to
-translate smaller collections of concepts, or even singular concepts, which are not necessarily a complete STG. These can be visualised, and then composed using
-\emph{Parallel Composition}
-within \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
+In some cases it may be useful to partially translate concepts to STGs, for
+example to investigate the behaviour of a circuit
+in different environments. An important property of the above algorithm is
+that it can be applied to incomplete systems, thereby translating
+smaller collections of concepts, or even singular concepts, which do not
+necessarily correspond to well-behaving STGs (e.g. the resulting STGs may contain
+spurious input transitions if they are not controlled by the environment).
+Such partial specifications can be visualised, studied, and then composed into
+complete specifications using the \emph{parallel composition}, which is supported
+by \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 
-Using the example in \S\ref{sub:Comp-of-concepts}, a C-element with environment, we can translate the $\mathsf{cElement}(e)$ and the two $\mathsf{inverter}(e)$ concepts
-individually. Including the initial states, this would give us the STGs found in Figure~\ref{fig:IndividConceptStgs}.
+Using the example in~\S\ref{sub:Comp-of-concepts}, a C-element with environment,
+we can translate the concepts corresponding to the C-element and the two
+environment inverters individually. Including the initial states, this would
+give us the STGs found in Figure~\ref{fig:IndividConceptStgs}. These STGs can be
+composed using the parallel composition, the outcome of which will be equivalent
+to the result obtained by translating the complete specification, bringing us back
+to the STG in Figure~\ref{fig:cElement STG composition}.
 
-\begin{figure}[h]
-\begin{centering}
-\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/C-element}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\begin{centering}
-\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/inverter(c,a)}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\begin{centering}
-\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/inverter(c,b)}
-\par\end{centering}
-
-}
-\par\end{centering}
-
-\protect\caption{\label{fig:IndividConceptStgs}Individual STG translations of concepts}
-\end{figure}
-
-These STGs can now be passed into \noun{Pcomp}~\cite{PCOMP}, which will compose them. The outcome of which will be the same as the concept composition, an STG the same as shown in
-Figure~\ref{fig:cElement STG}.
-
+\vspace{-1mm}
 \subsection{Scenario combination\label{sub:scenario-composition}}
 
-As mentioned in~\ref{sub:scenarios}, concepts can be used in a composition to produce a scenario.
+As mentioned in~\S\ref{sub:scenarios}, concepts are used to specify
+a single behavioural scenario.
 %which can be tested and verified separately to allow for easier changes and additions
 %to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to
 %produce a full system specification, so this can be tested and verified, and ultimately be synthesized to produce an implementation.
-
 When combining scenarios, there are several things to consider in
 how the scenarios fit together. Depending on the application,
 %the circuit is being designed for
 some scenarios may need to operate in certain
 orders, for example, one scenario may exist simply to initialise the
 circuit, therefore this scenario needs to run at start-up, before
-any of the other scenarios, and then never be run again while the
+any other scenario, and then never be run again while the
 system remains active.
 
-To address this, when combining scenarios we aim offer some templates,
-each of which can be used to combine scenarios in various orders.
-With this the designer specifies in which ways the scenarios should
+To address this, we can define \emph{templates},
+which can be used to combine scenarios in various ways.
+With this the designer specifies how the scenarios should
 be combined, and if an order is needed, the order the scenarios should
 be run from start up. The following are some examples of templates
-that will be offered before scenarios are combined:
+that can be used to combine scenarios:
 
-\textbf{Sequential:} Sequential combination will allow a designer
+\textbf{Sequential template:} Sequential combination will allow a designer
 to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
-the scenarios may run, and this needs to be specified by the designer.
+the scenarios may run, and this needs to be specified by the designer:
 
-\begin{figure}[h]
+\vspace{1mm}
+\begin{center}
+\includegraphics[scale=0.4]{Images/sequential_combination}
+\end{center}
+
+\textbf{Concurrent template:} In this case there is no order, but one or more
+of the scenarios in a specification may run concurrently. It may be necessary
+to limit concurrency by specifying, for instance, the number of scenarios
+that can be active simultaneously:
+
+\begin{center}
+\includegraphics[scale=0.4]{Images/concurrent_combination}
+\end{center}
+
+\begin{figure}[t]
 \begin{centering}
-\includegraphics[scale=0.45]{Images/sequential_combination}
+\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/C-element}
+\par\end{centering}
+}
+\par
+\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/inverter(c,a)}
 \par\end{centering}
 
-\begin{centering}
-\protect\caption{\label{fig:sequential_combination}An example of sequential combination}
-
+}
+\par
+\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/inverter(c,b)}
 \par\end{centering}
-
+}
+\par\end{centering}
+\protect\caption{\label{fig:IndividConceptStgs}Partial translation of concepts into STGs}
+\vspace{-4mm}
 \end{figure}
 
-\textbf{Concurrent:} In this case there is no order, but one or more
-of the scenarios in a specification may run in parallel. This template
-will combine the scenarios in a way that will allow concurrency to
-occur, limited to requirements of the specification, for instance,
-the number of scenarios that can be active at any one time, which
-can be limited by the number of tokens available at once.
-
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.45]{Images/concurrent_combination}
-\par\end{centering}
-
-\begin{centering}
-\protect\caption{\label{fig:concurrent_combination}An example of concurrent combination}
-
-\par\end{centering}
-
-\end{figure}
-
-\textbf{Non-deterministic choice:} This template will combine the
+\textbf{Non-deterministic choice template:} This template will combine the
 scenarios in a way that allows any of the scenarios to run, but not
 according to any order to deal with the lack of determinism in the
 system, using one token which is used only by the running scenario,
-and this is returned when the scenario completes.
+and returned when the scenario completes:
 
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.45]{Images/non_deterministic_combination}
-\par\end{centering}
+\vspace{1mm}
+\begin{center}
+\includegraphics[scale=0.4]{Images/non_deterministic_combination}
+\end{center}
 
-\begin{centering}
-\protect\caption{\label{fig:non_deterministic_combination}An example of non-deterministic combination}
-
-\par\end{centering}
-
-\end{figure}
-
-There may be more complex requirements to combination, and it
+There may be more complex requirements to combination of scenarios, and it
 is possible to combine some scenarios using one template, then including
-the result in a combination with other scenarios using another template. For example, a
-system which is non-deterministic may also have a scenario that runs
-at start up. In this case, a designer could
-combine all non-deterministic scenarios first, then combine the resulting
-STG with the initialising scenario, setting the order so this runs
-first.
+the result in a combination with other scenarios using another template.
+For example, a system which is non-deterministic may also have a scenario
+that runs at start up. In this case, a designer could combine all
+non-deterministic scenarios first, then combine the resulting STG with
+the initialising scenario, setting the order so this runs first.
 
-This method of combination can allow for many possible scenario combination
+This method can allow for many possible scenario combination
 styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time.
@@ -1505,11 +1484,14 @@ as well as design time.
 %
 %
 
-\section{Case study \label{sec:case-study}}
+\vspace{-1mm}
+\section{Case study\label{sec:case-study}}
 
-In \S\ref{sec:Motivating Example} we introduced the example for this case study, a simple buck converter,
-in order to discuss the monolithic approach to specifying asynchronous circuits. We have also introduced concepts in \S\ref{sec:Concepts},
-and with examples explained how they can be used to design simple circuits, and how these can be translated to
+In~\S\ref{sec:Motivating Example} we introduced the motivating example for
+this article, a simple buck converter, in order to discuss the monolithic
+approach to specifying asynchronous circuits. We have also introduced
+concepts in~\S\ref{sec:Concepts}, and with examples explained how they can
+be used to design simple circuits, and how these can be translated to
 provide us with an STG specification for use with standard tools.
 
 Now we can use this information with the buck converter case study to detail the design flow for producing a
