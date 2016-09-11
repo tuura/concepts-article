@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   font-size="12px"
+   font-style="normal"
+   font-weight="normal"
+   height="209.51006"
+   stroke-miterlimit="10"
+   width="621.41937"
+   id="svg4935"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="C-element-with-environment.svg"
+   style="font-style:normal;font-weight:normal;font-size:12px;font-family:Dialog;color-interpolation:auto;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto">
+  <rect
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.38876808;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect3762-3"
+     width="121.21017"
+     height="203.73248"
+     x="153.35217"
+     y="2.7844679" />
+  <rect
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.38876808;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4218"
+     width="121.21017"
+     height="203.73248"
+     x="406.97601"
+     y="2.7844679" />
+  <rect
+     y="2.7844679"
+     x="280.51199"
+     height="203.73248"
+     width="121.21017"
+     id="rect4216"
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.38876808;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  <rect
+     y="2.7844679"
+     x="26.732525"
+     height="203.73248"
+     width="121.21017"
+     id="rect4214"
+     style="fill:#e6e6e6;fill-opacity:1;stroke:#ffffff;stroke-width:0.38876808;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  <text
+     sodipodi:linespacing="125%"
+     id="text5713"
+     y="177.08653"
+     x="340.67761"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     xml:space="preserve"><tspan
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="177.08653"
+       x="343.27771"
+       id="tspan5715"
+       sodipodi:role="line">Interface </tspan><tspan
+       id="tspan5717"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="200.52403"
+       x="340.67761"
+       sodipodi:role="line">concept</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="340.67761"
+     y="33.646751"
+     id="text5719"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       x="340.67761"
+       y="33.646751"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       id="tspan5723">output</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     id="text5727"
+     y="81.646751"
+     x="340.67761"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     xml:space="preserve"><tspan
+       id="tspan5729"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="81.646751"
+       x="340.67761"
+       sodipodi:role="line">input</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="340.67761"
+     y="126.86289"
+     id="text5731"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       x="340.67761"
+       y="126.86289"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       id="tspan5733">input</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     id="text5757"
+     y="177.08653"
+     x="467.4346"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     xml:space="preserve"><tspan
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="177.08653"
+       x="470.0347"
+       id="tspan5759"
+       sodipodi:role="line">Circuit </tspan><tspan
+       id="tspan5761"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="200.52403"
+       x="467.4346"
+       sodipodi:role="line">concept</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="213.92064"
+     y="177.08653"
+     id="text5737"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan5739"
+       x="216.52074"
+       y="177.08653"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle">Initial state </tspan><tspan
+       sodipodi:role="line"
+       x="213.92064"
+       y="200.52403"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       id="tspan5741">concept</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     id="text5743"
+     y="35.646751"
+     x="213.92064"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     xml:space="preserve"><tspan
+       id="tspan5745"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="35.646751"
+       x="213.92064"
+       sodipodi:role="line">c=0</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="213.92064"
+     y="82.457512"
+     id="text5747"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       x="213.92064"
+       y="82.457512"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       id="tspan5749">a=0</tspan></text>
+  <text
+     sodipodi:linespacing="125%"
+     id="text5751"
+     y="127.26827"
+     x="213.92064"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     xml:space="preserve"><tspan
+       id="tspan5753"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       y="127.26827"
+       x="213.92064"
+       sodipodi:role="line">b=0</tspan></text>
+  <metadata
+     id="metadata5044">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1471"
+     inkscape:window-height="844"
+     id="namedview5042"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="1.7442977"
+     inkscape:cx="209.45289"
+     inkscape:cy="85.93393"
+     inkscape:window-x="57"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4935" />
+  <!--Generated by the Batik Graphics2D SVG Generator-->
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="87.163658"
+     y="177.08653"
+     id="text3135-1-4-9-1"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3137-7-8-3-6"
+       x="89.763756"
+       y="177.08653"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle">Environment </tspan><tspan
+       sodipodi:role="line"
+       x="87.163658"
+       y="200.52403"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.75px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:center;writing-mode:lr-tb;text-anchor:middle"
+       id="tspan3866">concept</tspan></text>
+  <defs
+     id="genericDefs" />
+  <g
+     id="g5677"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+     transform="translate(77.052713,-3.3165832)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.88800025;stroke-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path4944"
+       d="m 364.1775,70.1 16.2,0 c 48.6,0 48.6,64.8 0,64.8 l -16.2,0 z" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.59200001;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path4954"
+       d="m 395.86086,94.08248 a 9.72,9.72 0 1 0 0,16.83504" />
+  </g>
+  <circle
+     cx="11.78427"
+     cy="69.683418"
+     r="6.25"
+     id="circle4972"
+     style="stroke:none;stroke-width:0.04" />
+  <g
+     id="g5822"
+     transform="translate(-15.21573,4.6834168)">
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3"
+       inkscape:connector-curvature="0"
+       id="path4960"
+       d="m 70,40 0,50 50,-25 z" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3"
+       inkscape:connector-curvature="0"
+       id="path4978"
+       d="m 70,99 0,50 50,-25 z" />
+  </g>
+  <circle
+     cx="112.28427"
+     cy="128.68341"
+     r="7.5000005"
+     id="circle4982"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3" />
+  <path
+     d="m 119.62194,69.683417 18.91713,0 0,17.535443 301.58984,0"
+     id="path4990"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke-width:2"
+     sodipodi:nodetypes="cccc" />
+  <path
+     d="m 449.28427,19.683417 -437.5,0 0,43.75"
+     id="path5002"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke-width:2"
+     sodipodi:nodetypes="ccc" />
+  <circle
+     cx="112.28427"
+     cy="69.683418"
+     r="7.5000005"
+     id="circle4964"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3" />
+  <path
+     d="m 15.53427,63.433417 -7.5000002,0 3.7500002,0 z"
+     id="path5004"
+     inkscape:connector-curvature="0"
+     style="stroke:none;stroke-width:0.04" />
+  <path
+     d="m 18.03427,69.683417 36.149802,0"
+     id="path5012"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke-width:2"
+     sodipodi:nodetypes="cc" />
+  <path
+     d="m 11.78427,59.933417 0,68.750003 41.875686,0"
+     id="path5022"
+     inkscape:connector-curvature="0"
+     style="fill:none;stroke-width:2"
+     sodipodi:nodetypes="ccc" />
+  <path
+     sodipodi:nodetypes="cccc"
+     style="fill:none;stroke-width:2"
+     inkscape:connector-curvature="0"
+     id="path5675"
+     d="m 119.62194,128.68342 18.91713,0 0,-17.53544 302.73643,0" />
+  <path
+     style="fill:none;stroke-width:2"
+     d="m 493.17195,99.183418 49.18208,0"
+     id="line4948"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+  <line
+     x1="542.354"
+     x2="542.354"
+     y1="99.183418"
+     y2="93.683426"
+     id="line5008"
+     style="fill:none;stroke-width:2" />
+  <path
+     style="fill:none;stroke-width:2"
+     inkscape:connector-curvature="0"
+     id="path5811"
+     d="m 542.35407,93.370616 0,-73.687199 -130.213,0"
+     sodipodi:nodetypes="ccc" />
+  <text
+     xml:space="preserve"
+     style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.99999905px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook Italic';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none"
+     x="540.83191"
+     y="175.28905"
+     id="text3135-1-4-9-1-3-0"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       x="540.83191"
+       y="175.28905"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:start;writing-mode:lr-tb;text-anchor:start"
+       id="tspan4247">System</tspan><tspan
+       sodipodi:role="line"
+       x="540.83191"
+       y="200.28905"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:20px;line-height:125%;font-family:'Century Schoolbook';-inkscape-font-specification:'Century Schoolbook, Italic';text-align:start;writing-mode:lr-tb;text-anchor:start"
+       id="tspan5877">concept</tspan></text>
+  <rect
+     style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#000000;stroke-width:0.89671534;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.89671531, 0.89671531;stroke-dashoffset:0;stroke-opacity:1;enable-background:accumulate"
+     id="rect4227"
+     width="620.52264"
+     height="208.61334"
+     x="0.44835767"
+     y="0.44835767" />
+</svg>
