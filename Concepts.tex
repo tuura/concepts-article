@@ -736,22 +736,18 @@ is possible to write:
 
 Here we present a method for deriving a circuit specification
 from a set of concepts that describe its different aspects. We focus
-on specification of \emph{Speed-Independent}~(SI) circuits, which
+on specification of \emph{speed-independent}~(SI) circuits, which
 is an important class of asynchronous circuits~\cite{Muller_1959_ts}
-that work correctly regardless of the gates' delays, while the wires
+that work correctly regardless of the gate delays, while the wires
 are assumed to have negligible delays. Alternatively, one can regard
 wire forks as isochronic and add wire delays to the corresponding
 gate delays~(\emph{Quasi-Delay Insensitive}~(QDI) circuit class~\cite{Martin_1986_dc}).
-A convenient formalism for specification of SI circuits is STGs~\cite{Chu_1987_phd,Rosenblum_1985_tpn},
+A convenient formalism for specification of SI circuits is
+STGs~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
 which is a special kind of Petri nets~\cite{Petri_1962_phd} whose
 transitions are associated with signal events.
 
-%\vspace{-3mm}
-
 \subsection{Petri nets and STGs}
-
-%\vspace{-3mm}
-
 
 Formally, a Petri net is defined as a tuple~$PN=\left\langle P,\, T,\, F,\, M_{0}\right\rangle $
 comprising finite disjoint sets of \emph{places~}$P$ and \emph{transitions~}$T$,
@@ -782,9 +778,9 @@ events, i.e. $STG=\left\langle P,\, T,\, F,\, M_{0},\,\lambda,\, Z,\, v_{0}\righ
 where $\lambda$ is a \emph{labelling~function}, $Z$ is a set of
 \emph{signals} and $v_{0}\in\left\{ 0,\,1\right\} ^{\left|Z\right|}$
 is a \emph{vector~of}~\emph{initial~signal~values}. The labelling
-function $\lambda:T\rightarrow Z\pm$ maps transitions into \emph{signal~events}
-$Z\pm=Z\times\left\{ +,-\right\} $. The signal events labelled $z+$
-and $z-$ denote the transitions of signals $z\in Z$ from 0~to~1~(rising
+function $\lambda:T\rightarrow Z^{\pm}$ maps transitions into \emph{signal~events}
+$Z^{\pm}=Z\times\left\{ +,-\right\}$. The signal events labelled $z^{+}$
+and $z^{-}$ denote the transitions of signals $z\in Z$ from 0~to~1~(rising
 edge), or from 1~to~0~(falling edge), respectively. The labelling
 function does not have to be 1-to-1, i.e. transitions with the same
 label may occur several times in the net. To distinguish transitions
@@ -800,12 +796,15 @@ tokens are depicted by dots. For simplicity, the places with one incoming
 and one outgoing arc are often hidden, allowing arcs~(with implicit
 places) between transitions.
 
-%\vspace{-3mm}
+\begin{figure}[t]
+\begin{centering}
+\includegraphics[scale=0.62]{Images/c-element-circuit-redo}
+\par\end{centering}
+
+\protect\caption{\label{fig:cElement-concepts}Example system specified using concepts.}
+\end{figure}
 
 \subsection{Composition of concepts\label{sub:Comp-of-concepts}}
-
-%\vspace{-3mm}
-
 
 A single concept can be used to describe an initial state, invariant
 states, a single event or a combination of these, yet describing some
@@ -816,20 +815,18 @@ several levels of system description and refer to signal, gate and
 protocol level concepts in one specification, depending on which level
 is more convenient in a particular situation.
 
-Consider the example of a C-element, which has signals $a$ and $b$ as inputs,
+Consider an example of a C-element, which has signals $a$ and $b$ as inputs,
 and signal $c$ is the output. The output of this C-element is connected to
 each of the inputs via an inverter. This is a simple example of a complete
-system, of a C-element with an environment, and will be used several
-times as a simple example.
+system, of a C-element with an environment, see Figure~\ref{fig:cElement-concepts}.
+The example can be described by the following script:
 
-The following is a set of concepts used to describe this example:
-
-%\vspace{2mm}
+\vspace{2mm}
 \begin{minipage}[t]{1\columnwidth}%
 
 \begin{flushleft}
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\
-&\diamond\,\mathsf{outputFall}\,\diamond \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\,\mathsf{\,interface}\,\diamond \mathsf{\, outputRise}\,\diamond\,\mathsf{inputFall}\,\\
+\diamond\, &\,\,\mathsf{outputFall}\,\diamond \mathsf{\, inputRise}\,\diamond\,\mathsf{initialState}\\
 \end{aligned}
 $
 
@@ -837,38 +834,39 @@ $\,\mathsf{where}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{interface}=\mathsf{inputs}\,[a,b]\diamond\mathsf{outputs}\,[c]$
+$\,\,\,\,\,\,\mathsf{interface}=\mathsf{inputs}(\{a,b\})\diamond\mathsf{outputs}(\{c\})$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputRise}=\,a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
+$\,\,\,\,\,\,\mathsf{outputRise}=\,a^{+}\rightsquigarrow c^{+}\,\diamond\, b^{+}\rightsquigarrow c^{+}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputFall}=c ^ {+} \rightsquigarrow a^{-} \diamond\, c ^ {+} \rightsquigarrow b^{-}$
+$\,\,\,\,\,\,\mathsf{inputFall}=c ^ {+} \rightsquigarrow a^{-} \diamond\, c ^ {+} \rightsquigarrow b^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{outputFall}= a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}$
+$\,\,\,\,\,\,\mathsf{outputFall}= a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\,\mathsf{inputRise}=c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}$
+$\,\,\,\,\,\,\mathsf{inputRise}=c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}$
 \par\end{flushleft}
 
 \begin{flushleft}
-$\mathsf{initialState}= \, \mathsf{initialise}\,a \, 0\,\diamond\,\mathsf{initialise}\,b \,0\,\diamond \, \mathsf{initialise}\,c \,0 \,$
+$\,\,\,\,\,\,\mathsf{initialState}=\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)$
 \par\end{flushleft}
 
 \end{minipage}
 
 \vspace{3mm}
 
-The first concepts in this list is the \emph{circuit} concept, defined as the composition of the following 5. This is the concept which will be translated.
-The concepts defined after the \emph{where} describe certain operations of the system. The first four are named according to what they represent,
-for example, \textsf{\textit{\emph{outputRise}}} describes the events which cause the output to rise. The final concepts defines
-the initial states, necessary for the translation algorithm to produce an STG which is useable, as without the initial states, none of the signals will be
-able to transition.
+The first concepts in this list is the \textsf{circuit} concept, defined as a
+composition of the following five listed after the \textsf{where} keyword.
+They describe certain aspects of the system: the first four are named
+according to what they represent, for example, \textsf{outputRise} describes
+the events which cause the output to rise, and the final concept defines
+the initial states.
 
 %The sixth concept composes all of the first
 %5 concepts, and can be translated to the STG shown in Figure~\ref{fig:cElement STG composition}.
@@ -881,19 +879,13 @@ able to transition.
 %algorithm takes this concept and works out where tokens need to be
 %placed in the STG produced.
 
-\begin{figure}[h]
-\begin{centering}
-\includegraphics[scale=0.25]{Images/stg-cElement}
-\par\end{centering}
-
-\protect\caption{\label{fig:cElement STG composition}STG for the example system.}
-\end{figure}
-
-Note: The format of concepts used for examples in this work is used for clarity.
-The tool uses standard Haskell syntax for specifying concepts.
-The basis of the format used here is the same, but there are some minor differences, and some
-requirements for a file containing concepts to be used with the tool.
-The syntax used for the tool can be found both in examples and the manual, both of which are included with the tool~\cite{2016_concepts_github}.
+Note: For better readability the format of concept scripts used in the article
+differs from the actual syntax used in our current implementation, which is
+embedded in Haskell programming language~\cite{1996_hudak_dsl} and therefore
+relies on the standard Haskell syntax. The basis of the format used here is the
+same, but there are some minor differences. An up-to-date description of the
+actual syntax supported by the developed tool can be found in the
+manual~\cite{2016_concepts_github}.
 
 %Note: The code demonstrated in this example is the format required to work with the tool.
 %For the purpose of clarity, in this document we will be changing some of the syntax when defining concepts.
@@ -910,50 +902,41 @@ and the environment. Another way could be to use gate-level concepts
 and describe the environment explicitly. In this case the environment
 allows the inputs to transition in the opposite direction to the output
 $c$, as two inverters would. We can then compose this with the C-element
-and the same initial state concept:
+and the same interface and initial state concepts as follows.
 
-%\vspace{1mm}
-
-
-\begin{minipage}[t]{1\columnwidth}%
-$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\, \diamond \\
-&\mathsf{environment}\diamond\,\mathsf{initialState}
+\begin{minipage}[t]{1\columnwidth}
+$\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,interface}\diamond\mathsf{\,cElement}(a, b, c)\\
+\diamond\, &\,\mathsf{environment}\diamond\,\mathsf{initialState}
 \end{aligned}\\
 $
 $\mathsf{where}$\\
-$\mathsf{environment}=\mathsf{inverter} (c, a) \,\diamond\,\mathsf{inverter}(c, b)$
+$\mathsf{\,\,\,\,\,\,environment}=\mathsf{inverter} (c, a) \,\diamond\,\mathsf{inverter}(c, b)$
 \\
 \end{minipage}
 %\vspace{2mm}
 This specification is equivalent to the previous one; indeed one can
 prove this by rearranging the primitive concepts using the commutativity
-and associativity axioms of the underlying commutative monoid. Consequently,
-this specification will be translated to the same STG shown in Figure~\ref{fig:cElement STG  composition}.
-Figure~\ref{fig:cElement-concepts} illustrates all the concepts
-involved in this specification.
+and associativity of the underlying commutative monoid. Consequently,
+this specification will be translated to the same STG shown in
+Figure~\ref{fig:cElement STG composition}.
 
-\begin{figure}[t]
+\begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.62]{Images/c-element-circuit-redo}
+\includegraphics[scale=0.25]{Images/stg-cElement}
 \par\end{centering}
 
-\protect\caption{\label{fig:cElement-concepts}Example system specified using concepts.}
+\protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \end{figure}
-
 
 Finally, the designer can also rely on protocol-level concepts, producing
 the following equivalent specification:
-%\vspace{1mm}
-
 
 \begin{minipage}[t]{1\columnwidth}%
 
-$\\\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{handshake00}(a, c) \diamond\,\mathsf{handshake00}(b, c)\, \diamond\\
-&\mathsf{inputs}\,[a,b] \,\diamond \mathsf{outputs}\,[c]
+$\\\begin{aligned}\mathsf{circuit}(a, b, c)=&\mathsf{\,handshake00}(a, c) \diamond\,\mathsf{handshake00}(b, c)\\
+\diamond\, &\mathsf{\,interface}
 \end{aligned}$\\
 \end{minipage}
-%\vspace{2mm}
-
 
 This example demonstrates that the presented formal notation for capturing
 concepts is very flexible and provides the designer with a rich selection
@@ -962,24 +945,17 @@ deriving simplest possible specifications but also for cross-checking
 the adequacy of specifications by \emph{refactoring} them according
 to the composition laws.
 
-%\vspace{-3mm}
-
-
-
-\subsection{Multiple behavioural scenarios \label{sub:scenarios}}
-
-%\vspace{-2mm}
-
+\subsection{Multiple behavioural scenarios\label{sub:scenarios}}
 
 So far we have only considered systems operating in a single behavioural
 \textit{scenario} specified by a composition of concepts. However,
-real-life systems often need to support multiple scenarios~ (e.g.,
-start-up and normal operation, different power modes~\cite{microadapt},
-etc.). This allows each individual scenario to be designed using concepts,
+real-life systems often need to support multiple scenarios, e.g. start-up
+and normal operation, different power modes, etc. This allows
+each individual scenario to be designed using concepts,
 and tested individually to ensure they work correctly, before these
 are combined to produce a full system specification.
 
-To increase the re-usability of scenarios, which helps reduce design
+To increase the reuse of scenarios, which helps reduce design
 time of future systems, this method supports the use of pre-designed
 scenarios as concepts.
 
