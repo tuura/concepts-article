@@ -1551,7 +1551,8 @@ is signalled and produce the following list of concepts:
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}gn\_ack^{-}\rightsquigarrow gp^{+}~\diamond~gp\_ack^{-}\rightsquigarrow gn^{+}\\
 ~~~~\mathsf{gpHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gp,gp\_ack)\\
 ~~~~\mathsf{gnHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gn,gn\_ack)\\
-~~~~\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise0}[uv,oc,zc,gp\_ack,~ gn\_ack,~ gp,~ gn]\\
+~~~~\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise0}~[uv,oc,zc,gp,gp\_ack]\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{initialise1}~[gn,gn\_ack]\\
 ~~~~\mathsf{chargeFunc}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}~\diamond~\mathsf{ocFunc}~\diamond~\mathsf{ocReact}\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{environment}~\diamond~\mathsf{noShortcircuit}~\diamond~\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{gpHandshake}~\diamond~\mathsf{gnHandshake}\\
