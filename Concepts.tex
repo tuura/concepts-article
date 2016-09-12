@@ -1530,7 +1530,7 @@ is signalled and produce the following list of concepts:
 \]
 \vspace{-6mm}
 \[
-~~=~\mathsf{chargeFunc}~\diamond~\mathsf{uvFunc}~\diamond~\mathsf{uvReact}~\diamond~\mathsf{zcAbsent}
+~~=~\mathsf{chargeFunc}~\diamond~\mathsf{uvFunc}~\diamond~\mathsf{uvReact}
 \]
 \vspace{-5mm}
 \[
@@ -1616,25 +1616,24 @@ we can include the \textsf{zcAbsentScenario} concept. We still need
 to describe the interactions involving zero-crossing, as well as it's initial state. The concepts
 are as follows:
 
-\begin{minipage}[t]{1\columnwidth}%
-\begin{flushleft}
-$\begin{aligned}\\\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn) = \\
-& \mathsf{\, chargeFunc}\,\diamond\,\mathsf{uvFunc}\,\diamond\,\mathsf{uvReact}\,\diamond\\
-& \,\mathsf{zcLate}\,\diamond\,\mathsf{initialise}\,zc\,\,False
-\end{aligned}
-$
-\par\end{flushleft}%
+\vspace{-4mm}
+\[
+\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\]
+\vspace{-6mm}
+\[
+~~=~\mathsf{chargeFunc}~\diamond~\mathsf{uvFunc}~\diamond~\mathsf{uvReact}~\diamond~\mathsf{zcLate}
+\]
+\vspace{-5mm}
+\[
+\begin{array}{lcl}
+\mathsf{where}&~&\\
 
-\par\begin{flushleft}
-$\mathsf{where}$
-\par\end{flushleft}
+~~~~\mathsf{zcLate}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow zc^{+}~\diamond~ zc^{-}\rightsquigarrow uv^{-}
 
-\begin{flushleft}
-$\,\mathsf{zcLate}=uv^{+}\rightsquigarrow zc^{+}\,\diamond\, zc^{-}\rightsquigarrow uv^{-}$
-\par\end{flushleft}
-
-\end{minipage}
-
+\end{array}
+\]
+\vspace{-5mm}
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
@@ -1659,38 +1658,65 @@ are still operated in the same way. However, the interplay between
 the early zero-crossing and under-voltage needs to be specified with
 several new concepts:
 
-\begin{onehalfspace}
-\begin{minipage}[t]{1\columnwidth}%
+\vspace{-4mm}
+\[
+\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\]
+\vspace{-5mm}
+\[
+\begin{array}{lcl}
+~~=~\mathsf{chargeFunc}~\diamond~\mathsf{zcFunc}~\diamond~\mathsf{zcReact}~\diamond~\mathsf{uvFunc'}\\
+~~~~~~~\diamond~\mathsf{uvReact'}~\diamond~\mathsf{initialise}~zc~\mathsf{False}\\
+\end{array}
+\]
+\vspace{-3mm}
+\[
+\begin{array}{lcl}
+\mathsf{where}&~&\\
 
-\begin{flushleft}
-$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
-& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
-\end{aligned}
-$
-\par\end{flushleft}%
+~~~~\mathsf{zcFunc}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow gn^{-}\\
 
-\begin{flushleft}
-$\mathsf{where}$
-\end{flushleft}
+~~~~\mathsf{zcReact}&\hspace{-2mm}=&\hspace{-2mm}oc^{-}\rightsquigarrow zc^{+}~\diamond~gp^{+}\rightsquigarrow zc^{-}\\
 
-\begin{flushleft}
-$\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
-\par\end{flushleft}
+~~~~\mathsf{uvFunc'}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow gp^{+}\\
 
-\begin{flushleft}
-$\,\mathsf{zcReact}=oc^{-}\rightsquigarrow zc^{+}\,\diamond\, gp^{+}\rightsquigarrow zc^{-}$
-\par\end{flushleft}
+~~~~\mathsf{uvReact'}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow uv^{+}~\diamond~ zc^{-}\rightsquigarrow uv^{-}~\diamond~ gp\_ack^{+}\rightsquigarrow uv^{-}
 
-\begin{flushleft}
-$\,\mathsf{uvFunc'}=uv^{+}\rightsquigarrow gp^{+}$
-\par\end{flushleft}
+\end{array}
+\]
 
-\begin{flushleft}
-$\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigarrow uv^{-}\diamond\, gp\_ack^{+}\rightsquigarrow uv^{-}$
-\par\end{flushleft}
-
-\end{minipage}
-\end{onehalfspace}
+%\begin{onehalfspace}
+%\begin{minipage}[t]{1\columnwidth}%
+%
+%\begin{flushleft}
+%$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
+%& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
+%\end{aligned}
+%$
+%\par\end{flushleft}%
+%
+%\begin{flushleft}
+%$\mathsf{where}$
+%\end{flushleft}
+%
+%\begin{flushleft}
+%$\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
+%\par\end{flushleft}
+%
+%\begin{flushleft}
+%$\,\mathsf{zcReact}=oc^{-}\rightsquigarrow zc^{+}\,\diamond\, gp^{+}\rightsquigarrow zc^{-}$
+%\par\end{flushleft}
+%
+%\begin{flushleft}
+%$\,\mathsf{uvFunc'}=uv^{+}\rightsquigarrow gp^{+}$
+%\par\end{flushleft}
+%
+%\begin{flushleft}
+%$\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigarrow uv^{-}\diamond\, gp\_ack^{+}\rightsquigarrow uv^{-}$
+%\par\end{flushleft}
+%
+%\end{minipage}
+%\end{onehalfspace}
 
 \begin{center}
 \begin{figure}[H]
