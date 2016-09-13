@@ -235,7 +235,7 @@ and \textsf{$gn$} outputs) as a reaction to \emph{under-voltage}~(UV),
 \textsf{$oc$}, and \textsf{$zc$} inputs, respectively). These conditions
 are detected by a set of sensors that compare the measured current and voltage
 with some reference values~(\textsf{V\_ref}, \textsf{I\_max}, \textsf{I\_0}).
-Note that in order to avoid a short-circuit, the PMOS and NMOS transistors of
+Note that in order to avoid a shortcircuit, the PMOS and NMOS transistors of
 the buck must never be \noun{On} at the same time. Therefore, the controller
 is explicitly notified~(by \textsf{$gp\_ack$} and \textsf{$gn\_ack$})
 when the power transistor threshold levels~(\textsf{V\_pmos} and \textsf{V\_nmos})
@@ -335,7 +335,7 @@ These interactions can also be identified in the informal buck description:
 $uv$ and $oc$ indicate opposite conditions in the circuit and will naturally be
 mutually exclusive, while $gp$ and $gn$ are used to switch PMOS and NMOS
 transistors respectively, and switching these transistors \noun{On} at the same
-time will cause a short circuit and is therefore prohibited. Signals $gp\_ack$
+time will cause a shortcircuit and is therefore prohibited. Signals $gp\_ack$
 and $gn\_ack$ are used to acknowledge the state of these transistors, and thus
 always follow $gp$ and $gn$, respectively, forming two separate handshakes.
 
@@ -959,7 +959,7 @@ the corresponding definitions.
 \vspace{-1mm}
 \section{Interoperability with STG based tools\label{sec:interop-with-stg}}
 
-Concepts is a useful way of specifying asynchronous circuits, but
+Concepts are a useful way of specifying asynchronous circuits, but
 specifications also need to be \emph{verified} against certain properties to ensure
 their correctness, and once they are deemed to be correct, they need to
 be \emph{synthesised} into efficient circuit implementations. Many software
@@ -1071,11 +1071,11 @@ implementation supports automated \emph{resynthesis} of the resulting STG
 using \noun{Petrify}, and can therefore seamlessly produce the STG in
 Figure~\ref{fig:cElement STG composition} from the given specification.
 
-By integrating concepts into \noun{Workcraft} we allow a designer to
-visualise their concept designs as STGs, to simulate, verify and synthesise them,
-and if there are any corrections or additions to be made these can be done either
-directly in the STG or in the original concept specification, which can then
-be re-translated into an updated STG.
+%By integrating concepts into \noun{Workcraft} we allow a designer to
+%visualise their concept designs as STGs, to simulate, verify and synthesise them,
+%and if there are any corrections or additions to be made these can be done either
+%directly in the STG or in the original concept specification, which can then
+%be re-translated into an updated STG.
 
 %In some cases it may not be necessary to visualize a translated STG. A \emph{.g} file is used as an input with these tools, without having to import into \noun{Workcraft}. This can
 %further quicken the process of specification using concepts. This also applies to synthesis, which can be performed using a tool such as \noun{Petrify} or \noun{Mpsat}.
@@ -1224,6 +1224,17 @@ This method can allow for many possible scenario combination
 styles, and more complex systems can be combined automatically, which
 in comparison to manual combination, could reduce the number of errors
 as well as design time.
+
+\subsection{Tool integration}
+
+The concepts tool, which translates concepts to STGs has been integrated into \noun{Workcraft}. This allows a designer to
+visualise their concept designs as STGs, to simulate, verify and synthesise them using tools also integrated in \noun{Workcraft},
+and if there are any corrections or additions to be made these can be done either
+directly in the STG or in the original concept specification, which can then
+be re-translated into an updated STG. These automated processes can allow for a streamlined desing process.
+
+Scenario combination is not yet implemented. This information gives guidelines on how one can perform it manually, however this process can be automated to further
+streamline the design process using concepts.
 
 %\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
 %
@@ -1571,8 +1582,8 @@ and $gn/gn\_ack$ interfaces respectively;
 \textsf{ocFunc} and \textsf{ocReact} define the interplay with OC condition;
 and \textsf{environment} captures the fact that OC and UV conditions never happen at the same time.
 
-Note that sequence of PMOS/NMOS switching during the charging cycle is the same
-for all operating modes, and therefore the \textsf{chargeFunc} concept can will reused
+Note that the sequence of PMOS/NMOS switching during the charging cycle is the same
+for all operating modes, and therefore the \textsf{chargeFunc} concept can be reused
 in other scenarios.
 
 \begin{figure}[H]
@@ -1720,7 +1731,7 @@ each signal alternate.
 \end{itemize}
 These properties can be automatically checked in \noun{Workcraft} using
 the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool.
-It is also possible use custom properties as verification tools, by entering
+It is also possible to use custom properties as verification tools, by entering
 the code to check for these.
 Figure~\ref{fig:custom_assertion} contains an example custom assertion we
 created for this case study.
@@ -1869,9 +1880,9 @@ We have found these related works limited in certain aspects, and we discuss thi
   \begin{tabular}[htb]{| m{2.6cm} | m{2.0cm} | m{1.3cm} | m{1.75cm} | m{1.5cm} | m{1.5cm} | m{1.7cm} | m{1.9cm} |}
   \hline
   Title             & \,Asynchronous support & \,Tool support  & \,Composition & \,Gate-level & \,Event-level & \,Protocol-level  & \,Design focus \\ \hline \hline
-  Concep            & Yes                               & Yes                  & Yes               & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
+  Concepts            & Yes                               & Yes                  & Yes               & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
   Balsa             & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
-  Biscot            & Yes                               & Yes                  & No                & Yes                       & No                          & No                               & Big digital \\ \hline
+  Biscotti            & Yes                               & Yes                  & No                & Yes                       & No                          & No                               & Big digital \\ \hline
   Lava              & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
   C$\lambda$ash     & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
   Snippets          & No                                & No                   & Yes               & No                        & No                          & No                               & Little digital \\ \hline
@@ -1881,8 +1892,8 @@ We have found these related works limited in certain aspects, and we discuss thi
 \end{table*}
 
 A common approach of designing asynchronous circuits, \textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify operations for asynchronous circuits for both big-
-digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into format describing a network of handshaked components, which can be
-used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages
+digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into a format describing a network of handshaked components, which can 
+be used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages
 are used for synchronous design, and thus designers can adapt to Balsa more easily, however specifying a control system can lead to a complicated program which can be difficult to
 comprehend, in comparison to the STGs produced in the proposed approach, in which signal interactions can be visualised.
 
@@ -1963,10 +1974,10 @@ we have attempted to address these issues and make concepts not only a powerful 
 \section{Conclusions and future work\label{sec:conclusions}}
 
 In this work we show that it is possible to design a system by splitting
-it into operational modes, and describing signal interactions and requirements
-of the mode in a textual format. These can then be used to produce STGs
-that represent these operational modes, which can be combined to
-produce a model for the full system specification.
+it into operational modes, scenarios, and describing signal interactions and requirements
+of the scenario in a textual format. These can then be translated into STGs
+that represent these operational modes, which can be used with existing verification and synthesis tools. 
+These can be combined to produce a model for the full system specification.
 
 Using concepts, a user can reduce the time of designing an asynchronous
 control circuit from the ground up, as well as allow reuse of components
@@ -1976,39 +1987,32 @@ reduce errors and save time in comparison to performing these manually.
 This method can help to make asynchronous circuits more appealing
 to industrial designers.
 
-As the Internet-of-Things becomes more apparent, asynchronous circuits
-will be key in designing nodes, for quick and efficient power management
-to increase the operation time of these devices.
-
 Currently, this method works with Signal Transition Graphs, however
 it can be applied to other modelling disciplines, such as Finite State
-Machines~(FSM). In addition to FSMs and STGs, we also plan to extend
-this design method to support Conditional Partial Order
-Graphs~(CPOGs)~\cite{CPOG1} and Parameterised
-Graphs~\cite{mokhov2014algebra} for modelling asynchronous circuits.
-CPOGs can also be used for process mining, using tools such as
-\noun{PGminer}~\cite{mokhov_2016_mining}\cite{pgminer}. Process mining
-can be used for various purposes in conjunction with designing
+Machines~(FSM). 
+
+\emph{Process mining} can also be used for various purposes in conjunction with designing
 asynchronous circuits. For example, process mining can find a
 behavioural model if non exists, and can be
 used to check that an existing specification is realistic, or find less
-complex models. All of this can be performed automatically, and aid a
-designer in reducing design time and errors.
+complex models. All of this can be performed automatically, by tools such as \noun{PGminer}~\cite{pgminer}, and aid a
+designer in reducing design time and errors. We aim to include process mining in the design flow for the proposed approach.
 
-%In some cases, a designer may wish to view a scenario
-%or full system model as an FSM as they can provide more information
-%about a system, which can help with editing finer details of system,
-%or when correcting errors. It could be possible to use concepts to
-%create scenario FSMs that could then be combined to produce a full system
-%model in FSM form.
+We aim to test concepts using examples from several different areas where asynchronous circuits are beneficial. 
+These will be of various sizes, featuring differing numbers of signals, in an attempt to find problematic areas of the concepts design methodology.
+We can then use this information to imporove concepts.
 
+As the Internet-of-Things becomes more apparent, asynchronous circuits
+will be key in designing nodes, for quick and efficient power management
+to increase the operation time of these devices. We beleive concepts 
+could be instrumental in the design of these systems.
 
-CPOG and Parameterised Graph models are also integrated into
-\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco}~\cite{Scenco_paper},
-allowing circuits to be described by algebraic equations in text
-form. \noun{Scenco} provides support for describing concept models
-to produce scenarios and then compose scenarios to produce full system
-implementations.
+%CPOG and Parameterised Graph models are also integrated into
+%\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco}~\cite{Scenco_paper},
+%allowing circuits to be described by algebraic equations in text
+%form. \noun{Scenco} provides support for describing concept models
+%to produce scenarios and then compose scenarios to produce full system
+%implementations.
 
 %In certain cases, an implementation may need to be changed based on
 %design parameters to produce the best result, and these may change
@@ -2018,20 +2022,22 @@ implementations.
 %from another list of concepts, thus saving time. For this reason,
 %CPOGs could work very well with this design approach.
 
-In certain cases, an implementation may need to be changed based on
-design parameters to produce the best result, and these may change
-during run-time or after the fabrication stage. CPOGs support parameter
-and run-time reconfigurability~\cite{microadapt}, hence if
-design parameters change, the design does not need to be recomposed
-from another list of concepts, thus saving time. For this reason,
-CPOGs could work very well with this design approach.
 
-STGs and CPOGs both have their benefits when working with asynchronous
-systems, and it will be useful to compare these two methods, to see
-if either is better when designing a system from concepts, or see
-if there are certain specifications where one modelling method is
-better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits
-using concepts, and this is something we aim to explore.
+%
+%In certain cases, an implementation may need to be changed based on
+%design parameters to produce the best result, and these may change
+%during run-time or after the fabrication stage. CPOGs support parameter
+%and run-time reconfigurability~\cite{microadapt}, hence if
+%design parameters change, the design does not need to be recomposed
+%from another list of concepts, thus saving time. For this reason,
+%CPOGs could work very well with this design approach.
+
+%STGs and CPOGs both have their benefits when working with asynchronous
+%systems, and it will be useful to compare these two methods, to see
+%if either is better when designing a system from concepts, or see
+%if there are certain specifications where one modelling method is
+%better than the other. It may be necessary to have a form of interaction between CPOGs and STGs in order to provide a more streamlined method of designing asynchronous circuits
+%using concepts, and this is something we aim to explore.
 
 %\vspace{-2mm}
 
