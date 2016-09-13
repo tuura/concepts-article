@@ -970,6 +970,34 @@ necessary to be able to automatically translate concept specifications to STGs.
 In this section, we present a translation algorithm~(\S\ref{sub:translating})
 and discuss ways of composing multiple behavioural scenarios into a single STG specification~(\S\ref{sub:scenario-composition}).
 
+\begin{algorithm}[t]
+\begin{algorithmic}
+\caption{Algorithm for translating concepts to STGs\label{alg:translation}}
+\For {Each defined concept}
+  \State \textbf{add} signal-level concepts \textbf{to} conceptList
+\EndFor
+%//Create consistency loops
+\For {Each signal in system}
+  \State \textbf{define} signal as input/output/internal
+  \State \textbf{add} transition \textbf{high}
+  \State \textbf{add} transition \textbf{low}
+  \State \textbf{add} place \textbf{signal-0}
+  \State \textbf{add} place \textbf{signal-1}
+  \State \textbf{connect} (transition \textbf{high}, place \textbf{signal-1})
+  \State \textbf{connect} (place \textbf{signal-1}, transition \textbf{low})
+  \State \textbf{connect} (transition \textbf{low}, place \textbf{signal-0})
+  \State \textbf{connect} (place \textbf{signal-0}, transition \textbf{high})
+\EndFor
+
+\For {Each causlity concept}
+  \State \textbf{connect-read}(place \textbf{following} cause, effect transition)
+\EndFor
+
+\For {Each initial state concept}
+  \State \textbf{add-token}(place \textbf{signal-}value)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 %A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
 
 \vspace{-2mm}
@@ -1059,7 +1087,6 @@ Figure~\ref{fig:step-by-step12}.
 \includegraphics[scale=0.23]{Images/Step-by-step12}
 \par
 \protect\caption{\label{fig:step-by-step12}The final step: set the initial state.}
-\vspace{-2mm}
 \par\end{centering}
 \end{figure}
 
@@ -1085,35 +1112,6 @@ Figure~\ref{fig:cElement STG composition} from the given specification.
 The described translation algorithm is shown in pseudocode
 in~Algorithm~\ref{alg:translation}.
 
-\begin{algorithm}[t]
-\begin{algorithmic}
-\caption{Algorithm for translating concepts to STGs\label{alg:translation}}
-\For {Each defined concept}
-  \State \textbf{add} signal-level concepts \textbf{to} conceptList
-\EndFor
-%//Create consistency loops
-\For {Each signal in system}
-  \State \textbf{define} signal as input/output/internal
-  \State \textbf{add} transition \textbf{high}
-  \State \textbf{add} transition \textbf{low}
-  \State \textbf{add} place \textbf{signal-0}
-  \State \textbf{add} place \textbf{signal-1}
-  \State \textbf{connect} (transition \textbf{high}, place \textbf{signal-1})
-  \State \textbf{connect} (place \textbf{signal-1}, transition \textbf{low})
-  \State \textbf{connect} (transition \textbf{low}, place \textbf{signal-0})
-  \State \textbf{connect} (place \textbf{signal-0}, transition \textbf{high})
-\EndFor
-
-\For {Each causlity concept}
-  \State \textbf{connect-read}(place \textbf{following} cause, effect transition)
-\EndFor
-
-\For {Each initial state concept}
-  \State \textbf{add-token}(place \textbf{signal-}value)
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
 \vspace{-1mm}
 \subsection{Partial translation and parallel composition}
 
@@ -1127,6 +1125,28 @@ spurious input transitions if they are not controlled by the environment).
 Such partial specifications can be visualised, studied, and then composed into
 complete specifications using the \emph{parallel composition}, which is supported
 by \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
+
+\begin{figure}[t]
+\begin{centering}
+\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/C-element}
+\par\end{centering}
+}
+\par
+\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/inverter(c,a)}
+\par\end{centering}
+
+}
+\par
+\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
+\includegraphics[scale=0.23]{Images/inverter(c,b)}
+\par\end{centering}
+}
+\par\end{centering}
+\protect\caption{\label{fig:IndividConceptStgs}Partial translation of concepts into STGs}
+\vspace{-4mm}
+\end{figure}
 
 Using the example in~\S\ref{sub:Comp-of-concepts}, a C-element with environment,
 we can translate the concepts corresponding to the C-element and the two
@@ -1165,9 +1185,9 @@ to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
 the scenarios may run, and this needs to be specified by the designer:
 
-\vspace{1mm}
+\vspace{2mm}
 \begin{center}
-\includegraphics[scale=0.4]{Images/sequential_combination}
+\includegraphics[scale=0.42]{Images/sequential_combination}
 \end{center}
 
 \textbf{Concurrent template:} In this case there is no order, but one or more
@@ -1175,31 +1195,10 @@ of the scenarios in a specification may run concurrently. It may be necessary
 to limit concurrency by specifying, for instance, the number of scenarios
 that can be active simultaneously:
 
+\vspace{2mm}
 \begin{center}
-\includegraphics[scale=0.4]{Images/concurrent_combination}
+\includegraphics[scale=0.42]{Images/concurrent_combination}
 \end{center}
-
-\begin{figure}[t]
-\begin{centering}
-\subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/C-element}
-\par\end{centering}
-}
-\par
-\subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/inverter(c,a)}
-\par\end{centering}
-
-}
-\par
-\subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
-\includegraphics[scale=0.23]{Images/inverter(c,b)}
-\par\end{centering}
-}
-\par\end{centering}
-\protect\caption{\label{fig:IndividConceptStgs}Partial translation of concepts into STGs}
-\vspace{-4mm}
-\end{figure}
 
 \textbf{Non-deterministic choice template:} This template will combine the
 scenarios in a way that allows any of the scenarios to run, but not
@@ -1207,9 +1206,9 @@ according to any order to deal with the lack of determinism in the
 system, using one token which is used only by the running scenario,
 and returned when the scenario completes:
 
-\vspace{1mm}
+\vspace{2mm}
 \begin{center}
-\includegraphics[scale=0.4]{Images/non_deterministic_combination}
+\includegraphics[scale=0.42]{Images/non_deterministic_combination}
 \end{center}
 
 There may be more complex requirements to combination of scenarios, and it
@@ -1227,14 +1226,18 @@ as well as design time.
 
 \subsection{Tool integration}
 
-The concepts tool, which translates concepts to STGs has been integrated into \noun{Workcraft}. This allows a designer to
-visualise their concept designs as STGs, to simulate, verify and synthesise them using tools also integrated in \noun{Workcraft},
+The concepts tool, which translates asynchronous concepts to STGs has been
+integrated into open-source toolsuite \noun{Workcraft}~\cite{Workcraft_website}.
+This allows a designer to visualise their concept designs as STGs, to simulate,
+verify and synthesise them using other tools integrated in \noun{Workcraft},
 and if there are any corrections or additions to be made these can be done either
 directly in the STG or in the original concept specification, which can then
-be re-translated into an updated STG. These automated processes can allow for a streamlined desing process.
+be re-translated into an updated STG. These automated processes can allow for a streamlined design process of asynchronous circuits.
 
-Scenario combination is not yet implemented. This information gives guidelines on how one can perform it manually, however this process can be automated to further
-streamline the design process using concepts.
+Scenario combination is not yet implemented and is performed manually by
+the designer using \noun{Workcraft}'s graphical user interface. This
+design stage can also be automated to further streamline the design process
+using concepts.
 
 %\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
 %
@@ -1588,7 +1591,7 @@ in other scenarios.
 
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
+\includegraphics[scale=0.23]{Images/stg-UV_without_ZC}
 \par\end{centering}
 \protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario} concept.}
 \end{figure}
@@ -1630,7 +1633,7 @@ time by consistency loops.
 \begin{figure}[H]
 \begin{centering}
 \vspace{-1mm}
-\includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
+\includegraphics[scale=0.23]{Images/stg-UV_before_ZC}
 \par\end{centering}
 \vspace{-1mm}
 \protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario} concept.}
@@ -1681,7 +1684,7 @@ in Figure~\ref{fig:zcEarlyScenario STG}.
 
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.22]{Images/stg-UV_after_ZC}
+\includegraphics[scale=0.23]{Images/stg-UV_after_ZC}
 \par\end{centering}
 \protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario} concept.}
 \end{figure}
@@ -1696,15 +1699,6 @@ Figure~\ref{fig:buck STG} shows the resulting STG specification. This can be
 further simplified by merging the common parts of the scenarios, thus producing
 a more compact model similar to that shown in Figure~\ref{fig:Monolithic-buck}.
 
-\begin{figure}[t]
-\begin{centering}
-\includegraphics[scale=0.22]{Images/stg-buck-scenarios_merged}
-\par\end{centering}
-\begin{centering}
-\protect\caption{\label{fig:buck STG}Complete STG for a buck converter.}
-\par\end{centering}
-\end{figure}
-
 There is an explicit place in this model which holds a token initially
 and allows any of the scenarios to run. This free-choice place has no
 control over which scenario can run, and only allows one of
@@ -1714,30 +1708,38 @@ them to run at a time.
 
 \subsection{Verification and simulation}
 
-%\vspace{-3mm}
-
 To be combinable by our method, the scenario STGs need to satisfy certain
 properties~\cite{Cortadella}:
 \begin{itemize}
 \item Complete State Coding (CSC): each state of the models with different
 behaviour has differing signal encodings to avoid problems during
-synthesis. Note that in some cases it is possible to automatically
-resolve a CSC conflict.
+synthesis. Note that in most cases it is possible to automatically
+resolve CSC conflicts.
 \item Deadlock freedom: no state is reachable from which no progress can
 be made.
-\item Output persistence: there are no race conditions in the STG.
-\item Signal consistency: in any trace the rising and falling phases of
+\item Output persistence: there are no race conditions in the STG (i.e. no glitches).
+\item Signal consistency: in any trace the rising and falling transitions of
 each signal alternate.
 \end{itemize}
 These properties can be automatically checked in \noun{Workcraft} using
 the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool.
-It is also possible to use custom properties as verification tools, by entering
-the code to check for these.
-Figure~\ref{fig:custom_assertion} contains an example custom assertion we
-created for this case study.
+It is also possible to verify custom safety properties expressed using
+syntax similar to SystemVerilog Assertions, which is familiar to many
+hardware designers.
+Figure~\ref{fig:custom_assertion} contains an example custom assertion
+\textsf{!($gp$ \&\& $gn$)} that we created for this case study.
 In this we formally verify that there is no shortcircuit in the system, by
 checking that $gp$ and $gn$ are never high at the same time.
 As seen in this image, the property correctly holds, as expected.
+
+\begin{figure}[t]
+\begin{centering}
+\includegraphics[scale=0.23]{Images/stg-buck-scenarios_merged}
+\par\end{centering}
+\begin{centering}
+\protect\caption{\label{fig:buck STG}Complete STG for a buck converter.}
+\par\end{centering}
+\end{figure}
 
 \begin{figure}[h]
 \begin{centering}
@@ -1755,7 +1757,8 @@ is printed out to help a designer correct the issue.
 
 Correctly produced scenarios may not necessarily work as the designer expects,
 and this needs to be validated before using these scenarios
-in any further designs. \noun{Workcraft} features a simulation tool,
+in any further designs. In addition to formal verification, \noun{Workcraft}
+features a simulation tool,
 and this can be used by a designer to check that the signals can transition
 according to the initial requirements. If the simulation produces
 undesirable results, a designer can work to fix the error of the scenario
@@ -1883,38 +1886,60 @@ We have found these related works limited in certain aspects, and we discuss thi
   Concepts            & Yes                               & Yes                  & Yes               & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
   Balsa             & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
   Biscotti            & Yes                               & Yes                  & No                & Yes                       & No                          & No                               & Big digital \\ \hline
-  Lava              & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
-  C$\lambda$ash     & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  Lava              & No                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  C$\lambda$ash     & No                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
   Snippets          & No                                & No                   & Yes               & No                        & No                          & No                               & Little digital \\ \hline
   DI algebra        & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & Little digital \\ \hline
   Structural design & No                                & Yes                  & No                & No                        & No                          & No                               & Modular \\ \hline
   \end{tabular}
 \end{table*}
 
-A common approach of designing asynchronous circuits, \textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify operations for asynchronous circuits for both big-
-digital, data featuring multiple bits, and little-digital, control systems. A Balsa specification is initially converted into a format describing a network of handshaked components, which can 
-be used for simulation and circuit diagrams. This can then be used in synthesis, by mapping handshaked components on to library components~\cite{van1993handshake}. RTL languages
-are used for synchronous design, and thus designers can adapt to Balsa more easily, however specifying a control system can lead to a complicated program which can be difficult to
-comprehend, in comparison to the STGs produced in the proposed approach, in which signal interactions can be visualised.
+A common approach of designing asynchronous circuits,
+\textbf{Balsa}~\cite{edwards2002balsa}, uses an RTL language to specify
+operations for asynchronous circuits for both big-digital, data featuring
+multiple bits, and little-digital, control systems. A Balsa specification is
+initially converted into a format describing a network of handshake components,
+which can be used for simulation and circuit diagrams. This can then be used in
+synthesis, by mapping handshake components on to library
+components~\cite{van1993handshake}. RTL languages
+are used for synchronous design, and thus designers can adapt to Balsa
+more easily, however specifying a control system can lead to a complicated
+program which can be difficult to
+comprehend, in comparison to the STGs produced in the proposed approach,
+in which signal interactions can be visualised.
 
-\textbf{Biscotti}~\cite{5232351} is an approach which uses a C-style language, which can be easy to adapt to as designers are likely to have programming experience. It features
-\emph{forever} blocks, in which code runs sequentially, but all these blocks run concurrently to each other. This design method starts by specifying a circuit which is then
-\emph{compiled} into a Petri-net for verification with existing tools including \noun{Workcraft} and if successful, synthesis, similar to our approach with conversion of concepts to allow
-use with multiple existing tools based on STGs. Biscotti is aimed at designing data-driven asynchronous systems however, and as with Balsa, specifying an asynchronous control system is
-complex and difficult, especially as the number of signals involved increases.
+\textbf{Biscotti}~\cite{5232351} is an approach which uses a C-style language,
+which can be easy to adapt to as designers are likely to have programming
+experience. It features
+\emph{forever} blocks, in which code runs sequentially, but all these
+blocks run concurrently to each other. This design method starts by
+specifying a circuit which is then
+\emph{compiled} into a Petri-net for verification with existing tools
+including \noun{Workcraft} and if successful, synthesis, similar to our
+approach with conversion of concepts to allow
+use with multiple existing tools based on STGs. Biscotti is aimed at
+designing data-driven asynchronous systems however, and as with Balsa,
+specifying an asynchronous control system is
+difficult, especially as the number of signals involved increases.
 
 \cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define
 functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava
 generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However,
-Lava is more focussed on designing asynchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also
+Lava is more focussed on designing synchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also
 focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level.
 
-\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell based tool, similar to Lava, focussed on asynchronous data circuits.  It has some cross-over
-features with Lava, such as built-in verification, and the ability for users to define functions. C$\lambda$ash, however, uses existing Haskell constructs to directly synthesize as
-asynchronous operations. C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of
-specifying operations for asynchronous circuits, which may be more natural for designers, however Haskell as a language features huge differences to programming languages like
-\noun{C}. The idea of a natural description is shared with Concepts, but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow
-multiple levels, from low to high, when specifying.
+\textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell
+based tool, similar to Lava, focussed on synchronous data circuits.  It has some
+cross-over features with Lava, such as built-in verification, and the ability for
+users to define functions.
+% Note: not sure what you mean: Clash doesn't synthesise asynchronous circuits!
+% C$\lambda$ash, however, uses existing Haskell
+% constructs to directly synthesize as asynchronous operations.
+C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of
+specifying synchronous circuits, which may be more natural for designers,
+however Haskell as a language features huge differences to programming languages
+like \noun{C}. The idea of a natural description is shared with Concepts,
+but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow multiple levels, from low to high, when specifying.
 
 \textbf{Snippets}~\cite{raey}, similar to concepts, are smaller
 state graph models which are used to compose full state graphs of
@@ -1954,7 +1979,9 @@ modelling at circuit level, using composed concepts.
 Concepts have many advantageous features, such as reuse, natural description, multiple level description and composition, and more.
 Several of these approaches feature similar ideas which make them beneficial in certain ways,
 but we believe fall down where the inclusion of one or more of these features could make an approach better. With concepts,
-we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible.
+we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible, particularly targeting the little-digital design domain.
+Concepts are also supported by industrial-strength open-source software
+toolsuite \noun{Workcraft}.
 
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
 %a full model and recomposing it of selective components to produce
@@ -1973,11 +2000,14 @@ we have attempted to address these issues and make concepts not only a powerful 
 
 \section{Conclusions and future work\label{sec:conclusions}}
 
-In this work we show that it is possible to design a system by splitting
-it into operational modes, scenarios, and describing signal interactions and requirements
-of the scenario in a textual format. These can then be translated into STGs
-that represent these operational modes, which can be used with existing verification and synthesis tools. 
-These can be combined to produce a model for the full system specification.
+In this work we show that it is possible to design asynchronous control
+circuits at the interface between analogue and digital worlds by
+splitting their specification into operational modes, scenarios, and
+describing signal interactions and requirements of each scenario using
+high-level asynchronous concepts. These can then be translated into STGs
+that represent these operational modes, which can be used with existing
+verification and synthesis tools. STGs can be further combined to
+produce a complete model for the system specification.
 
 Using concepts, a user can reduce the time of designing an asynchronous
 control circuit from the ground up, as well as allow reuse of components
@@ -1989,23 +2019,27 @@ to industrial designers.
 
 Currently, this method works with Signal Transition Graphs, however
 it can be applied to other modelling disciplines, such as Finite State
-Machines~(FSM). 
+Machines~(FSM).
 
-\emph{Process mining} can also be used for various purposes in conjunction with designing
-asynchronous circuits. For example, process mining can find a
-behavioural model if non exists, and can be
-used to check that an existing specification is realistic, or find less
-complex models. All of this can be performed automatically, by tools such as \noun{PGminer}~\cite{pgminer}, and aid a
-designer in reducing design time and errors. We aim to include process mining in the design flow for the proposed approach.
+\emph{Process mining} can also be used for various purposes in conjunction
+with designing asynchronous circuits. For example, process mining can discover a
+behavioural model when none exists, and can be used to check that an existing
+specification is realistic, or find less complex models. All of this can be
+performed automatically, by tools such as \noun{PGminer}~\cite{mokhov2016mining}, given
+an event log with observations of a real analogue or digital system, and aid a
+designer in reducing design time and errors. We aim to include process mining
+in the design flow for the proposed approach.
 
-We aim to test concepts using examples from several different areas where asynchronous circuits are beneficial. 
-These will be of various sizes, featuring differing numbers of signals, in an attempt to find problematic areas of the concepts design methodology.
-We can then use this information to imporove concepts.
+% We aim to test concepts using examples from several different areas where
+% asynchronous circuits are beneficial.
+% These will be of various sizes, featuring differing numbers of signals, in an attempt to find problematic areas of the concepts design methodology.
+% We can then use this information to imporove concepts.
 
-As the Internet-of-Things becomes more apparent, asynchronous circuits
-will be key in designing nodes, for quick and efficient power management
-to increase the operation time of these devices. We beleive concepts 
-could be instrumental in the design of these systems.
+As the Internet-of-Things becomes ubiquitous, asynchronous circuits
+will be key in designing energy-efficient and reliable IoT nodes,
+particularly at the interfaces between analogue and digital domains,
+such as power management units. We believe that high-level asynchronous
+concepts could be instrumental in the design of these systems.
 
 %CPOG and Parameterised Graph models are also integrated into
 %\noun{Workcraft}~\cite{Workcraft_website} as part of the \noun{Scenco} toolsuite~\cite{2015_workcraft_scenco}~\cite{Scenco_paper},
