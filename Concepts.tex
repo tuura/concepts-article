@@ -1506,7 +1506,7 @@ whole design process in \noun{Workcraft}, see Figure~\ref{fig:workcraft_screensh
 
 \subsection{Formal specification using concepts}
 
-Informal specification of a buck converter defines three operating modes
+The informal specification of the buck converter defines three operating modes
 that require distinctive control scenarios. Requirements for each operating mode
 can be captured with a separate list of concepts and translated into scenario
 STGs. These can be subsequently combined to produce single STG for the whole circuit.
@@ -1560,15 +1560,6 @@ A circuit that handles buck operation in absence of ZC condition is specified as
 
 \end{array}
 \]
-\vspace{-5mm}
-
-\begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
-\par\end{centering}
-
-\protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario} concept.}
-\end{figure}
 
 The \textsf{zcAbsentScenario} concept is a composition of buck charging and UV handling.
 Consider the charging function captured in \textsf{chargeFunc} concept.
@@ -1583,6 +1574,13 @@ and \textsf{environment} captures the fact that OC and UV conditions never happe
 Note that sequence of PMOS/NMOS switching during the charging cycle is the same
 for all operating modes, and therefore the \textsf{chargeFunc} concept can will reused
 in other scenarios.
+
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
+\par\end{centering}
+\protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario} concept.}
+\end{figure}
 
 The \textsf{zcAbsentScenario} concept is automatically translated to the STG specification
 in Figure~\ref{fig:zcAbsentScenario STG}.
@@ -1611,20 +1609,32 @@ absence of ZC, i.e. ZC conditions can be ignored. This is captured by an additio
 
 \end{array}
 \]
-\vspace{-5mm}
-
-\begin{figure}[H]
-\begin{centering}
-\includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
-\par\end{centering}
-\protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario} concept.}
-\end{figure}
 
 The STG specification automatically produced from the \textsf{zcLateScenario} concept
 is shown in Figure~\ref{fig:zcLateScenario STG}. It looks similar to the STG in
 Figure~\ref{fig:zcAbsentScenario STG} but features a concurrent branch for $zc$ signal.
 Note that the arc $zc^{+}\rightsquigarrow zc^{-}$ is implied at translation
 time by consistency loops.
+
+\begin{figure}[H]
+\begin{centering}
+\vspace{-1mm}
+\includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
+\par\end{centering}
+\vspace{-1mm}
+\protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario} concept.}
+\vspace{-1mm}
+\end{figure}
+
+Note that the concept specification of \textsf{zcLateScenario} reuses most of
+the code from the \textsf{zcAbsentScenario}; in particular, the description of
+the analogue environment does not need to be duplicated, as with the STG
+approach, where the designer needs to redraw the specification from scratch.
+\noun{Workcraft} allows to copy and paste STGs, which mitigates the problem
+somewhat, but duplication and associated design problems remain -- for example, if
+the analogue environment needs to be amended, these changes need to be done
+consistently in all scenarios. With concepts, only one definition needs to be
+changed, which increases the productivity of the designer.
 
 \subsubsection{ZC~early scenario}
 
@@ -1635,14 +1645,14 @@ handled by the control circuit:
 \[
 \mathsf{zcEarlyScenario}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \]
-\vspace{-6mm}
+\vspace{-5mm}
 \[
 \begin{array}{lcl}
 ~~=~\mathsf{chargeFunc}~\diamond~\mathsf{zcFunc}~\diamond~\mathsf{zcReact}~\diamond~\mathsf{uvFunc'}\\
-~~~~~~~\diamond~\mathsf{uvReact'}\\
+~~~\!\diamond~~~~\!\!\mathsf{uvReact'}\\
 \end{array}
 \]
-\vspace{-5mm}
+\vspace{-4mm}
 \[
 \begin{array}{lcl}
 \mathsf{where}&~&\\
@@ -1654,21 +1664,16 @@ handled by the control circuit:
 
 \end{array}
 \]
-\vspace{-5mm}
 
-\begin{center}
+The obtained STG for the \textsf{zcEarlyScenario} concept is shown
+in Figure~\ref{fig:zcEarlyScenario STG}.
+
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_after_ZC}
 \par\end{centering}
 \protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario} concept.}
 \end{figure}
-\par\end{center}
-
-\vspace{-8mm}
-
-The obtained STG for the \textsf{zcEarlyScenario} concept is shown
-in Figure~\ref{fig:zcEarlyScenario STG}.
 
 \subsection{Combining the scenarios }
 
@@ -1676,7 +1681,7 @@ The scenario STGs can now be combined as described in \S\ref{sub:scenario-compos
 to produce a multi-scenario specification. As buck operating modes are active one at a
 time, the control scenarios are combined using the non-deterministic choice template.
 
-Figure~\ref{fig:buck STG} shows the resultant STG specification. This can be
+Figure~\ref{fig:buck STG} shows the resulting STG specification. This can be
 further simplified by merging the common parts of the scenarios, thus producing
 a more compact model similar to that shown in Figure~\ref{fig:Monolithic-buck}.
 
@@ -1689,7 +1694,7 @@ a more compact model similar to that shown in Figure~\ref{fig:Monolithic-buck}.
 \par\end{centering}
 \end{figure}
 
-There is a explicit place in this model which holds a token initially
+There is an explicit place in this model which holds a token initially
 and allows any of the scenarios to run. This free-choice place has no
 control over which scenario can run, and only allows one of
 them to run at a time.
@@ -1715,9 +1720,12 @@ each signal alternate.
 \end{itemize}
 These properties can be automatically checked in \noun{Workcraft} using
 the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool.
-It is also possible use custom properties as verification tools, by entering the code to check for these.
-Figure~\ref{fig:custom_assertion} contains an example custom asserstion we created for this case study.
-In this we test that there is no shortcircuit in the system, by checking that $gp$ and $gn$ are not hight at the same time.
+It is also possible use custom properties as verification tools, by entering
+the code to check for these.
+Figure~\ref{fig:custom_assertion} contains an example custom assertion we
+created for this case study.
+In this we formally verify that there is no shortcircuit in the system, by
+checking that $gp$ and $gn$ are never high at the same time.
 As seen in this image, the property correctly holds, as expected.
 
 \begin{figure}[h]
@@ -1734,14 +1742,14 @@ automatically, which \noun{Mpsat} can attempt, the combination of scenarios fail
 In this case a problematic concept can be identified and diagnostic information
 is printed out to help a designer correct the issue.
 
-Correctly produced scenarios may not necessarily work as the specification
-suggests, and this needs to be validated before using these scenarios
+Correctly produced scenarios may not necessarily work as the designer expects,
+and this needs to be validated before using these scenarios
 in any further designs. \noun{Workcraft} features a simulation tool,
 and this can be used by a designer to check that the signals can transition
 according to the initial requirements. If the simulation produces
 undesirable results, a designer can work to fix the error of the scenario
 STG, or correct the design at the concept level. The latter is the
-preferable method if this design is to be reused either as a predefined
+preferable method if the design is to be reused either as a predefined
 concept, or as a scenario in another system.
 
 After all scenarios have been combined, the result will be the STG specification
@@ -1798,10 +1806,10 @@ shows the result of \emph{Complex gate} synthesis of the buck STG.
 Complex-gate synthesis does not use a gate library and yields Boolean functions of arbitrary complexity.
 These functions are often too large to be implemented by a single gate available in the gate library.
 Unfortunately, breaking up a complex-gate into smaller ones, when performed na\"{\i}vely, generally yields
-an incorrect circuit -- this happens due to the delays associated with the outputs of the newly introduced gates.
+an incorrect circuit -- this happens due to the delays associated with the outputs of the newly introduced gates and can lead to glitches or deadlocks.
 
 In fact, logic decomposition in the context of speed-independent circuits is a very difficult problem,
-that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations,
+that cannot always be solved. \noun{Petrify} and \noun{MPSat} backend tools do a good job in many situations,
 but occasionally they fail to converge to a solution and a manual intervention by the designer is required.
 
 Another type of synthesis is \emph{Technology mapping}. This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library.
@@ -1824,12 +1832,14 @@ this can be enforced during the place-and-route stage.
 Within \noun{Workcraft} we can further decompose the implementation of $gp$ into two-input gates,
 as shown in Figure~\ref{fig:circuit-buck-deco2}. This is achieved by restricting the synthesis
 back end (in this case \noun{Mpsat}) to use the gates with at most two inputs.
+Such 2-input decompositions may be beneficial for designs targeting low
+operating voltages.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.3]{Images/circuit-buck-deco2-wc}
 \par\end{centering}
-\protect\caption{\label{fig:circuit-buck-deco2}Technology mapping into two-input gates/latches.}
+\protect\caption{\label{fig:circuit-buck-deco2}Technology mapping into 2-input gates/latches.}
 \end{figure}
 
 More information on the synthesis of this example can be found in the tutorials of the \noun{Workcraft} website~\cite{Workcraft_website}.
