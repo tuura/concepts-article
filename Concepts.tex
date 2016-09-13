@@ -1488,45 +1488,38 @@ as well as design time.
 \section{Case study\label{sec:case-study}}
 
 In~\S\ref{sec:Motivating Example} we introduced the motivating example for
-this article, a simple buck converter, in order to discuss the monolithic
+this article, a simple buck converter, and discussed the challenges of monolithic
 approach to specifying asynchronous circuits. We have also introduced
 concepts in~\S\ref{sec:Concepts}, and with examples explained how they can
-be used to design simple circuits, and how these can be translated to
-provide us with an STG specification for use with standard tools.
-
-Now we can use this information with the buck converter case study to detail the design flow for producing a
-specification for a buck converter. This design flow is implemented in \noun{Workcraft}.
+be used to design simple circuits, and how these can be translated to STGs
+for subsequent synthesis of asynchronous gate-level implementation.
+In this section we use the buck converter as a case study to detail the
+whole design process in \noun{Workcraft}, see Figure~\ref{fig:workcraft_screenshot}.
 
 \begin{figure*}[t]
 \begin{centering}
-\includegraphics[scale=0.4]{Images/design_flow_wc_screenshot}
+\includegraphics[scale=0.5]{Images/design_flow_wc_screenshot}
 \par\end{centering}
 
-\protect\caption{\label{fig:workcraft_screenshot}Stages of the design flow when using asunchronous concepts in \noun{Workcraft}}
+\protect\caption{\label{fig:workcraft_screenshot}Stages of the design flow when using asynchronous concepts in \noun{Workcraft}.}
 \end{figure*}
 
 \subsection{Formal specification using concepts}
 
-From the informal buck specification and our knowledge of the signals,
-we can determine three separate operating conditions that occur in
-the analogue circuit and the controller needs to react to. All of
-these can be produced from concepts separately and composed to produce
-scenario STGs, before combining these to produce a single full circuit
-STG.
-
+Informal specification of a buck converter defines three operating modes
+that require distinctive control scenarios. Requirements for each operating mode
+can be captured with a separate list of concepts and translated into scenario
+STGs. These can be subsequently combined to produce single STG for the whole circuit.
 During this process, it is useful to find any operations which occur
-between two or more operational modes, as these can then be reused
-in other scenarios. If this is defined in one list of concepts, it
-can then be referenced in concept lists for other scenarios by name, assuming these scenarios will be built as part of the same workspace.
+between two or more operating modes, as these can then be reused.
 
 \subsubsection{ZC~absent scenario}
 
-We start with describing the operational mode where no ZC condition
-is signalled and produce the following list of concepts:
+A circuit that handles buck operation in absence of ZC condition is specified as follows:
 
 \vspace{-4mm}
 \[
-\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\mathsf{zcAbsentScenario}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \]
 \vspace{-6mm}
 \[
@@ -1545,80 +1538,65 @@ is signalled and produce the following list of concepts:
 ~~~~\mathsf{ocFunc}&\hspace{-2mm}=&\hspace{-2mm}oc^{+}\rightsquigarrow gp^{-}~\diamond~ oc^{+}\rightsquigarrow gn^{+}\\
 
 ~~~~\mathsf{uvReact}&\hspace{-2mm}=&\hspace{-2mm}gp\_ack^{+}\rightsquigarrow uv^{-}~\diamond~gn\_ack^{-}\rightsquigarrow uv^{-}\\
+
 ~~~~\mathsf{ocReact}&\hspace{-2mm}=&\hspace{-2mm}gp\_ack^{-}\rightsquigarrow oc^{-}~\diamond~gn\_ack^{+}\rightsquigarrow oc^{-}\\
+
 ~~~~\mathsf{environment}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{me}(uv, oc)\\
+
 ~~~~\mathsf{\mathsf{noShortcircuit}}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{me}(gn, gp)\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}gn\_ack^{-}\rightsquigarrow gp^{+}~\diamond~gp\_ack^{-}\rightsquigarrow gn^{+}\\
+
 ~~~~\mathsf{gpHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gp,gp\_ack)\\
+
 ~~~~\mathsf{gnHandshake}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{handshake}(gn,gn\_ack)\\
+
 ~~~~\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise0}~[uv,oc,zc,gp,gp\_ack]\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{initialise1}~[gn,gn\_ack]\\
+
 ~~~~\mathsf{chargeFunc}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{interface}~\diamond~\mathsf{ocFunc}~\diamond~\mathsf{ocReact}\\
-~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{environment}~\diamond~\mathsf{noShortcircuit}~\diamond~\\
+~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{environment}~\diamond~\mathsf{noShortcircuit}\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{gpHandshake}~\diamond~\mathsf{gnHandshake}\\
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{initialState}
 
 \end{array}
 \]
-
-%\begin{flushleft}
-%$\,\mathsf{zcAbsent}=\mathsf{silent}\,zc^{+}\,\diamond\,\mathsf{silent}\,zc^{-}$
-%\par\end{flushleft}
+\vspace{-5mm}
 
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_without_ZC}
 \par\end{centering}
 
-\protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario}
-concept.}
+\protect\caption{\label{fig:zcAbsentScenario STG} STG for the \textsf{zcAbsentScenario} concept.}
 \end{figure}
 
-In this list, we introduce concepts which describe the correction
-of both under-voltage and over-current. This includes concepts describing
-handshakes for $gp/gp\_ack$ and $gn/gn\_ack$, and transistor safety
-constraints which are described using protocol-level concepts. We
-also describe constraints provided by the environment that we are
-aware of, such as $oc$ and $uv$ never signalling at the same time, and ensuring that
-the acknowledge signal of transistors must be low before the other transistor can be switched on.
-Environment behaviour is included in the concepts so that it is captured in the resulting STG for testing and simulation purposes.
-We also include an \textsf{interface} concept in order to include the
-types of the signals involved in the scenario.
+The \textsf{zcAbsentScenario} concept is a composition of buck charging and UV handling.
+Consider the charging function captured in \textsf{chargeFunc} concept.
+It comprises several concepts: \textsf{interface} specifies the types
+of signals and \textsf{initialState} defines their initial state;
+\textsf{gpHandshake} and \textsf{gnHandshake} specify the protocol on $gp/gp\_ack$
+and $gn/gn\_ack$ interfaces respectively;
+\textsf{noShortcircuit} enforces a safety constraint to prevent a shortcircuit;
+\textsf{ocFunc} and \textsf{ocReact} define the interplay with OC condition;
+and \textsf{environment} captures the fact that OC and UV conditions never happen at the same time.
 
-Within the \textsf{initialState} concepts, we use the \textsf{initialise0} concept, which applies the initial state of 0 to all listed signals.
-All signals in this system are initially 0, and this is a simpler way of specifying this. There also exists an \textsf{initialise1} function, which
-applies the initial state of 1 to all listed signals.
+Note that sequence of PMOS/NMOS switching during the charging cycle is the same
+for all operating modes, and therefore the \textsf{chargeFunc} concept can will reused
+in other scenarios.
 
-The descriptions of the operational modes suggest that there are similarities
-between them, mainly in the sequence of PMOS/NMOS activation during
-the charging cycle. The signal types are also the same for all scenarios in the system, and
-thus it is unnecessary to redefine these for each scenario.
-Therefore it is natural to define a \textsf{chargeFunc}
-concept that can be reused when other operation modes are specified.
-
-%We also include for this scenario a~\emph{zcAbscent} concept.
-%This uses the silent concept for both $zc^{+}$ and $zc^{-}$ to indicate
-%that in this system, there is a signal $zc$ but it has no bearing on the scenario.
-
-Figure~\ref{fig:zcAbsentScenario STG} shows the STG produced from
-the final concept in the list, \textsf{zcAbsentScenario}. It contains
-two tokens which are created based on the \textsf{initialState} concept.
-The analogue circuit is not guaranteed to signal either under-voltage
-or over-current first, and this needs to be noted in the concepts
-and the STG.
+The \textsf{zcAbsentScenario} concept is automatically translated to the STG specification
+in Figure~\ref{fig:zcAbsentScenario STG}.
 
 \subsubsection{ZC~late scenario}
 
-In this operational mode we have to include zero-crossing, as per
-the specification. However, in this case under-voltage and over-current
-are corrected in the same way as in the no~ZC scenario, as zero-crossing has no effect when it signals after UV, and therefore
-we can include the \textsf{zcAbsentScenario} concept. We still need
-to describe the interactions involving zero-crossing, as well as it's initial state. The concepts
-are as follows:
+
+If ZC condition is detected after UV, then buck operation is the same as in
+absence of ZC, i.e. ZC conditions can be ignored. This is captured by an additional
+\textsf{zcLate} concept:
 
 \vspace{-4mm}
 \[
-\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\mathsf{zcLateScenario}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \]
 \vspace{-6mm}
 \[
@@ -1629,203 +1607,92 @@ are as follows:
 \begin{array}{lcl}
 \mathsf{where}&~&\\
 
-~~~~\mathsf{zcLate}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow zc^{+}~\diamond~ zc^{-}\rightsquigarrow uv^{-}
+~~~~\mathsf{zcLate}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow zc^{+}~\diamond~ zc^{-}\rightsquigarrow uv^{-}~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \end{array}
 \]
 \vspace{-5mm}
+
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_before_ZC}
 \par\end{centering}
-
-\protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario}
-concept.}
-
+\protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario} concept.}
 \end{figure}
 
-Figure~\ref{fig:zcLateScenario STG} shows the STG produced, which
-looks similar to the STG in Figure~\ref{fig:zcAbsentScenario STG}
-but this features a branch from some $uv$ and $zc$ interaction.
-This is defined in the concept \textsf{zcLateScenario}, which does
-not describe the arc $zc^{+}\rightsquigarrow zc^{-}$ but this consistency
-is implied at translation time by consistency loops.
+The STG specification automatically produced from the \textsf{zcLateScenario} concept
+is shown in Figure~\ref{fig:zcLateScenario STG}. It looks similar to the STG in
+Figure~\ref{fig:zcAbsentScenario STG} but features a concurrent branch for $zc$ signal.
+Note that the arc $zc^{+}\rightsquigarrow zc^{-}$ is implied at translation
+time by consistency loops.
 
 \subsubsection{ZC~early scenario}
 
-The \textsf{chargeFunc} concept can be reused, as the PMOS/NMOS transistors
-are still operated in the same way. However, the interplay between
-the early zero-crossing and under-voltage needs to be specified with
-several new concepts:
+If ZC condition is detected before UV then it needs to be explicitly
+handled by the control circuit:
 
 \vspace{-4mm}
 \[
-\mathsf{circuit}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\mathsf{zcEarlyScenario}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \]
-\vspace{-5mm}
+\vspace{-6mm}
 \[
 \begin{array}{lcl}
 ~~=~\mathsf{chargeFunc}~\diamond~\mathsf{zcFunc}~\diamond~\mathsf{zcReact}~\diamond~\mathsf{uvFunc'}\\
-~~~~~~~\diamond~\mathsf{uvReact'}~\diamond~\mathsf{initialise}~zc~\mathsf{False}\\
+~~~~~~~\diamond~\mathsf{uvReact'}\\
 \end{array}
 \]
-\vspace{-3mm}
+\vspace{-5mm}
 \[
 \begin{array}{lcl}
 \mathsf{where}&~&\\
 
 ~~~~\mathsf{zcFunc}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow gn^{-}\\
-
 ~~~~\mathsf{zcReact}&\hspace{-2mm}=&\hspace{-2mm}oc^{-}\rightsquigarrow zc^{+}~\diamond~gp^{+}\rightsquigarrow zc^{-}\\
-
 ~~~~\mathsf{uvFunc'}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow gp^{+}\\
-
-~~~~\mathsf{uvReact'}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow uv^{+}~\diamond~ zc^{-}\rightsquigarrow uv^{-}~\diamond~ gp\_ack^{+}\rightsquigarrow uv^{-}
+~~~~\mathsf{uvReact'}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow uv^{+}~\diamond~zc^{-}\rightsquigarrow uv^{-}\diamond~gp\_ack^{+}\rightsquigarrow uv^{-}
 
 \end{array}
 \]
-
-%\begin{onehalfspace}
-%\begin{minipage}[t]{1\columnwidth}%
-%
-%\begin{flushleft}
-%$\begin{aligned}\mathsf{circuit}&(uv, oc, zc, gp\_ack, gn\_ack, gp, gn)= \\ &\,\mathsf{chargeFunc}\,\diamond\,\mathsf{zcFunc}\,\diamond\,\mathsf{zcReact}\,\diamond\\
-%& \,\mathsf{uvFunc'}\,\diamond\,\mathsf{uvReact'}\,\diamond\,\mathsf{initialise}\,zc\,\,False
-%\end{aligned}
-%$
-%\par\end{flushleft}%
-%
-%\begin{flushleft}
-%$\mathsf{where}$
-%\end{flushleft}
-%
-%\begin{flushleft}
-%$\,\mathsf{zcFunc}=zc^{+}\rightsquigarrow gn^{-}$
-%\par\end{flushleft}
-%
-%\begin{flushleft}
-%$\,\mathsf{zcReact}=oc^{-}\rightsquigarrow zc^{+}\,\diamond\, gp^{+}\rightsquigarrow zc^{-}$
-%\par\end{flushleft}
-%
-%\begin{flushleft}
-%$\,\mathsf{uvFunc'}=uv^{+}\rightsquigarrow gp^{+}$
-%\par\end{flushleft}
-%
-%\begin{flushleft}
-%$\,\mathsf{uvReact'}=zc^{+}\rightsquigarrow uv^{+}\diamond\, zc^{-}\rightsquigarrow uv^{-}\diamond\, gp\_ack^{+}\rightsquigarrow uv^{-}$
-%\par\end{flushleft}
-%
-%\end{minipage}
-%\end{onehalfspace}
+\vspace{-5mm}
 
 \begin{center}
 \begin{figure}[H]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-UV_after_ZC}
 \par\end{centering}
-
-\protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario}
-concept.}
+\protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario} concept.}
 \end{figure}
-
 \par\end{center}
 
-%\vspace{-8mm}
+\vspace{-8mm}
 
 The obtained STG for the \textsf{zcEarlyScenario} concept is shown
-in Figure~\ref{fig:zcEarlyScenario STG}. We have now produced three
-scenario STGs, one for each operational mode in this system. However,
-we need to ensure they are correct both for the specification and
-as STG models before we can combine these.
-
-%\subsection{Verification and simulation of scenarios \label{sub:Verification-and-simulation}}
-%
-%%\vspace{-2mm}
-%
-%To be combinable by our method, the produced STGs need to satisfy certain
-%properties~\cite{Cortadella}:
-%\begin{itemize}
-%\item Complete State Coding (CSC): each state of the models with different
-%behaviour has differing signal encodings to avoid problems during
-%synthesis. Note that in some cases it is possible to automatically
-%resolve a CSC conflict.
-%\item Deadlock freedom: no state is reachable from which no progress can
-%be made.
-%\item Output persistence: there are no race conditions in the STG.
-%\item Signal consistency: in any trace the rising and falling phases of
-%each signal alternate.
-%\end{itemize}
-%These properties can be automatically checked in \noun{Workcraft }using
-%the \noun{Mpsat}~\cite{khomenko2004detecting} backend tool\noun{.
-%}In the event that one of these properties does not hold, unless it
-%can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
-%In this case a problematic concept is identified and diagnostic information
-%is printed out to help a designer correct the issue.
-%
-%Correctly produced scenarios may not necessarily work as the specification
-%suggests, and this needs to be validated before using these scenarios
-%in any further designs. \noun{Workcraft} features a simulation tool,
-%and this can be used by a designer to check that the signals can transition
-%according to the initial requirements. If the simulation produces
-%undesirable results, a designer can work to fix the error of the scenario
-%STG, or correct the design at the concept level. The latter is the
-%preferable method if this design is to be reused either as a predefined
-%concept, or as a scenario in another system.
-
-%\vspace{-2mm}
+in Figure~\ref{fig:zcEarlyScenario STG}.
 
 \subsection{Combining the scenarios }
 
-%\vspace{-2mm}
+The scenario STGs can now be combined as described in \S\ref{sub:scenario-composition}
+to produce a multi-scenario specification. As buck operating modes are active one at a
+time, the control scenarios are combined using the non-deterministic choice template.
 
-Now we have scenario STGs that have been verified to ensure they conform
-to standards required of STGs, and simulated to ensure they work as
-expected according to the specification. These can now be combined
-to produce a full system implementation. As mentioned in \S\ref{sub:scenario-composition},
-we can combine these scenarios in multiple ways, depending on whether
-there is some sort of required ordering to the way these scenarios
-must run.
-
-For a simple buck controller there is no required order of running
-these scenarios, and it is uncertain as to which scenario may be running
-at any one time. Therefore, the best solution for this system is to
-combine all of the scenarios in a non-deterministic fashion. The full
-system implementation produced should allow for only one of these
-scenarios to run at a time, but when the scenario has completed the
-system should return to a state where any of the scenarios could run
-again, regardless of which solution ran previously.
+Figure~\ref{fig:buck STG} shows the resultant STG specification. This can be
+further simplified by merging the common parts of the scenarios, thus producing
+a more compact model similar to that shown in Figure~\ref{fig:Monolithic-buck}.
 
 \begin{figure}[t]
 \begin{centering}
 \includegraphics[scale=0.22]{Images/stg-buck-scenarios_merged}
 \par\end{centering}
-
 \begin{centering}
 \protect\caption{\label{fig:buck STG}Complete STG for a buck converter.}
-
 \par\end{centering}
-
 \end{figure}
 
-Figure~\ref{fig:buck STG} shows the full system specification STG
-that has been produced from combining the three scenario STGs as seen
-in Figures~\ref{fig:zcAbsentScenario STG},~\ref{fig:zcLateScenario STG},
-and~\ref{fig:zcEarlyScenario STG}. It is possible to view each individual
-scenario in the system in this STG. There are redundancies iuncluded in
-this STG, which can merged with other parts of the STG
-to produce a more compact model. This would produce an STG
-similar to that shown in Figure~\ref{fig:Monolithic-buck}.  It is a trivial
-step to simplify the STG, as these are functionally the same, and
-produce the same results during verification and synthesis.
-
-There is an explicit place in this model which holds a token initially,
-and this allows any of the scenarios to run. This place has no
-control over which scenario can run, but it only allows one of
-them to run at a time. The single token is consumed
-by whichever scenario runs, and the lack of token in the place
-after this stops any more scenarios running. The token is passed through
-the scenario, and after over-current is corrected the token is passed
-back into this place, allowing only one of the scenarios to run again.
+There is a explicit place in this model which holds a token initially
+and allows any of the scenarios to run. This free-choice place has no
+control over which scenario can run, and only allows one of
+them to run at a time.
 
 %\vspace{-3mm}
 
@@ -1833,7 +1700,7 @@ back into this place, allowing only one of the scenarios to run again.
 
 %\vspace{-3mm}
 
-To be combinable by our method, the produced scenario STGs need to satisfy certain
+To be combinable by our method, the scenario STGs need to satisfy certain
 properties~\cite{Cortadella}:
 \begin{itemize}
 \item Complete State Coding (CSC): each state of the models with different
@@ -1857,16 +1724,13 @@ As seen in this image, the property correctly holds, as expected.
 \begin{centering}
 \includegraphics[scale=0.75]{Images/screenshot-custom-assertion}
 \par\end{centering}
-
 \begin{centering}
-\protect\caption{\label{fig:buck STG}Custom verification of no shortcircuit}
-
+\protect\caption{\label{fig:custom_assertion}Custom verification of no shortcircuit.}
 \par\end{centering}
-
 \end{figure}
 
-In the event that one of these properties does not hold, unless it
-can be corrected automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
+In the event that one of these properties does not hold, unless it can be corrected
+automatically, which \noun{Mpsat} can attempt, the combination of scenarios fails.
 In this case a problematic concept can be identified and diagnostic information
 is printed out to help a designer correct the issue.
 
@@ -1914,65 +1778,60 @@ be utilised for testing the functionality of a full system specification.
 
 %\vspace{-2.5mm}
 
-A fully working model of the system is only part way to having completed
-the process. The final step in this design flow is to synthesize this
-specification. Synthesis is the process of finding Boolean equations to calculate
-the next state of the output signals based on the input signals and
-the current state of the circuit~\cite{Cortadella}. We can do this
-using \noun{Petrify} or \noun{Mpsat}, both of which are integrated
-in \noun{Workcraft}. Passing this model through one of these tools
-will produce logic equations that describe how the outputs $gp$ and
-$gn$ can be produced using $uv$, $oc$, $zc$, $gp\_ack$, $gn\_ack$.
-Using logic gates, we can reproduce a circuit diagram for these equations, which \noun{Workcraft} can automatically import.
-
-There are different types of synthesis which use different methods of generating the logic equations,
-each of which produces a slightly different ciruit. For example, Figure~\ref{fig:complex-gate-circuit} shows the
-circuit for this buck using \emph{Complex gate} synthesis.
+The final step in this design flow is to synthesise the STG specification into
+a speed-independent circuit. Synthesis is the process of finding Boolean equations
+to calculate the next state of the output signals based on the input signals
+and the current state of the circuit~\cite{Cortadella}. Circuits can be
+synthesised using \noun{Petrify} or \noun{Mpsat}, both of which are
+integrated in \noun{Workcraft}. There are different types of synthesis
+with their own specifics. For example, Figure~\ref{fig:complex-gate-circuit}
+shows the result of \emph{Complex gate} synthesis of the buck STG.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.3]{Images/complex-gate-circuit-buck}
 \par\end{centering}
 
-\protect\caption{\label{fig:complex-gate-circuit}Asynchronous complex gate implementation}
+\protect\caption{\label{fig:complex-gate-circuit}Complex gate implementation.}
 \end{figure}
 
-Complex-gate synthesis does not use a gate library - the implementations they yield are Boolean functions of arbitrary complexity. These functions are often too
-large to be implemented by a single gate available in the gate library. Unfortunately, breaking up a complex-gate into smaller ones, when performed naïvely, generally yields an incorrect
-circuit - this happens due to the delays associated with the outputs of the newly introduced gates. In fact, logic decomposition in the context of speed-independent circuits is a very
-difficult problem, that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations, but occasionally they fail to converge to a solution and a manual
-intervention by the designer is required.
+Complex-gate synthesis does not use a gate library and yields Boolean functions of arbitrary complexity.
+These functions are often too large to be implemented by a single gate available in the gate library.
+Unfortunately, breaking up a complex-gate into smaller ones, when performed na\"{\i}vely, generally yields
+an incorrect circuit -- this happens due to the delays associated with the outputs of the newly introduced gates.
 
-Another type of synthesis is \emph{Technology mapping}.
-This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library.
-This then produces a implementation which will be different to the complex gate implementation.
+In fact, logic decomposition in the context of speed-independent circuits is a very difficult problem,
+that cannot always be solved. Petrify and MPSat backend tools do a good job in many situations,
+but occasionally they fail to converge to a solution and a manual intervention by the designer is required.
+
+Another type of synthesis is \emph{Technology mapping}. This performs \emph{Logic decomposition} and uses a gate library to map the logic only onto gates available in the library.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.3]{Images/circuit-buck-mapped-pfy-wc.pdf}
 \par\end{centering}
 
-\protect\caption{\label{fig:tech-mapped-circuit}Asynchronous technology mapped implementation}
+\protect\caption{\label{fig:tech-mapped-circuit}Technology mapped implementation.}
 \end{figure}
 
-Figure~\ref{fig:tech-mapped-circuit} is the technology mapped implementation.  The gate labels correspond to the gate names in the library.
-The two inverters are shown with a dotted line through. This is because they have the Zero delay property expressing the assumption that their delays are negligible.
-This is usually unproblematic as long as such input inverters are placed next to the main gate, but in some situations this assumption may be questionable;
-moreover, this assumption introduces extra constraints that have to be satisfied during placing and routing.
+Figure~\ref{fig:tech-mapped-circuit} is the technology mapped implementation.
+The gate labels correspond to the gate names in the library.
+The two inverters are shown with a dotted line through.
+This is because they have the \emph{Zero delay} property expressing the assumption that their output wire delays are negligible.
+This is usually unproblematic as long as such input inverters are placed close to the main gate;
+this can be enforced during the place-and-route stage.
 
-We can try to decompose the implementation of $gp$ into gates/latches with at most two inputs.
-Within \noun{Workcraft}, we can pass further commands to the back end tools, in this case \noun{Mpsat}, to limit the number of inputs in gates and latches.
-Figure~\ref{fig:circuit-buck-deco2} features the implementation of gp can be computed by doing this.
+Within \noun{Workcraft} we can further decompose the implementation of $gp$ into two-input gates,
+as shown in Figure~\ref{fig:circuit-buck-deco2}. This is achieved by restricting the synthesis
+back end (in this case \noun{Mpsat}) to use the gates with at most two inputs.
 
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.3]{Images/circuit-buck-deco2-wc}
 \par\end{centering}
-
-\protect\caption{\label{fig:circuit-buck-deco2}Circuit with only two inputs on gates/latches}
+\protect\caption{\label{fig:circuit-buck-deco2}Technology mapping into two-input gates/latches.}
 \end{figure}
 
-There are further synthesis types, and for the example of a buck controller, they provide differing implementations.
 More information on the synthesis of this example can be found in the tutorials of the \noun{Workcraft} website~\cite{Workcraft_website}.
 
 %When we have acquired a circuit design via a chosen synthesis type, it needs to be verified to
@@ -1992,22 +1851,22 @@ one being proposed in this paper, and there are a common set of features between
 In some cases, these cannot be used for asynchronous designs, but some of their other key features can still be compared.
 Table~\ref{tab:related_work} contains a comparison of these features.
 
-We have found these related works limited in
-certain aspects, and we discuss this below.
+We have found these related works limited in certain aspects, and we discuss this below.
+
 \begin{table*}[t]
 \caption{A comparison of features of related works and the proposed method \label{tab:related_work}}
   \centering
-  \begin{tabular}[htb]{| m{1.5cm} | m{2cm} | m{1.3cm} | m{1.75cm} | m{1.5cm} | m{1.5cm} | m{1.7cm} | m{1.15cm} |}
+  \begin{tabular}[htb]{| m{2.6cm} | m{2.0cm} | m{1.3cm} | m{1.75cm} | m{1.5cm} | m{1.5cm} | m{1.7cm} | m{1.9cm} |}
   \hline
-  Title                       & \,Asynchronous support & \,Tool support  & \,Composition & \,Gate-level design & \,Event-level design & \,Protocol-level design  & \,Design focus \\ \hline \hline
-  Concepts              & Yes                               & Yes                 & Yes               & Yes                       & Yes                         & Yes                              & \,Little digital \\ \hline
-  Balsa                     & Yes                               & Yes                 & No                & Yes                       & No                          & Yes                              & \,Big\,\,\,\, digital \\ \hline
-  Biscotti                  & Yes                               & Yes                 & No                & Yes                       & No                           & No                               & \,Big\,\,\,\, digital \\ \hline
-  Lava                      & Yes                               & Yes                 & No                & Yes                       & No                           & Yes                             & \,Big\,\,\,\, digital \\ \hline
-  C$\lambda$ash     & Yes                               & Yes                 & No                & Yes                       & No                           & Yes                             & \,Big\,\,\,\, digital \\ \hline
-  Snippets                & No                                & No                   & Yes               & No                        & No                          & No                                & \,Little digital \\ \hline
-  DI algebra             & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & \,Little digital \\ \hline
-  Structural design   & No                                & Yes                 & No                 & No                        & No                          & No                               & \,Modular circuits \\ \hline
+  Title             & \,Asynchronous support & \,Tool support  & \,Composition & \,Gate-level & \,Event-level & \,Protocol-level  & \,Design focus \\ \hline \hline
+  Concep            & Yes                               & Yes                  & Yes               & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
+  Balsa             & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  Biscot            & Yes                               & Yes                  & No                & Yes                       & No                          & No                               & Big digital \\ \hline
+  Lava              & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  C$\lambda$ash     & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  Snippets          & No                                & No                   & Yes               & No                        & No                          & No                               & Little digital \\ \hline
+  DI algebra        & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & Little digital \\ \hline
+  Structural design & No                                & Yes                  & No                & No                        & No                          & No                               & Modular \\ \hline
   \end{tabular}
 \end{table*}
 
