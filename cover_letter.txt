@@ -1,0 +1,25 @@
+Dear Reviewers,
+
+We submit for your rewiew an article entitled "High-level asynchronous concepts at the interface between analogue and digital worlds", for the Special Issue on Circuit and System Design Automation for Internet of Things.
+
+A previous version of this article was submitted to, and presented at the 13th ACM-IEEE International Conference on Formal Methods and Models for System Design - MEMOCODE'15 conference. This version is available from http://ieeexplore.ieee.org/document/7340478/.
+
+The additions to the submitted article from the conference paper are as follows:
+
+* A motivating example, explaining the buck converter example and discussing the existing monolithic design flow used for this. This includes a discussion on how we began envisioning high-level concepts as a design method.
+
+* An introduction to interface concepts, a specification for signal types composable with all other concepts.
+
+* A section discussing interoperability with STG based tools. This details an algorithm to translate concepts into STGs, the ability to partially translate concept specifications and compose these, and the usability of the  concepts translation tool, for concept specifications and integration with existing tools for verification and synthesis.
+
+* Updated concept specifications for the case study, which are included as examples in the concept translation tool, and use the most up to date concepts, as described in this article.
+
+* An upated section on synthesis of a speed-independent controller, as part of the case-study. Included is more possible types synthesis, the implementatuio, and their benefits.
+
+* An expanded section on related work, detailing various existing methodologies which have similarities to the proposed method, but with approaches which may be disadvantageous, and have differing design focuses. This includes a table of comparison, with fields which display the differences at a glance.
+
+We thank you in advance for any comments you may give.
+
+Yours sincerely,
+
+Jonathan Beaumont, Andrey Mokhov, Danil Sokolov and Alex Yakovlev
