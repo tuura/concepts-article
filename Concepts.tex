@@ -1,4 +1,4 @@
-\documentclass[british,compsoc]{IEEEtran}
+\documentclass[british, journal]{IEEEtran}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
 \usepackage{float}
@@ -194,18 +194,18 @@ asynchronous circuit implementation targeting a chosen technology library.
 Our contributions are as follows:
 \begin{itemize}
   \item We introduce asynchronous concepts as a specification
-  language in \S\ref{sec:Concepts} and compare it to STGs in
-  \S\ref{sec:Circuit-specification-with}.
+  language in Section~\ref{sec:Concepts} and compare it to STGs in
+  Section~\ref{sec:Circuit-specification-with}.
   \item We present an algorithm for translating concepts to STGs
   and integrate it into our open-source software toolsuite \noun{Workcraft},
-  \S\ref{sec:interop-with-stg}.
+  Section~\ref{sec:interop-with-stg}.
   \item We demonstrate the proposed design method on a case study of an
-  asynchronous power regulator, \S\ref{sec:case-study}.
+  asynchronous power regulator, Section~\ref{sec:case-study}.
 \end{itemize}
 
 \noindent
-We start with a motivational example in \S\ref{sec:Motivating Example}, review related work
-in \S\ref{sec:related-work}, and discuss future research in \S\ref{sec:conclusions}.
+We start with a motivational example in Section~\ref{sec:Motivating Example}, review related work
+in Section~\ref{sec:related-work}, and discuss future research in Section~\ref{sec:conclusions}.
 
 %Designing a controller for an analogue circuit using this method can
 %be beneficial. Any of the partial knowledge we have about any casual
@@ -266,10 +266,11 @@ a high-speed clock solution would clearly be inadequate.
 \par
 \end{centering}
 \protect\caption{\label{fig:buck}Buck converter and its informal description.}
+\vspace{-3mm}
 \end{figure}
 
 In this section we first provide the background on asynchronous buck
-converters~\S\ref{sub:buck}, our main motivation example and case study.
+converters Section~\ref{sub:buck}, our main motivation example and case study.
 Buck converters rely on analogue circuitry for power regulation and
 conversion and their behaviour is typically characterised by many operating
 modes with complex interplay and high-level decision logic that is digitally
@@ -277,12 +278,12 @@ controlled.
 We then discuss challenges arising in the design of asynchronous buck converters
 with Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn},
 a commonly used mathematical model for the specification of asynchronous
-circuits~\S\ref{sub:Monolithic}.
-Finally, we outline our new design approach~\S\ref{sub:new-way} wherein the
+circuits Section~\ref{sub:Monolithic}.
+Finally, we outline our new design approach Section~\ref{sub:new-way} wherein the
 behaviour of an asynchronous buck converter is decomposed into simple
 behaviours, that we later refer to as \emph{concepts}. The approach is
 described at an intuitive level, and will be formalised in the next
-section~\S\ref{sec:Concepts}.
+section, Section~\ref{sec:Concepts}.
 
 \subsection{Background on buck converters\label{sub:buck}}
 
@@ -331,7 +332,7 @@ Nodes of the STG correspond to signal rising ($+$) and falling ($-$) transitions
 arcs model \emph{causality}, parallel branches correspond to concurrency, and
 a circle \emph{place} with a black dot (\emph{token}) represents the choice of
 the current scenario. We formally introduce STGs
-in~\S\ref{sec:Circuit-specification-with}.
+in Section~\ref{sec:Circuit-specification-with}.
 
 This STG is moderately large and captures all three scenarios by overlaying
 their common parts. In the monolithic design approach, the designer starts with
@@ -463,7 +464,7 @@ for all $a,b\in M$.
 
 We first describe \emph{abstract concepts} that we use as building
 blocks for developing \emph{domain specific concepts}, such as those
-related to asynchronous circuits (\S\ref{sub:Concepts-for-asynchronous}).
+related to asynchronous circuits (Section~\ref{sub:Concepts-for-asynchronous}).
 
 Abstract concepts are parameterised by finite sets of \emph{states}
 $S$ and \emph{events} $E$. The \emph{initial state concept} captures
@@ -668,7 +669,7 @@ via OR-causality:
 
 A \emph{C-element} is a gate with two inputs $a$ and $b$ and one
 output~$c$, which synchronises both rising and falling input transitions
-via AND-causality (see an example in~\S\ref{sub:Comp-of-concepts}):
+via AND-causality (see an example in Section~\ref{sub:Comp-of-concepts}):
 \[
 \mathsf{cElement}(a, b, c)=a^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ b^{+}\!\rightsquigarrow\! c^{+}\ \diamond\ a^{-}\!\rightsquigarrow\! c^{-}\ \diamond\ b^{-}\!\rightsquigarrow\! c^{-}
 \]
@@ -688,7 +689,7 @@ see our open-source implementation~\cite{2016_concepts_github}.
 \textbf{Protocol-level concepts:} In addition to gate-level concepts
 described above it is often important to specify \emph{protocols}
 of interaction between multiple gates, components or signals, as
-discussed in the motivating example~\S\ref{sub:new-way}.
+discussed in the motivating example Section~\ref{sub:new-way}.
 
 Here we demonstrate how one can use concepts to specify asynchronous handshakes
 and mutual exclusion mechanisms.
@@ -781,7 +782,7 @@ circuits, as it helps to quickly identify errors (e.g. an input transition is
 caused by a hidden internal transition), and reuse existing tools for circuit
 simulation, verification and synthesis. Signal type information is also used
 in the algorithm for automated translation of concepts to
-STGs~\S\ref{sec:interop-with-stg}.
+STGs (Section~\ref{sec:interop-with-stg}).
 
 Concepts \textsf{inputs}, \textsf{outputs}, \textsf{internals} are defined for
 specifying types of sets of signals for convenience. For example, to specify
@@ -1028,8 +1029,8 @@ tools exist which automatically verify and synthesise STG specifications,
 such as \noun{Petrify}~\cite{Cortadella} and \noun{Mpsat}~\cite{khomenko2004detecting}.
 In order to reuse the tools developed by the community, it is
 necessary to be able to automatically translate concept specifications to STGs.
-In this section, we present a translation algorithm~(\S\ref{sub:translating})
-and discuss ways of composing multiple behavioural scenarios into a single STG specification~(\S\ref{sub:scenario-composition}).
+In this section, we present a translation algorithm~(Section~\ref{sub:translating})
+and discuss ways of composing multiple behavioural scenarios into a single STG specification~(Section~\ref{sub:scenario-composition}).
 
 \begin{algorithm}[t]
 \begin{algorithmic}
@@ -1057,6 +1058,7 @@ and discuss ways of composing multiple behavioural scenarios into a single STG s
 \For {Each initial state concept}
   \State \textbf{add-token}(place \textbf{signal-}value)
 \EndFor
+
 \end{algorithmic}
 \end{algorithm}
 %A method of synthesizing concepts directly also exists, which will be explained,giving more options to designers.
@@ -1064,7 +1066,7 @@ and discuss ways of composing multiple behavioural scenarios into a single STG s
 \vspace{-2mm}
 \subsection{Translating concepts to STGs\label{sub:translating}}
 
-As discussed in~\S\ref{sub:Comp-of-concepts}, there are multiple ways of
+As discussed in Section~\ref{sub:Comp-of-concepts}, there are multiple ways of
 representing a specification using concepts. However, all levels of
 abstraction available to the designer are built out of primitive low-level
 signal concepts such as causality. Given a specification, we can therefore
@@ -1072,7 +1074,7 @@ break down all gate- and protocol-level constructs into `atoms', which
 significantly simplifies the translation task.
 
 Using the example of a C-element with an environment, any representation
-mentioned in~\S\ref{sub:Comp-of-concepts} can be broken down into the following
+mentioned in Section~\ref{sub:Comp-of-concepts} can be broken down into the following
 list of low-level concepts:
 
 \vspace{-3mm}
@@ -1085,7 +1087,7 @@ list of low-level concepts:
 ~&\hspace{-2mm}\diamond&\hspace{-2mm}\mathsf{inputs}(\{a,b\})\diamond\mathsf{outputs}(\{c\})
 \end{array}
 \]
-
+\vspace{2mm}
 \noindent One can see that the above list of primitive concepts matches
 the STG in Figure~\ref{fig:cElement STG composition} very closely, in particular
 the causality concepts match the arcs of the STG. Below we describe a general
@@ -1099,7 +1101,7 @@ and falling transitions of each signal to alternate, thereby ensuring that the r
 STG satisfies the property of \emph{consistency}~\cite{Cortadella}.
 The places between the transitions of a signal determine its state.
 Figure~\ref{fig:step-by-step1} shows consistency loops created for the example.
-
+\vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step1}
@@ -1116,6 +1118,7 @@ Figure~\ref{fig:step-by-step1}) to transition $c^{+}$ by a \emph{read arc},
 which allows $c^{+}$ to transition without consuming the token (consuming
 the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
 
+\vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step2}
@@ -1128,6 +1131,7 @@ the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
 We continue translating the remaining causality concepts in the same manner
 obtaining the STG shown in Figure~\ref{fig:step-by-step9}.
 
+\vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
 \includegraphics[scale=0.23]{Images/Step-by-step9}
@@ -1149,6 +1153,7 @@ Figure~\ref{fig:step-by-step12}.
 \par
 \protect\caption{\label{fig:step-by-step12}The final step: set the initial state.}
 \par\end{centering}
+\vspace{-3mm}
 \end{figure}
 
 The resulting STG and the STG shown in Figure~\ref{fig:cElement STG composition}
@@ -1206,10 +1211,10 @@ by \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 }
 \par\end{centering}
 \protect\caption{\label{fig:IndividConceptStgs}Partial translation of concepts into STGs}
-\vspace{-4mm}
+\vspace{-6mm}
 \end{figure}
 
-Using the example in~\S\ref{sub:Comp-of-concepts}, a C-element with environment,
+Using the example in Section~\ref{sub:Comp-of-concepts}, a C-element with environment,
 we can translate the concepts corresponding to the C-element and the two
 environment inverters individually. Including the initial states, this would
 give us the STGs found in Figure~\ref{fig:IndividConceptStgs}. These STGs can be
@@ -1220,7 +1225,7 @@ to the STG in Figure~\ref{fig:cElement STG composition}.
 \vspace{-1mm}
 \subsection{Scenario combination\label{sub:scenario-composition}}
 
-As mentioned in~\S\ref{sub:scenarios}, concepts are used to specify
+As mentioned in Section~\ref{sub:scenarios}, concepts are used to specify
 a single behavioural scenario.
 %which can be tested and verified separately to allow for easier changes and additions
 %to smaller, less complex, specifications. However, when scenarios are tested and prove to work as required, and satisfy all necessary properties, they then need to be combined to
@@ -1246,7 +1251,7 @@ to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
 the scenarios may run, and this needs to be specified by the designer:
 
-\vspace{2mm}
+\vspace{-2mm}
 \begin{center}
 \includegraphics[scale=0.42]{Images/sequential_combination}
 \end{center}
@@ -1256,7 +1261,7 @@ of the scenarios in a specification may run concurrently. It may be necessary
 to limit concurrency by specifying, for instance, the number of scenarios
 that can be active simultaneously:
 
-\vspace{2mm}
+\vspace{-2mm}
 \begin{center}
 \includegraphics[scale=0.42]{Images/concurrent_combination}
 \end{center}
@@ -1562,21 +1567,23 @@ using concepts.
 \vspace{-1mm}
 \section{Case study\label{sec:case-study}}
 
-In~\S\ref{sec:Motivating Example} we introduced the motivating example for
+In Section~\ref{sec:Motivating Example} we introduced the motivating example for
 this article, a simple buck converter, and discussed the challenges of monolithic
 approach to specifying asynchronous circuits. We have also introduced
-concepts in~\S\ref{sec:Concepts}, and with examples explained how they can
+concepts in Section~\ref{sec:Concepts}, and with examples explained how they can
 be used to design simple circuits, and how these can be translated to STGs
 for subsequent synthesis of asynchronous gate-level implementation.
 In this section we use the buck converter as a case study to detail the
 whole design process in \noun{Workcraft}, see Figure~\ref{fig:workcraft_screenshot}.
 
+%\vspace{-5mm}
 \begin{figure*}[t]
 \begin{centering}
 \includegraphics[scale=0.5]{Images/design_flow_wc_screenshot}
 \par\end{centering}
 
 \protect\caption{\label{fig:workcraft_screenshot}Stages of the design flow when using asynchronous concepts in \noun{Workcraft}.}
+\vspace{-4mm}
 \end{figure*}
 
 \subsection{Formal specification using concepts}
@@ -1651,6 +1658,7 @@ for all operating modes, and therefore the \textsf{chargeFunc} concept can be re
 in other scenarios.
 
 \begin{figure}[H]
+\vspace{-3mm}
 \begin{centering}
 \includegraphics[scale=0.23]{Images/stg-UV_without_ZC}
 \par\end{centering}
@@ -1698,7 +1706,7 @@ time by consistency loops.
 \par\end{centering}
 \vspace{-1mm}
 \protect\caption{\label{fig:zcLateScenario STG}STG for the \textsf{zcLateScenario} concept.}
-\vspace{-1mm}
+\vspace{-3mm}
 \end{figure}
 
 Note that the concept specification of \textsf{zcLateScenario} reuses most of
@@ -1735,7 +1743,9 @@ handled by the control circuit:
 ~~~~\mathsf{zcFunc}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow gn^{-}\\
 ~~~~\mathsf{zcReact}&\hspace{-2mm}=&\hspace{-2mm}oc^{-}\rightsquigarrow zc^{+}~\diamond~gp^{+}\rightsquigarrow zc^{-}\\
 ~~~~\mathsf{uvFunc'}&\hspace{-2mm}=&\hspace{-2mm}uv^{+}\rightsquigarrow gp^{+}\\
-~~~~\mathsf{uvReact'}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow uv^{+}~\diamond~zc^{-}\rightsquigarrow uv^{-}\diamond~gp\_ack^{+}\rightsquigarrow uv^{-}
+~~~~\mathsf{uvReact'}&\hspace{-2mm}=&\hspace{-2mm}zc^{+}\rightsquigarrow uv^{+}
+\diamond~zc^{-}\rightsquigarrow uv^{-}\\
+&\hspace{-2mm}\diamond&\hspace{-2mm}gp\_ack^{+}\rightsquigarrow uv^{-}
 
 \end{array}
 \]
@@ -1748,11 +1758,12 @@ in Figure~\ref{fig:zcEarlyScenario STG}.
 \includegraphics[scale=0.23]{Images/stg-UV_after_ZC}
 \par\end{centering}
 \protect\caption{\label{fig:zcEarlyScenario STG}STG for the \textsf{zcEarlyScenario} concept.}
+\vspace{-3mm}
 \end{figure}
 
 \subsection{Combining the scenarios }
 
-The scenario STGs can now be combined as described in \S\ref{sub:scenario-composition}
+The scenario STGs can now be combined as described in Section~\ref{sub:scenario-composition}
 to produce a multi-scenario specification. As buck operating modes are active one at a
 time, the control scenarios are combined using the non-deterministic choice template.
 
@@ -1800,6 +1811,7 @@ As seen in this image, the property correctly holds, as expected.
 \begin{centering}
 \protect\caption{\label{fig:buck STG}Complete STG for a buck converter.}
 \par\end{centering}
+\vspace{-3mm}
 \end{figure}
 
 \begin{figure}[h]
@@ -1809,6 +1821,7 @@ As seen in this image, the property correctly holds, as expected.
 \begin{centering}
 \protect\caption{\label{fig:custom_assertion}Custom verification of no shortcircuit.}
 \par\end{centering}
+\vspace{-3mm}
 \end{figure}
 
 In the event that one of these properties does not hold, unless it can be corrected
@@ -1953,6 +1966,7 @@ We have found these related works limited in certain aspects, and we discuss thi
   DI algebra        & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & Little digital \\ \hline
   Structural design & No                                & Yes                  & No                & No                        & No                          & No                               & Modular \\ \hline
   \end{tabular}
+  \vspace{-3mm}
 \end{table*}
 
 A common approach of designing asynchronous circuits,
