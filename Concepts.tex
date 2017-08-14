@@ -960,7 +960,7 @@ Figure~\ref{fig:cElement STG composition}.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/stg-cElement}
+\includegraphics[scale=0.3]{Images/stg-cElement}
 \par\end{centering}
 \protect\caption{\label{fig:cElement STG composition}STG for the example system.}
 \vspace{-4mm}
@@ -1105,7 +1105,7 @@ Figure~\ref{fig:step-by-step1} shows consistency loops created for the example.
 \vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step1}
+\includegraphics[scale=0.3]{Images/Step-by-step1}
 \par
 \protect\caption{\label{fig:step-by-step1}The first step: create consistency loops.}
 \vspace{-2mm}
@@ -1122,7 +1122,7 @@ the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
 \vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step2}
+\includegraphics[scale=0.3]{Images/Step-by-step2}
 \par
 \protect\caption{\label{fig:step-by-step2}The second step: add causality concept $a^{+}\rightsquigarrow c^{+}$.}
 \vspace{-2mm}
@@ -1135,7 +1135,7 @@ obtaining the STG shown in Figure~\ref{fig:step-by-step9}.
 \vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step9}
+\includegraphics[scale=0.3]{Images/Step-by-step9}
 \par
 \protect\caption{\label{fig:step-by-step9}Finish the second step: add all causality concepts.}
 \vspace{-2mm}
@@ -1150,7 +1150,7 @@ Figure~\ref{fig:step-by-step12}.
 
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.25]{Images/Step-by-step12}
+\includegraphics[scale=0.3]{Images/Step-by-step12}
 \par
 \protect\caption{\label{fig:step-by-step12}The final step: set the initial state.}
 \par\end{centering}
@@ -1196,18 +1196,18 @@ by \noun{Workcraft} using an integrated tool \noun{Pcomp}~\cite{PCOMP}.
 \begin{figure}[t]
 \begin{centering}
 \subfloat[\label{fig:cElement}$\mathsf{cElement}(a,b,c)$]{\begin{centering}
-\includegraphics[scale=0.25]{Images/C-element}
+\includegraphics[scale=0.3]{Images/C-element}
 \par\end{centering}
 }
 \par
 \subfloat[\label{fig:inverterca}$\mathsf{inverter}(c,a)$]{\begin{centering}
-\includegraphics[scale=0.25]{Images/inverter(c,a)}
+\includegraphics[scale=0.3]{Images/inverter(c,a)}
 \par\end{centering}
 
 }
 \par
 \subfloat[\label{fig:inverterba} $\mathsf{inverter}(c,b)$]{\begin{centering}
-\includegraphics[scale=0.25]{Images/inverter(c,b)}
+\includegraphics[scale=0.3]{Images/inverter(c,b)}
 \par\end{centering}
 }
 \par\end{centering}
@@ -1252,7 +1252,7 @@ to select the order of all scenarios, so when combined, they will
 run in a sequence. In this case, there may be a clear order in which
 the scenarios may run, and this needs to be specified by the designer:
 
-\vspace{-2mm}
+%\vspace{-2mm}
 \begin{center}
 \includegraphics[scale=0.42]{Images/sequential_combination}
 \end{center}
@@ -1306,265 +1306,6 @@ the designer using \noun{Workcraft}'s graphical user interface. This
 design stage can also be automated to further streamline the design process
 using concepts.
 
-%\subsection{Direct synthesis from concepts \label{sub:direct-synth}}
-%
-%It is possible to synthesise directly from STGs, which we call \emph{Direct Synthesis}. Direct synthesis is a method of producing an implementation directly from concepts, finding Boolean
-%functions which are used to produce a logic gate implementation. There are some caveats to this however. Currently, it is suboptimal, and thus the functions it produces may not be the
-%best possible implementation, but it may be a quicker method of finding an implementation. We will explain this algorithm in this section, and give a brief example.
-%
-%\subsubsection{Algorithm of direct synthesis}
-%
-%When finding an implementation for a specification, we need only concern ourselves with the output signals. The input signals, the environment, can not be
-%controlled directly by a circuit, it merely reacts to the outputs, but we need to find a way of causing the outputs to changed based on the inputs. In this way we only need to find the
-%Boolean equations for the output signals.
-%
-%Therefore, we take an output signal, $x$. With this, we start by finding all concepts in which a signal causes a low to high transition, also known as the set function, $x^{+}$, such as
-%$p\rightsquigarrow x^{+}$, where p is any signal transition. We then record these signals only for $x^{+}$ in the form of a Boolean equation, where a low to high signal transition, such
-%as $p^{+}$ would be recorded as simply $p$, and a high to low transition, $p^{-}$, would be recorded as $\bar{p}$. All signals which cause this output signal transition in this scenario
-%will be combined using the \emph{AND} ($*$) operation.
-%
-%This is then repeated to find the equations for the opposite transition for this output signal, in this case the high to low transition, $x^{-}$, also known as the reset function. Following
-%this, we can reduce these equations. First of all, by resolving some Boolean relations. A Boolean relation is when an equation contains several signals which are related, usually by a
-%transition of one being assumed to occur after the transition of another~\cite{Cortadella}. For example, take a system with two input signals, $p$ and $q$, and an output signal $x$. If
-%some concepts in this system are:
-%
-%\vspace{2mm}
-%\begin{minipage}[t]{1\columnwidth}%
-%\begin{center}
-%$\,p^{+}\rightsquigarrow x^{+}$
-%\par\end{center}
-%
-%\begin{center}
-%$\,q^{+}\rightsquigarrow x^{+}$
-%\par\end{center}
-%
-%\begin{center}
-%$\,p^{+}\rightsquigarrow q^{+}$
-%\par\end{center}
-%
-%\end{minipage}\vspace{2mm}
-%
-%The equation for $x^{+}$ will contain in some variation $p*q$. These concepts state that both $p^{+}$ and $q^{+}$ must occur before $x^{+}$ can occur. It also states, however,
-%the timing assumption that $p^{+}$ occurs before $q^{+}$. It can therefore be assumed that $q^{+}$ shows that the $p^{+}$ transition has occurred, and can be removed from the
-%Boolean equations.
-%
-%Further reductions can be performed on these equations using existing algorithms, which will remove any redundancies and simplify them. The set and reset functions for
-%this signal can then be used for a logic implementation. Depending on the type of synthesis these can be used in different ways, for instance, C-element synthesis uses these set and
-%reset functions as they are, but technology mapping combines these functions by negating only the signals in the reset function, not the equation itself, and then \emph{OR}-ing this
-%with the set function of $x^{+}$. This can then be combined with an existing equation for $x$ from previous scenarios by \emph{OR}-ing this with the existing equation.
-%
-%This can be repeated for each output signal in the scenario, and for each scenario in the specification, and this will produce a full implementation for the system. An algorithm for Direct
-%Synthesis is found in Algorithm~\ref{alg:direct-synth}
-%
-%\begin{algorithm}[h]
-%\begin{algorithmic}
-%\caption{Algorithm for direct synthesis \label{alg:direct-synth}}
-%\For {Each scenario in system}
-%  \For {Output signal $x$ in all output signals}
-%    \For {Each signal transition $p$ that causes $x^{+}$}
-%	\If {$p^{+}$}
-%                \State setEq <- setEq $*$ $p$;
-%          \Else
-%	     \State setEq <- setEq  $*$ $\bar{p}$
-%	\EndIf
-%    \EndFor
-%    \For {Each signal transition $p$ that causes $x^{-}$}
-%         \If {$p^{+}$}
-%                \State resetEq <- resetEq  $*$  $p$;
-%          \Else
-%	     \State resetEq <- resetEq  $*$  $\bar{p}$
-%	\EndIf
-%    \EndFor
-%  \EndFor
-%  \State reduce(setEq)
-%  \State reduce(resetEq)
-%\EndFor
-%\end{algorithmic}
-%\end{algorithm}
-%
-%\subsubsection{Example of direct synthesis}
-%
-%For this example we will use the same example as we have previously, the C-element with environment~(Figure~{\ref{fig:cElement-concepts}). In the case of a circuit for this example,
-%the inputs $a$ and $b$ we cannot control, and thus it is assumed that the environment will correctly invert the output, $c$, to produce these input signals.
-%
-%Using the list of concepts found in Figure~\ref{fig:c-element-concepts}, we can find the set and reset functions for the only output signal $c$.
-%
-%\vspace{2mm}
-%\begin{minipage}[t]{1\columnwidth}%
-%\begin{center}
-%$\,c^{+}: a * b$
-%\par\end{center}
-%
-%\begin{center}
-%$\,c^{-}: \bar{a} * \bar{b}$
-%\par\end{center}
-%
-%\end{minipage}\vspace{2mm}
-%
-%These functions are fairly simple in this example, and there are no further simplification to be done, and thus these can be used for synthesis. In this case, as we are aiming to use a
-%C-element in the implementation, and thus we can use C-element synthesis. The synthesis of this will produce the implementation found in Figure~\ref{fig:c-element-gate}
-%
-%\begin{figure}[h]
-%\begin{centering}
-%\includegraphics[scale=0.65]{Images/C-element-gate}
-%\par\end{centering}
-%
-%\begin{centering}
-%\protect\caption{\label{fig:c-element-gate}Implementation of C-element with environment}
-%
-%\par\end{centering}
-%
-%\end{figure}
-
-%%+ Algorithm for translating concepts to STGs
-%%
-%%+ Using parallel and scenario composition to produce STGs for the whole system
-%%
-%%+ Direct synthesis from concepts
-%\section{NEED TO REMOVE: Synthesis of STGs from concepts \label{sec:Synthesis-of-STGs}}
-%
-%\vspace{-3mm}
-%\textbf{This section needs to be edited to be included in section \ref{sec:interop-with-stg}}
-%
-%\vspace{5mm}
-%
-%When a list of concepts is produced, we then pass this into an algorithm
-%which converts these into a single scenario STG that, if possible,
-%satisfies all of the concepts. This STG represents one operational
-%mode of a full specification, and this needs to be combined with other
-%scenario STGs in order to produce a full system specification. In
-%this section we will discuss how this process is performed, from concepts,
-%to a set of scenario STGs, to a full system model.
-%
-%\vspace{-2mm}
-%
-%
-%
-%\subsection{Deriving STG fragments from concepts}
-%
-%\vspace{-2mm}
-%
-%
-%The algorithm begins by expanding any predefined concepts, and this
-%returns a full list of concepts. Each concept can then be converted
-%into its own STG fragment. In some cases, a single concept can represent
-%a single STG fragment, but if a one-to-many concept is used, multiple
-%fragments can be produced. These fragments are all created and stored
-%for use in the next step, but hidden from the user. However, how the
-%fragments are produced is important. For example, an STG fragment
-%converted from the concept \textsf{\textit{\emph{outputRise}}} in
-%the above C-element example is shown in Figure~\ref{fig:outputRise STG}.
-%
-%\begin{figure}[h]
-%\begin{centering}
-%\includegraphics[scale=0.23]{Images/outputRise-stg}
-%\par\end{centering}
-%
-%\protect\caption{\label{fig:outputRise STG}STG for the \textsf{\textit{\emph{outputRise}}}
-%concept.}
-%\end{figure}
-%
-%
-%This STG features arcs which suggest that \textsf{$a^{+}$} and $b^{+}$
-%must occur before \textsf{$c^{+}$}, as the concept suggests. This
-%fragment can also be seen as part of the scenario STG in Figure~\ref{fig:cElement STG}.
-%This concept however features two back-pressure arcs which are not
-%necessarily described in the concept. In order for fragments created
-%from concepts to be usable in producing scenario STGs, they need to
-%be complete, meaning they must have initial states, displayed using
-%tokens, and must not reach deadlock at any point, and this STG would
-%be incomplete without these back-pressure arcs used to show initial
-%states. These arcs are produced automatically by the algorithm, and
-%these fragments may be hidden from the user.
-%
-%\vspace{-3mm}
-%
-%
-%
-%\subsection{Scenario STGs}
-%
-%\vspace{-2mm}
-%
-%
-%If all concepts can be correctly converted into STG fragments, then
-%they can then be used to produce the STG for the scenario. This process
-%is done using a tool integrated in \noun{Workcraft} called \noun{Pcomp~}\cite{PCOMP},
-%which is designed to compose multiple STGs. The algorithm will automatically
-%take all STG fragments and pass them into the \noun{Pcomp} tool, and
-%this returns a single STG, created by composing all of the fragments.
-%It is necessary for all STG fragments to be complete, for example
-%using back-pressure arcs and including the initial states, as this
-%is used in the parallel composition process.
-%
-%We can use this process to produce STGs for scenarios, which are then
-%verified and simulated in \noun{Workcraft} and used in the next step.
-%However, if this STG is not to be used as a scenario but as a predefined
-%concept, this can be verified and stored for further use as part of
-%scenario descriptions.
-%
-%\vspace{-3mm}
-%
-%
-%
-%\subsection{Combination of scenarios \label{sub:Combination-of-scenarios}}
-%
-%\vspace{-3mm}
-%
-%
-%When a scenario STG has been produced and verified, it can then be
-%combined with other scenarios to produce a complete circuit specification.
-%
-%When combining scenarios, there are several things to consider in
-%how the scenarios fit together. Depending on the application the circuit
-%is being designed for, some scenarios may need to operate in certain
-%orders, for example, one scenario may exist simply to initialise the
-%circuit, therefore this scenario needs to run at start-up, before
-%any of the other scenarios, and then never be run again while the
-%system remains active.
-%
-%To address this, when combining scenarios we offer some templates,
-%each of which can be used to combine scenarios in various orders.
-%With this the designer specifies in which ways the scenarios should
-%be combined, and if an order is needed, the order the scenarios should
-%be run from start up. The following are some examples of templates
-%that will be offered before scenarios are combined:
-%
-%\textbf{Sequential:} Sequential combination will allow a designer
-%to select the order of all scenarios, so when combined, they will
-%run in a sequence. In this case, there may be a clear order in which
-%the scenarios may run, and this needs to be specified by the designer.
-%
-%\textbf{Concurrent:} In this case there is no order, but one or more
-%of the scenarios in a specification may run in parallel. This template
-%will combine the scenarios in a way that will allow concurrency to
-%occur, limited to requirements of the specification, for instance,
-%the number of scenarios that can be active at any one time, which
-%can be limited by the number of tokens available at once.
-%
-%\textbf{Non-deterministic choice:} This template will combine the
-%scenarios in a way that allows any of the scenarios to run, but not
-%according to any order to deal with the lack of determinism in the
-%system, using one token which is used only by the running scenario,
-%and this is returned when the scenario completes.
-%
-%There may be some more complex requirements to combination, and it
-%is possible to combine some scenarios using one template, then including
-%the result in a combination using another template. For example, a
-%system which is non-deterministic may also have a scenario that runs
-%at start up to initialise the system. In this case, a designer could
-%combine all non-deterministic scenarios first, then combine the resulting
-%STG with the initialising scenario, setting the order so this runs
-%first.
-%
-%This method of combination can allow for many possible scenario combination
-%styles, and more complex systems can be combined automatically, which
-%in comparison to manual combination, could reduce the number of errors
-%as well as design time.
-%
-%\vspace{-3mm}
-%
-%
-
 \vspace{-1mm}
 \section{Case study\label{sec:case-study}}
 
@@ -1600,7 +1341,8 @@ between two or more operating modes, as these can then be reused.
 
 A circuit that handles buck operation in absence of ZC condition is specified as follows:
 
-\vspace{-4mm}
+%\vspace{-4mm}
+\newpage
 \[
 \mathsf{zcAbsentScenario}(uv,oc,zc,gp,gp\_ack,gn,gn\_ack)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \]
