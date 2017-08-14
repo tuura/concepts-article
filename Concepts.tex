@@ -19,6 +19,7 @@
 \makeatother
 
 \usepackage{babel}
+\usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
 
@@ -1072,8 +1073,8 @@ break down all gate- and protocol-level constructs into `atoms', which
 significantly simplifies the translation task.
 
 Using the example of a C-element with an environment, any representation
-mentioned in Section~\ref{sub:Comp-of-concepts} can be broken down into the following
-list of low-level concepts:
+mentioned in Section~\ref{sub:Comp-of-concepts} can be broken down into the 
+following list of low-level concepts:
 
 \vspace{-3mm}
 \[
@@ -1104,7 +1105,7 @@ Figure~\ref{fig:step-by-step1} shows consistency loops created for the example.
 \vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/Step-by-step1}
+\includegraphics[scale=0.25]{Images/Step-by-step1}
 \par
 \protect\caption{\label{fig:step-by-step1}The first step: create consistency loops.}
 \vspace{-2mm}
@@ -1113,7 +1114,7 @@ Figure~\ref{fig:step-by-step1} shows consistency loops created for the example.
 
 The next step is to connect signal transitions according to the list of causality
 concepts. In the above example we start with $a^{+}\rightsquigarrow c^{+}$.
-To represent it in the STG, we connect the place after $a^{+}$ ($a_1$ in
+To represent it in the STG, we connect the place after $a^{+}$ ($a1$ in
 Figure~\ref{fig:step-by-step1}) to transition $c^{+}$ by a \emph{read arc},
 which allows $c^{+}$ to transition without consuming the token (consuming
 the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
@@ -1121,7 +1122,7 @@ the token would disable $a^{-}$), see Figure~\ref{fig:step-by-step2}.
 \vspace{-2mm}
 \begin{figure}[h]
 \begin{centering}
-\includegraphics[scale=0.23]{Images/Step-by-step2}
+\includegraphics[scale=0.25]{Images/Step-by-step2}
 \par
 \protect\caption{\label{fig:step-by-step2}The second step: add causality concept $a^{+}\rightsquigarrow c^{+}$.}
 \vspace{-2mm}
@@ -1144,7 +1145,7 @@ obtaining the STG shown in Figure~\ref{fig:step-by-step9}.
 The final step of the translation algorithm is to add tokens to some of the places
 of the resulting STG according to the initial state concepts
 $\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \diamond \mathsf{initialise}(c,0)$, which declare the initial states of all three signals to be 0. We therefore
-add tokens to places $a_0$, $b_0$ and $c_0$, producing the fully translated STG in
+add tokens to places $a0$, $b0$ and $c0$, producing the fully translated STG in
 Figure~\ref{fig:step-by-step12}.
 
 \begin{figure}[h]
