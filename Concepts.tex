@@ -84,11 +84,11 @@
 %
 %\twocolumn
 
-\title{High-level asynchronous concepts at the interface between analogue and 
+\title{High-level asynchronous concepts at the interface between analogue and
 digital worlds}
 \author{Jonathan Beaumont, Andrey Mokhov, Danil Sokolov, Alex Yakovlev\\
 \texttt{\{j.r.beaumont, andrey.mokhov, danil.sokolov, alex.yakovlev\}@ncl.ac.uk}\\
-\emph{School of Electrical and Electronic Engineering, Newcastle University,
+\emph{School of Engineering, Newcastle University,
 UK}}
 
 \maketitle
@@ -145,21 +145,22 @@ Signal Transition Graphs~(STGs)~\cite{Chu_1987_phd}\cite{Rosenblum_1985_tpn}
 are commonly used for the specification,
 verification and synthesis of asynchronous control circuits as they are
 supported by multiple EDA tools, such as \noun{Petrify}~\cite{Cortadella},
-\noun{Mpsat}~\cite{khomenko2004detecting}, \noun{Versify}~\cite{i1997formal},
-\noun{Workcraft}~\cite{2007_poliakov_workcraft}\cite{Workcraft_website}, and others.
-These tools take an STG specification of a complete controller and can
-formally verify its correctness, as well as synthesise an asynchronous
+\noun{Punf}/\noun{Mpsat}~\cite{khomenko2004detecting}\cite{khomenko2011mp}, \noun{Versify}~\cite{i1997formal},
+\noun{Workcraft}~\cite{workcraft2016}\cite{Workcraft_website}, and others.
+These tools take an STG specification of a complete asynchronous controller and
+can formally verify its correctness, as well as synthesise an asynchronous
 circuit implementation that is \emph{speed-independent}, i.e. guaranteed
 to work correctly regardless of component delays~\cite{Muller_1959_ts}.
 Such a monolithic approach to designing asynchronous circuits has
 poor scalability: as the system grows in complexity its monolithic
-specification becomes challenging to comprehend and debug. The problem
+specification becomes challenging to comprehend, debug and maintain. The problem
 becomes particularly severe when designing multi-mode systems, such as
 power regulators, where capturing all aspects of system behaviour in a
-consistent specification is a major design challenge~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}.
-The STG models of components and operating modes are difficult to reuse
-when designing other specifications, and thus each new design must be built
-from the ground up. This further adds to the design time, hence making
+consistent specification is a major design
+challenge~\cite{2014_sokolov_ftfc}\cite{sokolov2015design}. The STG models of
+components and operating modes developed for one asynchronous system are
+difficult to reuse when designing others, and thus each new design
+must be built from the ground up. This further adds to the design time, hence making
 asynchronous circuits costly for use in industry.
 
 In this paper we address this issue by proposing a new method for design
@@ -195,7 +196,7 @@ Our contributions are as follows:
   language in Section~\ref{sec:Concepts} and compare it to STGs in
   Section~\ref{sec:Circuit-specification-with}.
   \item We present an algorithm for translating concepts to STGs
-  and integrate it into our open-source software toolsuite \noun{Workcraft},
+  and integrate it into the open-source software toolsuite \noun{Workcraft},
   Section~\ref{sec:interop-with-stg}.
   \item We demonstrate the proposed design method on a case study of an
   asynchronous power regulator, Section~\ref{sec:case-study}.
@@ -1073,7 +1074,7 @@ break down all gate- and protocol-level constructs into `atoms', which
 significantly simplifies the translation task.
 
 Using the example of a C-element with an environment, any representation
-mentioned in Section~\ref{sub:Comp-of-concepts} can be broken down into the 
+mentioned in Section~\ref{sub:Comp-of-concepts} can be broken down into the
 following list of low-level concepts:
 
 \vspace{-3mm}
