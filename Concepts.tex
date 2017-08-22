@@ -123,6 +123,7 @@ an asynchronous power regulator.
 \sloppy
 \thispagestyle{empty}
 
+\vspace{-4mm}
 \section{Introduction}
 
 Analogue and mixed-signal circuits become more tightly integrated with
@@ -195,9 +196,10 @@ Our contributions are as follows:
   \item We introduce asynchronous concepts as a specification
   language in Section~\ref{sec:Concepts} and compare it to STGs in
   Section~\ref{sec:Circuit-specification-with}.
-  \item We present an algorithm for translating concepts to STGs
-  and integrate it into the open-source software toolsuite \noun{Workcraft},
-  Section~\ref{sec:interop-with-stg}.
+  \item We present an algorithm for translating concepts to STGs, which is
+  implemented in the open-source tool \noun{Plato}~\cite{2016_concepts_github}
+  and integrated into the open-source asynchronous circuit design toolsuite
+  \noun{Workcraft}~\cite{Workcraft_website}, see Section~\ref{sec:interop-with-stg}.
   \item We demonstrate the proposed design method on a case study of an
   asynchronous power regulator, Section~\ref{sec:case-study}.
 \end{itemize}
@@ -897,7 +899,7 @@ The example can be described by the following script:
 \,\,\,\,\,\,\mathsf{outputFall}&\hspace{-2mm}=&\hspace{-2mm}a^{-} \rightsquigarrow c^{-} \,\diamond\, b^{-} \rightsquigarrow c^{-}\\
 \,\,\,\,\,\,\mathsf{inputRise}&\hspace{-2mm}=&\hspace{-2mm}c^{-} \rightsquigarrow a^{+} \,\diamond\, c^{-} \rightsquigarrow b^{+}\\
 \,\,\,\,\,\,\mathsf{initialState}&\hspace{-2mm}=&\hspace{-2mm}\mathsf{initialise}(a,0) \diamond \mathsf{initialise}(b,0) \\
-&~&\hspace{-4.3mm}\diamond \, \mathsf{initialise}(c,0)\\
+&~&\hspace{-5.6mm}\diamond\,\,\,\mathsf{initialise}(c,0)\\
 \end{array}
 \]
 \vspace{-1mm}
@@ -1698,22 +1700,22 @@ one being proposed in this paper, and there are a common set of features between
 In some cases, these cannot be used for asynchronous designs, but some of their other key features can still be compared.
 Table~\ref{tab:related_work} contains a comparison of these features.
 
-We have found these related works limited in certain aspects, and we discuss this below.
+We have found the related work limited in certain aspects, and we discuss this below.
 
 \begin{table*}[t]
-\caption{A comparison of features of related works and the proposed method \label{tab:related_work}}
+\caption{A comparison of features of related work and the proposed method \label{tab:related_work}}
   \centering
-  \begin{tabular}[htb]{| m{2.6cm} | m{2.0cm} | m{1.3cm} | m{1.75cm} | m{1.5cm} | m{1.5cm} | m{1.7cm} | m{1.9cm} |}
+  \begin{tabular}[htb]{| m{2.6cm} | m{2.0cm} | m{1.3cm} | m{1.5cm} | m{1.5cm} | m{1.7cm} | m{1.9cm} |}
   \hline
-  Title             & \,Asynchronous support & \,Tool support  & \,Composition & \,Gate-level & \,Event-level & \,Protocol-level  & \,Design focus \\ \hline \hline
-  Concepts            & Yes                               & Yes                  & Yes               & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
-  Balsa             & Yes                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
-  Biscotti            & Yes                               & Yes                  & No                & Yes                       & No                          & No                               & Big digital \\ \hline
-  Lava              & No                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
-  C$\lambda$ash     & No                               & Yes                  & No                & Yes                       & No                          & Yes                              & Big digital \\ \hline
-  Snippets          & No                                & No                   & Yes               & No                        & No                          & No                               & Little digital \\ \hline
-  DI algebra        & Yes                               & No                   & Yes               & No                        & Yes                         & No                               & Little digital \\ \hline
-  Structural design & No                                & Yes                  & No                & No                        & No                          & No                               & Modular \\ \hline
+  Method             & \,Asynchronous support & \,Tool support  & \,Gate-level & \,Event-level & \,Protocol-level  & \,Design focus \\ \hline \hline
+  Concepts            & Yes                               & Yes                       & Yes                       & Yes                         & Yes                              & Little digital \\ \hline
+  Balsa             & Yes                               & Yes                        & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  Biscotti            & Yes                               & Yes                         & Yes                       & No                          & No                               & Big digital \\ \hline
+  Lava              & No                               & Yes                       & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  C$\lambda$ash     & No                               & Yes                        & Yes                       & No                          & Yes                              & Big digital \\ \hline
+  Snippets          & No                                & No                        & No                        & No                          & No                               & Little digital \\ \hline
+  DI algebra        & Yes                               & No                         & No                        & Yes                         & No                               & Little digital \\ \hline
+  Structural design & No                                & Yes                        & No                        & No                          & No                               & Modular \\ \hline
   \end{tabular}
   \vspace{-3mm}
 \end{table*}
@@ -1738,10 +1740,10 @@ experience. It features
 \emph{forever} blocks, in which code runs sequentially, but all these
 blocks run concurrently to each other. This design method starts by
 specifying a circuit which is then
-\emph{compiled} into a Petri-net for verification with existing tools
+\emph{compiled} into a Petri Net for verification with existing tools
 including \noun{Workcraft} and if successful, synthesis, similar to our
 approach with conversion of concepts to allow
-use with multiple existing tools based on STGs. Biscotti is aimed at
+use with multiple existing back-end tools based on STGs. Biscotti is aimed at
 designing data-driven asynchronous systems however, and as with Balsa,
 specifying an asynchronous control system is
 difficult, especially as the number of signals involved increases.
@@ -1749,11 +1751,12 @@ difficult, especially as the number of signals involved increases.
 \cite{bjesse1998lava} introduces \textbf{Lava}, a Haskell tool. This features its own design flow, using predefined functions for structures like logic gates, allowing users to define
 functions using these structures. A collection of these functions can be used to design a circuit and be verified within Lava, however for steps such as simulation and synthesis, Lava
 generates VHDL code to be used by other software. This has similar ideals to concepts, allowing users to define functions from predefined structures, which can be reused. However,
-Lava is more focussed on designing synchronous circuits for data operations featuring wires with multiple bit widths, rather than asynchronous control systems. Concepts are also
-focussed on more than just logic gates, and allows definitions both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level.
+Lava is more focussed on designing synchronous circuits for data processing featuring wires with multiple bit widths, rather than asynchronous control circuits.
+% Concepts are also
+% focussed on more than just logic gates, and support both as standard and user-defined at multiple levels; signal-, gate-, protocol- and scenario-level.
 
 \textbf{C$\lambda$ash}, introduced in~\cite{baaij2009clambdaash},  is also a Haskell
-based tool, similar to Lava, focussed on synchronous data circuits.  It has some
+based tool, similar to Lava, focussed on synchronous data processing circuits. It has some
 cross-over features with Lava, such as built-in verification, and the ability for
 users to define functions.
 % Note: not sure what you mean: Clash doesn't synthesise asynchronous circuits!
@@ -1762,8 +1765,13 @@ users to define functions.
 C$\lambda$ash also features built in synthesis and simulation, avoiding the need to export VHDL, however this feature remains. This allows a simpler way of
 specifying synchronous circuits, which may be more natural for designers,
 however Haskell as a language features huge differences to programming languages
-like \noun{C}. The idea of a natural description is shared with Concepts,
-but as with Lava, the main focus is on logic gates, and other high level descriptions, where as Concepts allow multiple levels, from low to high, when specifying.
+like \noun{C}, which may be an issue for adoption. C$\lambda$ash is also focussed on synchronous circuits.
+
+The current implementaion of asynchronous concepts also uses Haskell as the host language, but our focus is
+on asynchronous control circuits, therefore the designer only works with a very small subset of Haskell using predefined
+domain-specific primitives, i.e. no advanced Haskell knowledge is required. We use Haskell because it provides
+powerful functional programming abstractions, significantly simplifying our implementation, and allowing us to use
+algebraic approaches to the specification of event-interaction graphs, e.g. see~\cite{2017_mokhov_alga}.
 
 \textbf{Snippets}~\cite{raey}, similar to concepts, are smaller
 state graph models which are used to compose full state graphs of
@@ -1773,7 +1781,7 @@ can fail. When composed with other snippets it can produce a working
 system state graph model. With our design methodology however we want
 to go deeper and decompose a component into concepts responsible for
 capturing signal behaviours for system features, such as handshakes,
-mutual exclusion, synchronisation, etc.
+mutual exclusion, synchronisation and others.
 
 \textbf{DI algebra}~\cite{josephs1993overview} is a method of describing
 systems as algebraic equations. Each equation represents an operation
@@ -1785,10 +1793,10 @@ to DI algebra, however concepts are described textually, which is
 different to DI algebra and as such, simplification does not occur
 at concept level, but during the composition and combination steps,
 and the most compact form of the model is automatically produced.
-To the best of our knowledge there are no tools or methodologies supporting
-compositional design of asynchronous circuits using DI algebra and
-it is therefore not interoperable with the rest of our design flow,
-and this also makes it unsuitable for use in an industrial setting.
+
+To the best of our knowledge there are no EDA tools supporting
+compositional design of asynchronous circuits using snippets or DI algebra,
+which makes these approaches unsuitable for use in an industrial setting.
 
 \textbf{Structural design} features re-usability of modular components~\cite{modular-circuit-design}.
 Here, a component design can be used multiple times across full device
@@ -1797,24 +1805,22 @@ can be changed in some way without affecting how they are used in
 the full device designs. The ideas of this method are similar to that
 of the design methodology we are proposing to reduce design time.
 However, this method is at a much higher level, using fully designed
-and tested components where as we propose to allow re-usability when
-modelling at circuit level, using composed concepts.
+and tested components, whereas we propose to allow re-usability
+at gate and even signal/event levels.
 
 Asynchronous concepts presented in this paper have been inspired by a
 series of research works dedicated to the compositional specification of
 asynchronous circuits. Specifically, we build on Conditional Partial
 Order Graphs~\cite{CPOG1}, Conditional Signal Graphs~\cite{mokhov2012adapting}
 and Parameterised Graphs~\cite{2014_mokhov_pg}. This work is different in that
-we focus on developing a flexible textual specification language that can be
-used by a circuit designer directly, without the need to explicitly describe
-systems by large graph-based models.
+we focus on developing a textual specification language that can be used by a
+designer directly, without the need to explicitly describe large graph-based models.
 
-Concepts have many advantageous features, such as reuse, natural description, multiple level description and composition, and more.
-Several of the abovementioned approaches feature similar ideas which make them beneficial in certain ways,
-but we believe fall down where the inclusion of one or more of these features could make an approach better. With concepts,
-we have attempted to address these issues and make concepts not only a powerful tool to specify asynchronous circuits, but a method with as much ease-of-use as possible, particularly targeting the little-digital design domain.
-Concepts are also supported by industrial-strength open-source software
-toolsuite \noun{Workcraft}.
+Concepts have many advantageous features, such as reuse, description and composition
+at multiple levels of abstraction. Several of the abovementioned approaches feature similar
+features which make them beneficial in certain circuit design applications, but we believe that
+concepts address an important gap in the state of the art: compositional design of little
+digital asyncrhonous control logic, with industrial-strength open-source EDA tool support.
 
 %\textbf{Resynthesis}~\cite{Resynth2} is a process of decomposing
 %a full model and recomposing it of selective components to produce
